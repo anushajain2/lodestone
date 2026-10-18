@@ -192,13 +192,24 @@ def eval_provenance(n: int = typer.Option(20), live: bool = typer.Option(False, 
 
 
 @eval_app.command("calibration")
-def eval_calibration(reps: int = typer.Option(20), seeds: int = typer.Option(20), loop: bool = typer.Option(True, help="Also rerun the Bayesian campaigns with each uncertainty variant")):
-    """Is the GP's uncertainty honest on held-out samples, and does fixing it help the loop?"""
+def eval_calibration(
+    reps: int = typer.Option(20),
+    seeds: int = typer.Option(20),
+    random: bool = typer.Option(True, "--random/--no-random", help="Random held-out samples (calibration.json)"),
+    loop: bool = typer.Option(True, help="Also rerun the Bayesian campaigns with each uncertainty variant (needs the random check)"),
+    libraries: bool = typer.Option(True, "--libraries/--no-libraries", help="Hold out one whole library (deposition run) at a time"),
+    library_reps: int = typer.Option(5, help="Random training subsets per held-out library and size"),
+):
+    """Is the GP's uncertainty honest on held-out samples and held-out libraries, and does fixing it help the loop?"""
+    from lodestone.loop import held_out_libraries
     from lodestone.loop.calibration import save, save_bench
 
-    save(reps=reps)
-    if loop:
-        save_bench(seeds=seeds)
+    if random:
+        save(reps=reps)
+        if loop:
+            save_bench(seeds=seeds)
+    if libraries:
+        held_out_libraries.save(reps=library_reps)
     typer.echo("wrote reports/calibration/")
 
 

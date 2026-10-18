@@ -95,7 +95,8 @@ def test_campaign_service_end_to_end(seeded):
     cmp = svc.compare_with_baselines(c["campaign_id"], seeds=2)
     assert {"random", "grid", "bayes-gp"} <= set(cmp["methods"]) and cmp["experiments_saved_vs"] is not None
     recipes = svc.suggest_recipes(c["campaign_id"], 3)
-    assert len(recipes) == 3 and all("unverified" in r["status"] for r in recipes)
+    assert len(recipes) == 3 and all("unverified" in r["status"] and "deposition run" in r["warning"] for r in recipes)
+    assert all(v["interval"] == "68% interval, calibrated on held-out deposition runs" for r in recipes for v in r["predicted"].values())
     doc = export_campaign(scope, c["campaign_id"])
     assert len(doc["experiments"]) == len(scope.list_results(c["campaign_id"])) and doc["schema"]["units"]["conductivity"] == "S/cm"
     assert all(e["provenance"]["source_sample_id"] for e in doc["experiments"])
@@ -191,3 +192,24 @@ def test_explanations_label_the_calibrated_interval():
     assert "calibrated on held-out data" in why
     pj = CampaignService._prediction_json(tc, pk)
     assert pj["conductivity"]["interval"].startswith("68% interval, calibrated") and pj["band_gap"]["std_inflation"] > 1
+
+
+def test_recipe_inflation_is_never_narrower_than_the_display_factor():
+    from lodestone.loop.calibration import display_inflation
+    from lodestone.loop.held_out_libraries import recipe_inflation
+
+    for system in ("N-Sn-Zn", "Co-Ni-O-Zn", "In-O-Sn-Zn", "a system with no checks"):
+        rec, disp = recipe_inflation(system), display_inflation(system)
+        assert set(disp) <= set(rec) and all(rec[p] >= disp[p] for p in disp)
+
+
+def test_leave_one_library_out_holds_out_whole_libraries():
+    from lodestone.loop import held_out_libraries as h
+
+    res = h.check(sizes=(), targets=(("izto-conductivity", "conductivity"),), verbose=False)
+    (row,) = res["results"]
+    assert row["n_train"] == "all" and row["libraries"] == len(row["per_library"]) >= 2
+    assert row["library"]["n_predictions"] == row["random"]["n_predictions"] == sum(p["n_test"] for p in row["per_library"])
+    for arm in ("library", "random"):
+        assert 0 <= row[arm]["cov68"] <= row[arm]["cov95"] <= 1
+    assert all(p["best_gap"] >= 0 and 0 < p["pick_percentile"] <= 1 for p in row["per_library"])
