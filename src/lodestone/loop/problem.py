@@ -108,6 +108,10 @@ class Problem:
     def n(self) -> int:
         return len(self.ids)
 
+    def libraries(self) -> dict[str, np.ndarray]:
+        """Library id → indices of its samples, in a stable order. One library is one deposition run."""
+        return {str(lib): np.flatnonzero(self.library == lib) for lib in sorted(set(self.library.tolist()), key=str)}
+
     # ------------------------------------------------------------------ scoring
 
     def objective_props(self) -> list[str]:

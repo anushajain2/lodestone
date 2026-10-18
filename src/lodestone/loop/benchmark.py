@@ -7,6 +7,10 @@ failure rate. Metrics:
 * best value found against experiments used (the chart),
 * how many of the top-5% samples were found,
 * robustness: the same campaign at 0%, 10% and 20% failure rates, and with batch sizes 1, 5 and 10.
+
+``run_library_benchmark`` repeats the comparison with one experiment = one library (a whole
+deposition run): runs needed to find a top-5% sample, and top-5% samples found within the run budget.
+It writes ``reports/benchmark/library.json`` and leaves the spot-level results alone.
 """
 
 from __future__ import annotations
@@ -20,7 +24,7 @@ import numpy as np
 from lodestone import config
 from lodestone.connectors import htem
 from lodestone.connectors.adapters import HTEMAdapter
-from lodestone.loop.engine import best_so_far, simulate, summarize_runs
+from lodestone.loop.engine import best_so_far, per_run, simulate, summarize_runs
 from lodestone.loop.problem import Problem, untransform
 from lodestone.schemas import PROPERTIES, CampaignSpec
 
@@ -122,6 +126,80 @@ def run_benchmark(cfg: BenchConfig = BenchConfig(), verbose: bool = True) -> dic
     (path / "summary.json").write_text(json.dumps(out, indent=2))
     (path / "curves.json").write_text(json.dumps(curves_all))
     plot(out, curves_all, path)
+    return out
+
+
+# ------------------------------------------------------------------------------- library level
+
+LIBRARY_METHODS = (("random", "gp"), ("grid", "gp"), ("bayes", "gp"))
+LIBRARY_BUDGET = 10  # deposition runs
+LIBRARY_INITIAL = 2  # shared random seed runs, then one run per round
+LIBRARY_BATCH = 1
+MIN_LIBRARIES = 2 * LIBRARY_BUDGET  # below this the budget covers most of the system and the test measures exhaustion
+
+
+def library_problem(key: str, failure_rate: float = 0.05, budget: int = LIBRARY_BUDGET) -> Problem:
+    spec = DEMO_CAMPAIGNS[key].model_copy(update={
+        "experiment_unit": "library", "budget": budget, "initial": LIBRARY_INITIAL, "batch_size": LIBRARY_BATCH, "failure_rate": failure_rate,
+    })
+    return Problem.from_records(public_records(spec.system), spec)
+
+
+def run_library_benchmark(seeds: int = 20, campaigns: tuple[str, ...] = tuple(DEMO_CAMPAIGNS), failure_rate: float = 0.05,
+                          budget: int = LIBRARY_BUDGET, verbose: bool = True, write: bool = True) -> dict:
+    out = {"config": {"seeds": seeds, "budget_runs": budget, "initial_runs": LIBRARY_INITIAL, "batch_runs": LIBRARY_BATCH,
+                      "failure_rate": failure_rate, "min_libraries": MIN_LIBRARIES, "methods": [m for m, _ in LIBRARY_METHODS]},
+           "campaigns": {}, "skipped": {}}
+    for key in campaigns:
+        prob = library_problem(key, failure_rate, budget)
+        libs = prob.libraries()
+        if len(libs) < MIN_LIBRARIES:
+            out["skipped"][key] = {"libraries": len(libs), "samples": prob.n, "name": prob.spec.name,
+                                   "reason": f"only {len(libs)} libraries with samples; a {budget}-run budget needs at least {MIN_LIBRARIES}"}
+            if verbose:
+                print(f"[{key}] skipped: {out['skipped'][key]['reason']}", flush=True)
+            continue
+        top = prob.top_set(0.05)
+        top_libs = {str(prob.library[i]) for i in top}
+        trajs, curves, paired = [], {}, {}
+        for strat, sur in LIBRARY_METHODS:
+            t0 = time.time()
+            for s in range(seeds):
+                t = simulate(prob, strat, sur, seed=s)
+                trajs.append(t)
+                best, found = per_run(prob, t, top)
+                curves.setdefault(t.method, {"best": [], "top_found": []})
+                curves[t.method]["best"].append(best)
+                curves[t.method]["top_found"].append(found)
+                paired.setdefault(t.method, []).append({
+                    "spots_measured": len(t.steps),
+                    "top_libraries_found": len({st.library for st in t.steps if st.library in top_libs}),
+                    "top_found": found[-1],
+                })
+            if verbose:
+                print(f"[{key}] library {t.method}: {seeds} seeds in {time.time() - t0:.0f}s", flush=True)
+        summary = summarize_runs(prob, trajs)
+        base = np.array([r["top_found"] for r in paired["random"]], float)
+        for m, rows in paired.items():
+            d = np.array([r["top_found"] for r in rows], float) - base
+            summary["methods"][m].update({
+                "spots_measured_mean": float(np.mean([r["spots_measured"] for r in rows])),
+                "top_libraries_found_mean": float(np.mean([r["top_libraries_found"] for r in rows])),
+                "top_found_minus_random_mean": float(d.mean()),
+                "top_found_minus_random_sem": float(d.std(ddof=1) / np.sqrt(len(d))) if len(d) > 1 else None,
+                "top_found_per_run_mean": np.mean(curves[m]["top_found"], axis=0).tolist(),
+            })
+        summary.update({
+            "spec": prob.spec.model_dump(), "summary": prob.spec.summary(), "libraries": len(libs),
+            "spots_per_library": [int(min(len(v) for v in libs.values())), int(max(len(v) for v in libs.values()))],
+            "libraries_with_top": len(top_libs),
+            "top_per_library": sorted((int(np.isin(top, idx).sum()) for idx in libs.values()), reverse=True)[:len(top_libs)],
+        })
+        out["campaigns"][key] = summary
+    if write:
+        path = config.REPORTS_DIR / "benchmark"
+        path.mkdir(parents=True, exist_ok=True)
+        (path / "library.json").write_text(json.dumps(out, indent=2))
     return out
 
 

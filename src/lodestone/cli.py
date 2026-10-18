@@ -126,10 +126,20 @@ def campaign_export(campaign_id: str, partner: str = typer.Option("partner-a"), 
 
 
 @app.command()
-def bench(seeds: int = typer.Option(20), robustness_seeds: int = typer.Option(10)):
+def bench(seeds: int = typer.Option(20), robustness_seeds: int = typer.Option(10),
+          level: str = typer.Option("sample", help="sample: one experiment = one spot (the main benchmark). library: one experiment = one deposition run")):
     """Benchmark (E1): Bayesian optimization vs random and grid search on real HTEM data."""
-    from lodestone.loop.benchmark import BenchConfig, run_benchmark
+    from lodestone.loop.benchmark import BenchConfig, run_benchmark, run_library_benchmark
 
+    if level == "library":
+        out = run_library_benchmark(seeds=seeds)
+        for k, v in out["campaigns"].items():
+            typer.echo(k + ": runs to first top-5% sample " + ", ".join(f"{m} {s['experiments_to_first_top5_median']:.0f}" for m, s in v["methods"].items()))
+        for k, v in out["skipped"].items():
+            typer.echo(f"{k}: skipped ({v['reason']})")
+        return
+    if level != "sample":
+        raise typer.BadParameter("level must be 'sample' or 'library'")
     out = run_benchmark(BenchConfig(seeds=seeds, robustness_seeds=robustness_seeds))
     for k, v in out["campaigns"].items():
         typer.echo(k + ": " + ", ".join(f"{m} {s['experiments_to_top_median']:.0f}" for m, s in v["methods"].items()))

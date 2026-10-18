@@ -215,6 +215,9 @@ class CampaignSpec(BaseModel):
     objectives: list[Objective] = Field(default_factory=list, max_length=2)
     constraints: list[Constraint] = Field(default_factory=list)
     window: Window | None = None
+    experiment_unit: Literal["sample", "library"] = Field(
+        "sample", description="What one experiment is: one sample (spot), or one library (a whole deposition run, every spot on it measured). "
+        "With 'library', budget, initial and batch_size count libraries.")
     budget: int = Field(60, ge=5, le=1000, description="Experiments the partner will pay for")
     batch_size: int = Field(5, ge=1, le=50)
     initial: int = Field(10, ge=1, le=100, description="Random seed experiments before the model takes over")
@@ -244,6 +247,10 @@ class CampaignSpec(BaseModel):
             raise ValueError("two-objective campaigns don't take constraints in this prototype")
         if self.initial > self.budget:
             raise ValueError("initial experiments cannot exceed the budget")
+        if self.experiment_unit == "library" and len(self.objectives) == 2:
+            raise ValueError("library-level campaigns support one objective, a constraint or a window, not two objectives")
+        if self.experiment_unit == "library" and self.strategy == "bayes" and self.surrogate == "rf":
+            raise ValueError("library-level campaigns use the GP surrogate")
         if self.strategy == "bayes" and self.surrogate == "rf" and len(self.objectives) == 2:
             raise ValueError("the random-forest surrogate supports one objective")
         return self
