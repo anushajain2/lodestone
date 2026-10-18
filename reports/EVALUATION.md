@@ -143,6 +143,36 @@ The default GP is overconfident everywhere. CV scaling overshoots: it widens the
 
 So the shipped GP keeps its default, overconfident uncertainty (`models.GP_OPTIONS`; `uv run lodestone eval calibration` reruns all of this). A likely reading, not tested: with ~1,000 samples where the good ones cluster, an overconfident model exploits sooner, and that pays. The raw GP's ± is too narrow by about ×1.6 for log10 conductivity and ×2.1 for band gap. So the uncertainty *shown to people* (the ± and the chance of meeting a constraint in 'why this sample', the dashboard and the agent tools) uses the fixed inflation for the campaign's system, labelled as calibrated on held-out data, while the optimizer ranks with the raw GP (`loop.calibration.display_inflation`; a test checks that a seeded run picks the same samples with and without it).
 
+### Can it predict a deposition run it has never seen?
+
+Samples on one HTEM library come from one deposition run, so a random split leaves close neighbours of almost every test sample in the training set. A new recipe is made in a new run. So: hold out one whole library at a time (libraries with at least 10 measurements), fit on the other libraries (all of them, or a random campaign-sized subset of 30 or 60, 5 subsets each), and predict the held-out library. Each is paired with a **matched random control**: same training size, a random test set of the same size drawn from every library. Coverage and R² are pooled over every held-out prediction. 'Display' widens σ by the factor people are shown today (learned on the other systems' *random* splits). 'Best pick' is how far the sample the model ranks first in the held-out library falls short of that library's real best (median over libraries), next to what a random pick in the same library gives up; 'best' follows the demo campaign: highest conductivity, band gap closest to the 1.4–1.6 eV window on N-Sn-Zn, highest band gap on Co-Ni-O-Zn (its ≥ 3 eV constraint).
+
+| System | Property | Training | Libraries | R², held-out library | R², matched random | 68%: library, raw | display | matched random, raw | random split (calibration.json) | 95%: library, raw | display | σ factor needed for 68% | Best pick short of the library's best | Random pick | Pick is the library's best |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| N-Sn-Zn | log10 conductivity | all other libraries | 22 | 0.64 | 0.86 | 43% | 56% | 40% | — | 61% | 76% | ×2.5 | 0.28 decades | 0.80 decades | 14% |
+| N-Sn-Zn | log10 conductivity | 30 | 22 | 0.30 | 0.62 | 43% | 62% | 54% | 52% | 70% | 83% | ×1.9 | 0.28 decades | 0.80 decades | 16% |
+| N-Sn-Zn | log10 conductivity | 60 | 22 | 0.53 | 0.76 | 50% | 67% | 56% | 55% | 73% | 85% | ×1.6 | 0.26 decades | 0.80 decades | 15% |
+| N-Sn-Zn | band gap | all other libraries | 23 | 0.28 | 0.60 | 42% | 71% | 39% | — | 68% | 88% | ×2.0 | 0.29 eV | 0.29 eV | 4% |
+| N-Sn-Zn | band gap | 30 | 23 | 0.08 | 0.22 | 49% | 76% | 46% | 43% | 74% | 92% | ×1.7 | 0.25 eV | 0.29 eV | 1% |
+| N-Sn-Zn | band gap | 60 | 23 | 0.06 | 0.34 | 44% | 71% | 47% | 45% | 68% | 91% | ×2.0 | 0.23 eV | 0.29 eV | 5% |
+| Co-Ni-O-Zn | log10 conductivity | all other libraries | 20 | -0.47 | 0.85 | 37% | 57% | 68% | — | 66% | 79% | ×2.1 | 0.20 decades | 0.51 decades | 0% |
+| Co-Ni-O-Zn | log10 conductivity | 30 | 20 | -0.21 | 0.31 | 40% | 61% | 53% | 55% | 71% | 87% | ×1.8 | 0.41 decades | 0.51 decades | 5% |
+| Co-Ni-O-Zn | log10 conductivity | 60 | 20 | -0.19 | 0.48 | 43% | 64% | 60% | 61% | 74% | 87% | ×1.7 | 0.36 decades | 0.51 decades | 7% |
+| Co-Ni-O-Zn | band gap | all other libraries | 20 | 0.29 | 0.39 | 27% | 50% | 25% | — | 49% | 69% | ×3.8 | 1.29 eV | 1.10 eV | 0% |
+| Co-Ni-O-Zn | band gap | 30 | 20 | 0.03 | 0.12 | 52% | 73% | 48% | 46% | 72% | 88% | ×1.7 | 1.23 eV | 1.10 eV | 1% |
+| Co-Ni-O-Zn | band gap | 60 | 20 | 0.16 | 0.18 | 41% | 68% | 46% | 43% | 66% | 85% | ×2.1 | 1.20 eV | 1.10 eV | 1% |
+| In-O-Sn-Zn | log10 conductivity | all other libraries | 4 | -0.70 | 0.87 | 19% | 32% | 45% | — | 45% | 57% | ×5.1 | 0.83 decades | 0.60 decades | 0% |
+| In-O-Sn-Zn | log10 conductivity | 30 | 4 | -0.82 | 0.61 | 16% | 27% | 51% | 50% | 39% | 53% | ×4.4 | 0.73 decades | 0.60 decades | 5% |
+| In-O-Sn-Zn | log10 conductivity | 60 | 4 | -0.84 | 0.78 | 15% | 26% | 49% | 49% | 40% | 55% | ×4.6 | 0.67 decades | 0.60 decades | 0% |
+
+**The predicted values suffer most.** With 30 or 60 training samples, R² on a held-out run is -0.84 to 0.53 (median 0.04), against 0.12 to 0.78 on the matched random splits. Fit on every other library, it is -0.70 to 0.64, against 0.39 to 0.87. So a model that looks decent on random held-out samples often does no better than predicting the average once the deposition run is new.
+
+**Interval coverage, raw GP, 30 or 60 training samples:** log10 conductivity 15%–50% on held-out runs against 49%–60% on matched random splits; band gap 41%–52% on held-out runs against 46%–48% on matched random splits. The widened intervals people see today hold the truth 26%–76% of the time on a new run, not 68% (95%: 53%–92%).
+
+**Picking the best sample of a new run:** the model's top-ranked sample falls short of the run's real best by less than a random pick does in 9 of 15 rows (N-Sn-Zn log10 conductivity, N-Sn-Zn band gap, Co-Ni-O-Zn log10 conductivity), and by as much or more in the rest (Co-Ni-O-Zn band gap, In-O-Sn-Zn log10 conductivity). It is the run's actual best in 0%–16% of held-out runs.
+
+**What this changes: 'suggest recipes'.** Its recipes have never been made, so each one is at least as far from the data as a new run. Its ± now uses a separate factor per property: the median, over the *other* systems' held-out-run checks with 30 or 60 training samples, of the factor that would have given 68% coverage (Co-Ni-O-Zn: ×1.8 band gap, ×3.1 log10 conductivity; In-O-Sn-Zn: ×1.9 band gap, ×1.8 log10 conductivity; N-Sn-Zn: ×1.9 band gap, ×3.1 log10 conductivity), and never narrower than the display factor. Scored on the system it was not learned from, its 68% interval holds the truth 83% (N-Sn-Zn log10 conductivity, n=30), 86% (N-Sn-Zn log10 conductivity, n=60), 73% (N-Sn-Zn band gap, n=30), 67% (N-Sn-Zn band gap, n=60), 87% (Co-Ni-O-Zn log10 conductivity, n=30), 87% (Co-Ni-O-Zn log10 conductivity, n=60), 70% (Co-Ni-O-Zn band gap, n=30), 64% (Co-Ni-O-Zn band gap, n=60), 35% (In-O-Sn-Zn log10 conductivity, n=30), 35% (In-O-Sn-Zn log10 conductivity, n=60). With three systems, one of them (In-O-Sn-Zn) far worse than the others, a single factor is too wide for some systems and still too narrow for others; too wide is the safer error for recipes nobody has made. Each suggestion also carries a warning that predictions for a new run were weak in this check (`campaign.suggest_recipes`, `loop.held_out_libraries`). The same wider factor and label are used for the loop's picks from a library it has no measurements from yet (`select.select_bayes`, `Pick.new_run`). Both are display only: the optimizer's picks are unchanged. `uv run lodestone eval calibration --no-random` reruns only this check.
+
 ## 2. Data onboarding and provenance (D1–D4)
 
 | System | Libraries | Listed but no samples served | Records received | Accepted | Rejected | Main rejection reasons |
@@ -181,5 +211,6 @@ Provenance spot-check: 20 random samples, 56 values compared with the raw HTEM r
 - **The adapters have only seen two formats**, one of them generated by this project. A real second lab will break them in new ways.
 - **Conductivity censoring is a modelling assumption**: a missing four-point-probe value is treated as 'too resistive to measure' (one decade below the lowest seen). It is usually right for HTEM, and not checked per sample.
 - **The GP's error bars are too narrow, and fixing them made the loop worse.** Its 68% intervals contain the real value only 43%–61% of the time on held-out samples. Widening them to near-nominal coverage made the Bayesian loop find fewer top-5% samples (clearly fewer on 2 of 4 campaigns, see 'Is the model's uncertainty honest?'), so the optimizer keeps the overconfident default; only the ± shown to people is widened to the held-out calibration.
+- **Random held-out splits flatter the model.** Holding out a whole deposition run instead, with 30–60 training samples, R² falls to a median of 0.04 (matched random splits: 0.41), and for In-O-Sn-Zn conductivity and Co-Ni-O-Zn band gap the model's top pick in a new run does no better than a random one. Suggested recipes are new runs, so their ± is widened further and they carry a warning (see 'Can it predict a deposition run it has never seen?').
 - **Claude's agent results are pending an API key** (see section 3).
 

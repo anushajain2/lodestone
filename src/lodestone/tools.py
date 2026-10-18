@@ -19,7 +19,7 @@ from typing import Any, Callable, Literal
 import numpy as np
 from pydantic import BaseModel, Field, ValidationError
 
-from lodestone.campaign import CampaignError, CampaignService
+from lodestone.campaign import RECIPE_WARNING, CampaignError, CampaignService
 from lodestone.connectors import htem
 from lodestone.goals import parse_goal
 from lodestone.onboarding import OnboardingError, import_htem_library, import_htem_system
@@ -267,7 +267,7 @@ class Toolbox:
         return out
 
     def suggest_recipes(self, a: RecipeInput) -> dict:
-        return {"recipes": self.svc.suggest_recipes(a.campaign_id, a.n), "warning": "unverified predictions; not measured"}
+        return {"recipes": self.svc.suggest_recipes(a.campaign_id, a.n), "warning": "unverified predictions; not measured. " + RECIPE_WARNING}
 
 
 TOOLS: dict[str, tuple[type[BaseModel], Callable, str]] = {
@@ -281,7 +281,7 @@ TOOLS: dict[str, tuple[type[BaseModel], Callable, str]] = {
     "get_status": (CampaignInput, Toolbox.get_status, "Campaign status: budget used, experiments by status, best result so far with its HTEM sample id."),
     "explain_choice": (ExplainInput, Toolbox.explain_choice, "Why the optimizer chose a given sample in this campaign, with its prediction. For GP campaigns, low–high is a 68% interval calibrated on held-out data (the raw GP is overconfident)."),
     "compare_with_baselines": (CompareInput, Toolbox.compare_with_baselines, "Replay the same goal and budget with random and grid search on the same data; experiments needed to find a top-5% sample, per method."),
-    "suggest_recipes": (RecipeInput, Toolbox.suggest_recipes, "Recipes the model would try next that are NOT in the data (composition, temperature) with predicted values; low–high is a 68% interval calibrated on held-out data. Unverified."),
+    "suggest_recipes": (RecipeInput, Toolbox.suggest_recipes, "Recipes the model would try next that are NOT in the data (composition, temperature) with predicted values; low–high is a 68% interval calibrated on held-out deposition runs, where the model's predictions were weak. Unverified."),
 }
 
 

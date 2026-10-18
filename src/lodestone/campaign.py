@@ -11,14 +11,23 @@ from __future__ import annotations
 
 import numpy as np
 
-from lodestone.loop.calibration import INTERVAL_LABEL, display_inflation
+from lodestone.loop.calibration import INTERVAL_LABEL
 from lodestone.loop.engine import initial_picks, next_batch, simulate, summarize_runs, best_so_far, MAX_RANDOM_RETRIES
+from lodestone.loop.held_out_libraries import RECIPE_INTERVAL_LABEL, recipe_inflation
 from lodestone.loop.models import Observations, Surrogate, training_data
 from lodestone.loop.problem import Problem, fmt_value, transform, untransform
 from lodestone.loop.replay import LabReplay
 from lodestone.loop.select import Pick, grid_order
 from lodestone.schemas import PROPERTIES, CampaignSpec
 from lodestone.store import PartnerScope, new_id
+
+
+# Why suggested recipes carry a warning: reports/EVALUATION.md, 'Can it predict a deposition run it has never seen?'
+# (reports/calibration/held_out_libraries.json, as of 2026-10-18).
+RECIPE_WARNING = (
+    "A new recipe means a new deposition run. Trained on 30-60 samples and tested on whole deposition runs it had not seen, the model "
+    "explained little of the variation (R² from -0.8 to 0.5, median about 0, across the demo systems), so treat the predicted value as a rough guess."
+)
 
 
 class CampaignError(ValueError):
@@ -34,10 +43,10 @@ def fmt(prop: str, v: float) -> str:
     return f"{v:.2f} {unit}"
 
 
-def _interval_note(std_inflation: dict[str, float], prop: str) -> dict:
+def _interval_note(std_inflation: dict[str, float], prop: str, label: str = INTERVAL_LABEL) -> dict:
     """How to read low–high: ±1σ of the GP, widened by the held-out calibration factor when there is one."""
     if prop in std_inflation:
-        return {"interval": INTERVAL_LABEL, "std_inflation": std_inflation[prop]}
+        return {"interval": label, "std_inflation": std_inflation[prop]}
     return {"interval": "±1σ of the model, not calibrated"}
 
 
@@ -150,11 +159,13 @@ class CampaignService:
         out = {}
         for p, (m, s) in pk.prediction.items():
             lo, mid, hi = untransform(p, np.array([m - s, m, m + s]))
-            out[p] = {"mean": float(mid), "low": float(lo), "high": float(hi), "unit": PROPERTIES[p]["unit"], **_interval_note(pk.std_inflation, p)}
+            out[p] = {"mean": float(mid), "low": float(lo), "high": float(hi), "unit": PROPERTIES[p]["unit"], **_interval_note(pk.std_inflation, p, RECIPE_INTERVAL_LABEL if pk.new_run else INTERVAL_LABEL)}
         if pk.p_feasible is not None:
             out["p_feasible"] = pk.p_feasible
         if pk.p_success is not None:
             out["p_success"] = pk.p_success
+        if pk.new_run:
+            out["new_run"] = True  # no measurements from this sample's deposition run yet: widened for a new run
         return out
 
     def submit(self, campaign_id: str, record_ids: list[str] | None = None) -> list[dict]:
@@ -336,7 +347,8 @@ class CampaignService:
         main = spec.window.property if spec.window else spec.objectives[0].property
         m, s = pk.prediction[main]
         lo, mid, hi = untransform(main, np.array([m - s, m, m + s]))
-        rng_text = f"{INTERVAL_LABEL}: {fmt(main, lo)} to {fmt(main, hi)}" if main in pk.std_inflation else f"likely {fmt(main, lo)} to {fmt(main, hi)}"
+        label = RECIPE_INTERVAL_LABEL if pk.new_run else INTERVAL_LABEL
+        rng_text = f"{label}: {fmt(main, lo)} to {fmt(main, hi)}" if main in pk.std_inflation else f"likely {fmt(main, lo)} to {fmt(main, hi)}"
         parts.append(f"Predicted {PROPERTIES[main]['label'].lower()} ≈ {fmt(main, mid)} ({rng_text})")
         if spec.window:
             inside = spec.window.low <= mid <= spec.window.high
@@ -348,6 +360,8 @@ class CampaignService:
             if feas:
                 best = max((vals[i] for i in feas), key=lambda v: v if spec.objectives[0].direction == "max" else -v)
                 parts.append(f"best so far is {fmt(main, best)}")
+        if pk.new_run:
+            parts.append("no measurements from this deposition run yet, so the range is wider: the model was much less accurate on runs it had not seen")
         if pk.p_feasible is not None:
             parts.append(f"{100 * pk.p_feasible:.0f}% chance it meets {', '.join(c.text() for c in spec.constraints)}")
         rel_unc = s / (np.std(transform(main, np.array(list(obs.values.get(main, {0: 1}).values())))) + 1e-9)
@@ -428,7 +442,9 @@ class CampaignService:
             cands.append(np.clip(x, lo, hi))
         C = np.array(cands)
         pred = sur.predict(C)
-        infl = {p: f for p, f in display_inflation(spec.system).items() if p in props}  # display only, as in select_bayes
+        # A recipe that was never made is a new deposition run: widen by the held-out-library factor, not the
+        # random-split one (loop/held_out_libraries.py). Display only; it does not change the ranking.
+        infl = {p: f for p, f in recipe_inflation(spec.system).items() if p in props}
         pred = {p: (m, s * infl.get(p, 1.0)) for p, (m, s) in pred.items()}
         vals = {p: untransform(p, pred[p][0]) for p in props}
         full = {p: vals.get(p, np.full(len(C), np.nan)) for p in prob.truth}
@@ -444,8 +460,8 @@ class CampaignService:
             out.append({**recipe, "predicted": {p: {"mean": float(untransform(p, np.array([pred[p][0][j]]))[0]),
                                                     "low": float(untransform(p, np.array([pred[p][0][j] - pred[p][1][j]]))[0]),
                                                     "high": float(untransform(p, np.array([pred[p][0][j] + pred[p][1][j]]))[0]),
-                                                    "unit": PROPERTIES[p]["unit"], **_interval_note(infl, p)} for p in props},
-                        "status": "unverified: not in the data; needs a real experiment"})
+                                                    "unit": PROPERTIES[p]["unit"], **_interval_note(infl, p, RECIPE_INTERVAL_LABEL)} for p in props},
+                        "status": "unverified: not in the data; needs a real experiment", "warning": RECIPE_WARNING})
             if len(out) == n:
                 break
         return out

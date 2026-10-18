@@ -33,6 +33,7 @@ from botorch.acquisition.objective import GenericMCObjective
 from botorch.sampling import SobolQMCNormalSampler
 
 from lodestone.loop.calibration import display_inflation
+from lodestone.loop.held_out_libraries import recipe_inflation
 from lodestone.loop.models import Observations, Surrogate, SuccessModel, training_data
 from lodestone.loop.problem import Problem, transform
 
@@ -45,6 +46,7 @@ class Pick:
     prediction: dict[str, tuple[float, float]] = field(default_factory=dict)  # model space mean, std as shown (see std_inflation)
     p_feasible: float | None = None  # from the shown (inflated) std
     std_inflation: dict[str, float] = field(default_factory=dict)  # display-only factor applied to the GP std, per property
+    new_run: bool = False  # no training sample from this sample's library (deposition run): std widened by recipe_inflation
     p_success: float | None = None
     notes: list[str] = field(default_factory=list)
 
@@ -223,10 +225,14 @@ def select_bayes(
             picks.append(Pick(index=int(avail[b]), strategy="bayes", acquisition=float(vals[b])))
 
     # predictions and feasibility for the explanations. The picks above used the raw GP; what people
-    # see uses the std widened to match held-out coverage (loop.calibration.display_inflation).
-    infl = {p: f for p, f in display_inflation(spec.system).items() if p in props} if surrogate_kind == "gp" else {}
+    # see uses the std widened to match held-out coverage (loop.calibration.display_inflation), or, for a
+    # sample from a library the model has no data from, held-out-library coverage (loop.held_out_libraries).
+    infl_seen = {p: f for p, f in display_inflation(spec.system).items() if p in props} if surrogate_kind == "gp" else {}
+    infl_new = {p: f for p, f in recipe_inflation(spec.system).items() if p in props} if surrogate_kind == "gp" else {}
+    seen_libs = {problem.library[i] for p in props for i in data[p][0]}
     for pk, b in zip(picks, chosen):
-        pk.std_inflation = infl
+        pk.new_run = bool(infl_new) and problem.library[pk.index] not in seen_libs
+        pk.std_inflation = infl = infl_new if pk.new_run else infl_seen
         pk.prediction = {p: (float(pred[p][0][b]), float(pred[p][1][b]) * infl.get(p, 1.0)) for p in props}
         pk.p_success = float(p_succ[b])
         if spec.constraints:

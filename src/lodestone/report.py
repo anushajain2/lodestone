@@ -98,6 +98,86 @@ def _sensitivity_ratios(R: Path) -> list[float]:
     return out
 
 
+GAP_UNIT = {"conductivity": "decades", "band_gap": "eV"}
+
+
+def _held_out_libraries_section(lib: dict, cal: dict | None) -> list[str]:
+    """Leave-one-library-out: predictions for a deposition run the model has never seen."""
+    import numpy as np
+
+    rand = {(r["system"], r["property"], r["n_train"]): r for r in (cal or {}).get("results", []) if r["variant"] == "default"}
+    cfg = lib["config"]
+    out = ["### Can it predict a deposition run it has never seen?", "",
+           "Samples on one HTEM library come from one deposition run, so a random split leaves close neighbours of almost every test sample in the training set. "
+           "A new recipe is made in a new run. So: hold out one whole library at a time (libraries with at least "
+           f"{cfg['min_library']} measurements), fit on the other libraries (all of them, or a random campaign-sized subset of 30 or 60, {cfg['reps']} subsets each), "
+           "and predict the held-out library. Each is paired with a **matched random control**: same training size, a random test set of the same size drawn from every library. "
+           "Coverage and R² are pooled over every held-out prediction. 'Display' widens σ by the factor people are shown today (learned on the other systems' *random* splits). "
+           "'Best pick' is how far the sample the model ranks first in the held-out library falls short of that library's real best (median over libraries), next to what a random pick in the same library gives up; "
+           "'best' follows the demo campaign: highest conductivity, band gap closest to the 1.4–1.6 eV window on N-Sn-Zn, highest band gap on Co-Ni-O-Zn (its ≥ 3 eV constraint).", "",
+           "| System | Property | Training | Libraries | R², held-out library | R², matched random | 68%: library, raw | display | matched random, raw | random split (calibration.json) | 95%: library, raw | display | σ factor needed for 68% | Best pick short of the library's best | Random pick | Pick is the library's best |",
+           "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for r in lib["results"]:
+        L, M, b = r["library"], r["random"], r["best"]
+        rs = rand.get((r["system"], r["property"], r["n_train"]))
+        u = GAP_UNIT.get(r["property"], "")
+        out.append(f"| {r['system']} | {PROP_LABEL.get(r['property'], r['property'])} | {'all other libraries' if r['n_train'] == 'all' else r['n_train']} | {r['libraries']} | "
+                   f"{L['r2']:.2f} | {M['r2']:.2f} | {L['cov68']:.0%} | {_pct(L.get('cov68_display'))} | {M['cov68']:.0%} | {_pct(rs and rs['cov68'])} | "
+                   f"{L['cov95']:.0%} | {_pct(L.get('cov95_display'))} | ×{L['needed_scale']:.1f} | {b['median_gap']:.2f} {u} | {b['median_random_pick_gap']:.2f} {u} | {b['pick_is_best']:.0%} |")
+    camp = [r for r in lib["results"] if r["n_train"] != "all"]
+    span = lambda rows, f: f"{min(map(f, rows)):.0%}–{max(map(f, rows)):.0%}"
+    r2span = lambda rows, arm: f"{min(r[arm]['r2'] for r in rows):.2f} to {max(r[arm]['r2'] for r in rows):.2f}"
+    out += ["", f"**The predicted values suffer most.** With 30 or 60 training samples, R² on a held-out run is {r2span(camp, 'library')} "
+            f"(median {np.median([r['library']['r2'] for r in camp]):.2f}), against {r2span(camp, 'random')} on the matched random splits. "
+            f"Fit on every other library, it is {r2span([r for r in lib['results'] if r['n_train'] == 'all'], 'library')}, against "
+            f"{r2span([r for r in lib['results'] if r['n_train'] == 'all'], 'random')}. "
+            "So a model that looks decent on random held-out samples often does no better than predicting the average once the deposition run is new.", ""]
+    cov = []
+    for prop in dict.fromkeys(r["property"] for r in camp):
+        rows = [r for r in camp if r["property"] == prop]
+        cov.append(f"{PROP_LABEL.get(prop, prop)} {span(rows, lambda r: r['library']['cov68'])} on held-out runs against {span(rows, lambda r: r['random']['cov68'])} on matched random splits")
+    disp = [r for r in camp if "cov68_display" in r["library"]]
+    out += [f"**Interval coverage, raw GP, 30 or 60 training samples:** " + "; ".join(cov) + ". "
+            f"The widened intervals people see today hold the truth {span(disp, lambda r: r['library']['cov68_display'])} of the time on a new run, not 68% "
+            f"(95%: {span(disp, lambda r: r['library']['cov95_display'])}).", ""]
+    beat = [r for r in lib["results"] if r["best"]["median_gap"] < r["best"]["median_random_pick_gap"]]
+    lose = [r for r in lib["results"] if r not in beat]
+    names = lambda rows: ", ".join(dict.fromkeys(f"{r['system']} {PROP_LABEL.get(r['property'], r['property'])}" for r in rows))
+    out += [f"**Picking the best sample of a new run:** the model's top-ranked sample falls short of the run's real best by less than a random pick does in {len(beat)} of {len(lib['results'])} rows "
+            f"({names(beat)}), and by as much or more in the rest ({names(lose)}). "
+            f"It is the run's actual best in {min(r['best']['pick_is_best'] for r in lib['results']):.0%}–{max(r['best']['pick_is_best'] for r in lib['results']):.0%} of held-out runs.", ""]
+    ri = lib.get("recipe_inflation", {})
+    rows = [r for r in camp if "cov68_recipe" in r["library"]]
+    if rows:
+        out += ["**What this changes: 'suggest recipes'.** Its recipes have never been made, so each one is at least as far from the data as a new run. "
+                "Its ± now uses a separate factor per property: the median, over the *other* systems' held-out-run checks with 30 or 60 training samples, of the factor that would have given 68% coverage ("
+                + "; ".join(f"{s}: " + ", ".join(f"×{f:.1f} {PROP_LABEL.get(p, p)}" for p, f in sorted(v.items())) for s, v in ri.items() if v)
+                + "), and never narrower than the display factor. Scored on the system it was not learned from, its 68% interval holds the truth "
+                + ", ".join(f"{r['library']['cov68_recipe']:.0%} ({r['system']} {PROP_LABEL.get(r['property'], r['property'])}, n={r['n_train']})" for r in rows)
+                + ". With three systems, one of them (In-O-Sn-Zn) far worse than the others, a single factor is too wide for some systems and still too narrow for others; "
+                "too wide is the safer error for recipes nobody has made. Each suggestion also carries a warning that predictions for a new run were weak in this check "
+                "(`campaign.suggest_recipes`, `loop.held_out_libraries`). The same wider factor and label are used for the loop's picks from a library it has no measurements from yet "
+                "(`select.select_bayes`, `Pick.new_run`). Both are display only: the optimizer's picks are unchanged. "
+                "`uv run lodestone eval calibration --no-random` reruns only this check.", ""]
+    return out
+
+
+def _pct(v) -> str:
+    return "—" if v is None or v is False else f"{v:.0%}"
+
+
+def _held_out_bullet(R: Path) -> list[str]:
+    import numpy as np
+
+    lib = _load(R / "calibration" / "held_out_libraries.json")
+    if not lib:
+        return []
+    camp = [r for r in lib["results"] if r["n_train"] != "all"]
+    return [f"- **Random held-out splits flatter the model.** Holding out a whole deposition run instead, with 30–60 training samples, R² falls to a median of "
+            f"{np.median([r['library']['r2'] for r in camp]):.2f} (matched random splits: {np.median([r['random']['r2'] for r in camp]):.2f}), and for In-O-Sn-Zn conductivity and Co-Ni-O-Zn band gap the model's top pick in a new run does no better than a random one. "
+            "Suggested recipes are new runs, so their ± is widened further and they carry a warning (see 'Can it predict a deposition run it has never seen?')."]
+
+
 def _calibration_bullet(R: Path) -> list[str]:
     import numpy as np
 
@@ -303,6 +383,9 @@ def write_report() -> Path:
     eff = _load(R / "calibration" / "loop_effect.json")
     if cal:
         out += _calibration_section(cal, eff, bench)
+    lib = _load(R / "calibration" / "held_out_libraries.json")
+    if lib:
+        out += _held_out_libraries_section(lib, cal)
 
     out += ["## 2. Data onboarding and provenance (D1–D4)", ""]
     if ob:
@@ -354,6 +437,7 @@ def write_report() -> Path:
             "- **The adapters have only seen two formats**, one of them generated by this project. A real second lab will break them in new ways.",
             "- **Conductivity censoring is a modelling assumption**: a missing four-point-probe value is treated as 'too resistive to measure' (one decade below the lowest seen). It is usually right for HTEM, and not checked per sample.",
             *_calibration_bullet(R),
+            *_held_out_bullet(R),
             "- **Claude's agent results are pending an API key** (see section 3).", ""]
     path = R / "EVALUATION.md"
     path.write_text("\n".join(out) + "\n")
