@@ -1,0 +1,50 @@
+# Lodestone column mapping: which column of your CSV export holds what.
+#
+# 1. Copy this file next to your export and edit the column names on the right.
+# 2. Delete (or comment out) the lines for columns you don't have. Only sample_id and
+#    composition are required; the replay also needs the properties your goal mentions.
+# 3. Check it:  uv run lodestone data check path/to/export.csv --mapping my_mapping.yaml
+#
+# A column can be named with or without the unit in its header: "Sigma" matches the header
+# "Sigma [S/cm]" or "Sigma (S/cm)", and the unit is read from the brackets. If a header has no
+# unit, give one with {column: ..., unit: ...}. Units are converted with pint, so mOhm*cm, ohm*m,
+# K, degC, Pa, mTorr, nm, um, eV all work. A unit with the wrong dimension (a temperature in mm)
+# or a value that is physically impossible gets the row or value rejected, with the reason.
+#
+# This template matches data/templates/export_template.csv. Its rows are 12 real samples from
+# NREL's HTEM DB (In-Sn-Zn-O library 9940), rewritten in a different layout as an example.
+
+name: Example lab, In-Sn-Zn-O sputtering export
+system: In-O-Sn-Zn              # element system including anions (O, N, ...); or pass --system
+synthesis_method: combinatorial sputtering
+
+columns:
+  sample_id: Sample             # unique id: letters, digits, '-' and '_'
+  library: Wafer                # optional: library / wafer / batch
+  # position: Spot              # optional: spot number on the library
+  # date: Date                  # optional, read with date_format below
+
+  # Composition, either one column per element (cation amounts; anions are ignored) ...
+  composition:
+    In: In (at%)
+    Sn: Sn (at%)
+    Zn: Zn (at%)
+  # ... or a single column holding "In:45.7;Sn:18.8;Zn:35.5":
+  # composition: Composition
+
+  deposition_temperature: {column: Tsub, unit: degC}   # header has no unit, so give it here
+  pressure: Pressure            # unit from the header: (mTorr)
+  thickness: Thickness
+
+  # Electrical: conductivity, resistivity (converted to conductivity), or both (cross-checked)
+  conductivity: Sigma
+  # resistivity: Rho
+  # sheet_resistance: Rsheet
+
+  # Optical: band gap directly, or an absorption-edge wavelength (converted to a band gap)
+  band_gap: Eg
+  # optical_edge: Optical edge
+  # transmittance: {column: T_vis, unit: "%"}          # '%' or 'fraction'
+
+composition_unit: percent       # percent (sums to ~100) or fraction (sums to ~1)
+date_format: "%Y-%m-%d"         # Python strptime format, e.g. "%d/%m/%Y" for day-first dates

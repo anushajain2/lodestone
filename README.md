@@ -108,10 +108,35 @@ uv run lodestone campaign run "most conductive zinc tin nitride, 40 experiments"
 
 ## Use it on your own data
 
-**Import a lab's CSV export** into a workspace. Put units in the column headers (`Substrate T [K]`, `Rho [mOhm*cm]`, `Thickness [nm]`); they are converted with `pint`, and rows with missing or impossible values are rejected with a reason. [`data/partner_lab/helix_second_lab_export.csv`](data/partner_lab/helix_second_lab_export.csv) shows the expected columns.
+**See what it would have saved on your own past experiments.** Three steps, no code changes:
+
+1. **Map your columns.** Copy [`data/templates/mapping_template.yaml`](data/templates/mapping_template.yaml) and write which column of your CSV export is the sample id, composition (one `In:45.7;Zn:35.5` column, or one column per element), deposition temperature, pressure, thickness, conductivity or resistivity, band gap or absorption edge, and transmittance. Units are read from the headers (`Rho [mOhm*cm]`, `Eg (eV)`); for a header without one, give it in the mapping (`{column: Tsub, unit: degC}`). Everything is converted with `pint`. [`data/templates/export_template.csv`](data/templates/export_template.csv) is an example export that matches the template (12 real HTEM samples rewritten in a different layout), and [`data/partner_lab/helix_mapping.yaml`](data/partner_lab/helix_mapping.yaml) maps the Helix demo export.
+2. **Check the import.** A dry run shows which column feeds which field, which columns are unused, and every rejected row or dropped value with its reason (unknown or wrong-dimension unit, composition that doesn't add up, duplicate id, impossible value). Nothing is saved:
+
+   ```bash
+   uv run lodestone data check path/to/export.csv --mapping my_mapping.yaml
+   ```
+
+3. **Write the savings report.** Your export is imported into a throwaway workspace, your goal is replayed with Bayesian optimization, random picks and a grid sweep over several seeds (the benchmark's own code), and one self-contained HTML page is written. It shows the import summary with rejections, how fast each method finds your top-5% samples, the best result so far, experiments and money saved with a 90% interval, and the caveats:
+
+   ```bash
+   uv run lodestone replay-report path/to/export.csv --mapping my_mapping.yaml --goal "maximize conductivity with band gap >= 3 eV" --cost-per-experiment 1500
+   ```
+
+   Try it on the Helix demo export (about two minutes for the default 10 seeds):
+
+   ```bash
+   uv run lodestone replay-report data/partner_lab/helix_second_lab_export.csv --mapping data/partner_lab/helix_mapping.yaml --goal "maximize conductivity with band gap >= 3 eV" --cost-per-experiment 1500
+   ```
+
+   On that file (176 of 180 rows accepted; the 4 rejected rows are duplicate sample ids) the honest answer is **not proven**. Bayesian optimization found 5 of the 9 top-5% samples in a median of 53.5 experiments, against 61 for random picks (random found them within 60 experiments in only 2 of 10 runs, Bayesian in 6). That is 7.5 experiments, or $11,250 at $1,500 each, but the 90% interval runs from 0 to 16.5 experiments, so the report does not claim a saving.
+
+   The report says plainly when a result is weak: if the 90% interval of the saving includes zero it is marked "not proven", and if Bayesian optimization was slower it says so. It also refuses to run on fewer than 30 accepted samples. The replay can only choose among samples you already made, "top 5%" is relative to your own file, and one experiment means one row of your export: if your lab makes samples in combinatorial libraries, the real cost is per library.
+
+**Import a lab's CSV export** into a workspace for campaigns (same mapping, same validation):
 
 ```bash
-uv run lodestone data import --partner partner-a --system Co-Ni-O-Zn --csv path/to/export.csv
+uv run lodestone data import --partner partner-a --csv path/to/export.csv --mapping my_mapping.yaml
 ```
 
 **Pull any public HTEM system** from the live API, then import it:
@@ -161,6 +186,8 @@ src/lodestone/
   schemas.py              records, import reports, campaign specs (units, provenance)
   connectors/htem.py      HTEM DB API connector + snapshot
   connectors/adapters.py  HTEM and lab-CSV adapters, validation
+  connectors/mapping.py   column mappings: which CSV column holds what, and its unit
+  replay_report.py        replay savings report on a lab's own export (one HTML page)
   onboarding.py           import into a lab workspace
   goals.py                plain-English goal reader
   loop/                   problem, models (GP/RF, censoring, success model, calibration), selection, replay, benchmark
@@ -171,7 +198,7 @@ src/lodestone/
   evals/                  agent tasks and scoring, onboarding and provenance checks
 dashboard/app.py          Streamlit dashboard
 tests/                    pytest
-data/htem/                HTEM snapshot (3 systems); data/partner_lab/ a second lab's CSV
+data/htem/                HTEM snapshot (3 systems); data/partner_lab/ a second lab's CSV + mapping; data/templates/ mapping and export templates
 reports/                  benchmark, calibration, onboarding, agent eval, EVALUATION.md
 legacy/dielectric/        an earlier version on computed dielectrics, kept for reference
 ```
@@ -179,7 +206,7 @@ legacy/dielectric/        an earlier version on computed dielectrics, kept for r
 ## Limits
 
 - The replay can only choose among samples that were made. The "suggest recipes" feature proposes new ones, but those predictions are unverified.
-- The adapters have seen two data formats. A new lab's exports will need adapter work.
+- CSV exports are read through a column mapping, so a new layout needs a mapping file, not code. Formats that aren't one row per sample (spectra, instrument files, several header rows) still need adapter work. Measurement methods are recorded as the HTEM defaults (four-point probe, Tauc fit, XRF thickness) whatever the lab used.
 - The Claude agent's evaluation is built, but so far only the scripted reference policy has been scored.
 
 ## Data and credits

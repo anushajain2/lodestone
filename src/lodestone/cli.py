@@ -46,21 +46,90 @@ def data_import(
     partner: str = typer.Option("partner-a"),
     library: int = typer.Option(None, help="One HTEM library id"),
     system: str = typer.Option(None, help="Every library of a system"),
-    csv: str = typer.Option(None, help="A partner lab CSV export (needs --system)"),
+    csv: str = typer.Option(None, help="A lab CSV export (needs --system unless the mapping names it)"),
+    mapping: str = typer.Option(None, help="Column mapping YAML/JSON for --csv (default: the Helix demo layout)"),
 ):
     """Import lab data into a partner workspace and print the import report."""
+    from lodestone.connectors.mapping import load_mapping
     from lodestone.onboarding import import_htem_library, import_htem_system, import_partner_csv
     from lodestone.store import Database
 
     scope = Database().scope(partner, "cli")
     if csv:
-        reps = import_partner_csv(scope, open(csv).read(), system, csv)
+        reps = import_partner_csv(scope, open(csv, encoding="utf-8-sig").read(), system, csv, load_mapping(mapping) if mapping else None)
     elif library:
         reps = [import_htem_library(scope, library)]
     else:
         reps = import_htem_system(scope, system)
     for r in reps:
         typer.echo(f"library {r.source_library_id}: received {r.received}, accepted {r.accepted}, rejected {r.rejected}  {r.reasons()}")
+
+
+@data_app.command("check")
+def data_check(
+    csv: str = typer.Argument(..., help="A lab CSV export"),
+    mapping: str = typer.Option(None, help="Column mapping YAML/JSON (default: the Helix demo layout)"),
+    system: str = typer.Option(None, help="Element system, if the mapping doesn't name it"),
+):
+    """Dry-run an import: which columns are used, what would be accepted, rejected and why. Nothing is saved."""
+    from lodestone.connectors.adapters import LabCSVAdapter, Reject
+    from lodestone.connectors.mapping import helix_mapping, load_mapping
+
+    import csv as csvlib
+
+    m = load_mapping(mapping) if mapping else helix_mapping()
+    text = open(csv, encoding="utf-8-sig").read()
+    adapter = LabCSVAdapter(m)
+    try:
+        cols, comp, ignored = adapter.plan(next(csvlib.reader(text.splitlines()), []))
+        records, reps = adapter.adapt_csv(text, system)
+    except Reject as e:
+        typer.echo(f"cannot import {csv}: {e}", err=True)
+        raise typer.Exit(1)
+    typer.echo(f"mapping: {m.name}")
+    for f, c in cols.items():
+        typer.echo(f"  {f:24s} <- {c.header}" + (f"  [{c.unit_text}]" if c.unit_text else "") + (f"  ERROR: {c.error}" if c.error else ""))
+    for el, h in comp.items():
+        typer.echo(f"  {'composition ' + el:24s} <- {h}")
+    typer.echo(f"  unused columns: {ignored or 'none'}")
+    for r in reps:
+        typer.echo(f"library {r.source_library_id}: received {r.received}, accepted {r.accepted}, rejected {r.rejected}  {r.reasons()}")
+    typer.echo(f"{len(records)} samples would be imported; measured: {dict(sorted({p: sum(r.measurements.get(p, 0) for r in reps) for p in {p for r in reps for p in r.measurements}}.items()))}")
+
+
+@app.command("replay-report")
+def replay_report(
+    csv: str = typer.Argument(..., help="Your lab's CSV export"),
+    goal: str = typer.Option(..., help='e.g. "maximize conductivity with band gap >= 3 eV"'),
+    mapping: str = typer.Option(None, help="Column mapping YAML/JSON (default: the Helix demo layout); see data/templates/"),
+    cost_per_experiment: float = typer.Option(1500.0, help="What one experiment (one row) costs you"),
+    currency: str = typer.Option("$"),
+    system: str = typer.Option(None, help="Element system, if the mapping doesn't name it"),
+    seeds: int = typer.Option(10, help="Replays per method; more seeds give a tighter interval"),
+    budget: int = typer.Option(None, help="Experiments per replay (default: from the goal, else min(60, half the samples))"),
+    failure_rate: float = typer.Option(0.05, help="Simulated random lab failures on top of real missing measurements"),
+    out: str = typer.Option(None, help="Output HTML (default: <export>-replay-report.html next to the export)"),
+):
+    """Replay your past experiments: how many could Bayesian optimization have skipped? Writes one HTML page."""
+    from pathlib import Path
+
+    from lodestone.replay_report import ReplayError, write_replay_report
+
+    target = out or str(Path(csv).with_name(Path(csv).stem + "-replay-report.html"))
+    typer.echo(f"replaying {seeds} seeds x 3 methods (the Bayesian runs take a few seconds each)...")
+    try:
+        path, r = write_replay_report(target, csv_path=csv, goal=goal, mapping_path=mapping, system=system, cost_per_experiment=cost_per_experiment,
+                                      currency=currency, seeds=seeds, budget=budget, failure_rate=failure_rate, verbose=True)
+    except (ReplayError, ValueError) as e:
+        typer.echo(f"no report: {e}", err=True)
+        raise typer.Exit(1)
+    imp = r["import"]
+    typer.echo(f"imported {imp['accepted']} of {imp['received']} rows ({imp['rejected']} rejected, {imp['dropped']} values dropped)")
+    typer.echo(f"goal: {r['goal_summary']}")
+    typer.echo(f"[{r['verdict']}] {r['verdict_text']}")
+    for n in r["verdict_notes"]:
+        typer.echo(f"  note: {n}")
+    typer.echo(f"wrote {path}")
 
 
 # -------------------------------------------------------------------------------------- campaigns

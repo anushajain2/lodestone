@@ -2,7 +2,7 @@
 
     import_htem_library(scope, 9940)            one HTEM library (snapshot first, live API otherwise)
     import_htem_system(scope, "In-O-Sn-Zn")     every library of a system in the snapshot
-    import_partner_csv(scope, text, system)     a second lab's CSV export
+    import_partner_csv(scope, text, system)     a lab's CSV export, read through a column mapping
 
 Every call returns the import report(s): what was received, accepted, rejected and why.
 """
@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from lodestone.connectors import htem
 from lodestone.connectors.adapters import HTEMAdapter, LabCSVAdapter, Reject
+from lodestone.connectors.mapping import ColumnMapping
 from lodestone.schemas import ImportReport
 from lodestone.store import PartnerScope
 
@@ -56,8 +57,12 @@ def import_htem_system(scope: PartnerScope, system: str, max_libraries: int | No
     return out
 
 
-def import_partner_csv(scope: PartnerScope, text: str, system: str, filename: str = "export.csv") -> list[ImportReport]:
-    adapter = LabCSVAdapter()
+def import_partner_csv(scope: PartnerScope, text: str, system: str | None, filename: str = "export.csv",
+                       mapping: ColumnMapping | None = None) -> list[ImportReport]:
+    """Import a CSV export. ``mapping`` says which column holds what (default: the Helix demo layout);
+    ``system`` may be None when the mapping names it."""
+    adapter = LabCSVAdapter(mapping)
+    system = system or adapter.mapping.system
     try:
         records, reports = adapter.adapt_csv(text, system, seen_ids=scope.existing_source_ids())
     except Reject as e:
