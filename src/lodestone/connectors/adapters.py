@@ -3,10 +3,12 @@
 Two "labs", two formats, one record schema:
 
 * :class:`HTEMAdapter` reads HTEM DB API records (library + samples).
-* :class:`LabCSVAdapter` reads a partner lab's CSV export: different column names, units written in
-  the headers (resistivity in mΩ·cm, substrate temperature in K, pressure in Pa, band gap as an
-  absorption-edge wavelength in nm, transmittance in %, thickness in nm, day-first dates). Units are
-  parsed and converted with ``pint``.
+* :class:`LabCSVAdapter` reads any lab's CSV export through a column mapping (YAML/JSON, see
+  :mod:`lodestone.connectors.mapping`): which column is the sample id, composition, temperature,
+  resistivity or conductivity, optical edge or band gap, and so on, with units taken from the headers
+  (``Rho [mOhm*cm]``) or the mapping. The Helix demo lab's export (resistivity in mΩ·cm, substrate
+  temperature in K, pressure in Pa, band gap as an absorption-edge wavelength in nm, day-first dates)
+  is read through ``data/partner_lab/helix_mapping.yaml``. Units are converted with ``pint``.
 
 Validation is the same for both. A record is **rejected** (with a reason) when it can't be used at
 all: no composition, compositions that don't add up, duplicate sample ids, unknown units. A single
@@ -22,11 +24,13 @@ import csv
 import io
 import math
 import re
+from dataclasses import dataclass
 from datetime import datetime
 
 import pint
 
 from lodestone.connectors import htem
+from lodestone.connectors.mapping import FIELDS, ColumnMapping, find_header, helix_mapping, split_header
 from lodestone.schemas import ExperimentRecord, ImportReport, Measurement, PROPERTIES, Provenance, RecordIssue, SynthesisConditions
 
 ureg = pint.UnitRegistry()
@@ -186,7 +190,7 @@ class HTEMAdapter:
                 if not s.get("id"):
                     raise Reject("sample has no id")
                 if sid in seen:
-                    raise Reject(f"duplicate sample id {sid}")
+                    raise Reject(f"duplicate sample id ({sid})")
                 if str(s.get("sample_library_id")) != lid:
                     raise Reject(f"sample claims library {s.get('sample_library_id')}, imported under {lid}")
                 comp = cation_fractions(s.get("xrf_compounds") or [], s.get("xrf_concentration") or [])
@@ -234,136 +238,222 @@ class HTEMAdapter:
 # ------------------------------------------------------------------------------- partner CSV
 
 
-CSV_COLUMNS = {
-    # their header (unit in brackets) → our raw field
-    "SampleID": "sample_id",
-    "Library": "library",
-    "Spot": "position",
-    "Composition [at.%]": "composition",
-    "Substrate T [K]": "temp",
-    "Process pressure [Pa]": "pressure",
-    "Rho [mOhm*cm]": "resistivity",
-    "Optical edge [nm]": "edge",
-    "T_vis [%]": "transmittance",
-    "Thickness [nm]": "thickness",
-    "Date": "date",
+# The Helix demo lab's export header (written by :func:`to_partner_csv`, read via helix_mapping.yaml).
+CSV_COLUMNS = [
+    "SampleID", "Library", "Spot", "Composition [at.%]", "Substrate T [K]", "Process pressure [Pa]",
+    "Rho [mOhm*cm]", "Optical edge [nm]", "T_vis [%]", "Thickness [nm]", "Date",
+]
+UNIT_ALIASES = {"C": "degC", "°C": "degC", "K": "kelvin", "F": "degF", "°F": "degF", "%": "percent"}
+# measured property → mapping fields that can supply it
+PROPERTY_SOURCES = {
+    "conductivity": ("conductivity", "resistivity"),
+    "band_gap": ("band_gap", "optical_edge"),
+    "visible_transmittance": ("transmittance",),
+    "sheet_resistance": ("sheet_resistance",),
+    "thickness": ("thickness",),
 }
-_HEADER = re.compile(r"^(?P<name>[^\[]+?)\s*\[(?P<unit>[^\]]+)\]$")
 
 
-def _unit_of(header: str) -> tuple[str, str | None]:
-    m = _HEADER.match(header.strip())
-    return (m.group("name").strip(), m.group("unit").strip()) if m else (header.strip(), None)
+def parse_unit(text: str) -> pint.Unit:
+    """Lab spellings → pint: 'mOhm*cm', 'mΩ·cm', 'µm', '°C', 'K', 'mTorr', '%'."""
+    u = UNIT_ALIASES.get(text.strip(), text.strip())
+    u = u.replace("Ohm", "ohm").replace("Ω", "ohm").replace("µ", "u").replace("μ", "u").replace("Torr", "torr")
+    u = re.sub(r"(?<=[A-Za-z])[.·](?=[A-Za-z])", "*", u)
+    return ureg.Unit(u)
+
+
+@dataclass
+class MappedColumn:
+    """One mapped column, resolved against the file's header once. ``error`` rejects rows that use it."""
+
+    field: str
+    header: str
+    unit_text: str | None = None
+    unit: pint.Unit | None = None
+    divisor: float = 1.0  # transmittance: % → fraction
+    error: str | None = None
 
 
 class LabCSVAdapter:
-    """A second lab's export: same physics, different names, units and conventions."""
+    """Any lab's CSV export, read through a :class:`~lodestone.connectors.mapping.ColumnMapping`.
+
+    Without a mapping it reads the Helix demo lab's export (``data/partner_lab/helix_mapping.yaml``).
+    """
 
     name = "partner-csv/1.0"
     source = "Partner lab CSV export"
 
-    expected_units = {  # quantity name → a unit with the dimension that column must have
-        "Substrate T": "kelvin",
-        "Process pressure": "Pa",
-        "Rho": "ohm*m",
-        "Optical edge": "m",
-        "Thickness": "m",
-    }
-    unit_aliases = {"C": "degC", "°C": "degC", "K": "kelvin", "F": "degF"}
+    def __init__(self, mapping: ColumnMapping | None = None):
+        self.mapping = mapping or helix_mapping()
 
-    def _quantity(self, value: str | None, unit: str, name: str):
-        if value is None or value.strip() == "":
+    # ---------------------------------------------------------------- columns
+
+    def _resolve(self, field: str, header: str, mapping_unit: str | None) -> MappedColumn:
+        col = MappedColumn(field, header)
+        ref = FIELDS[field][1]
+        if ref is None:
+            return col
+        name, header_unit = split_header(header)
+        col.unit_text = header_unit or mapping_unit
+        if col.unit_text is None:
+            col.error = f"column '{header}' ({field}) has no unit: write it in the header, e.g. '{name} [unit]', or give `unit:` in the mapping"
+            return col
+        if field == "transmittance":
+            scales = {"%": 100.0, "percent": 100.0, "fraction": 1.0, "1": 1.0}
+            if col.unit_text not in scales:
+                col.error = f"unknown unit '{col.unit_text}' in column '{name}' (transmittance takes '%' or 'fraction')"
+            col.divisor = scales.get(col.unit_text, 1.0)
+            return col
+        try:
+            col.unit = parse_unit(col.unit_text)
+            if header_unit and mapping_unit and parse_unit(mapping_unit) != col.unit:
+                col.error = f"column '{name}' says '{header_unit}' in its header but the mapping says '{mapping_unit}'"
+        except (pint.errors.UndefinedUnitError, pint.errors.DefinitionSyntaxError, ValueError, TypeError, AttributeError, AssertionError):
+            col.error = f"unknown unit '{col.unit_text}' in column '{name}'"
+            return col
+        if col.unit.dimensionality != ureg.Unit(ref).dimensionality:
+            col.error = f"column '{name}' has unit '{col.unit_text}', which has the wrong dimension (expected something like {ref})"
+        return col
+
+    def plan(self, headers: list[str]) -> tuple[dict[str, MappedColumn], dict[str, str], list[str]]:
+        """Mapped field → column, element → composition column, and the file's unmapped columns.
+
+        Raises :class:`Reject` when the mapping names a column the file doesn't have."""
+        m = self.mapping
+        cols: dict[str, MappedColumn] = {}
+        comp: dict[str, str] = {}
+        missing = []
+        for f, spec in m.columns.items():
+            h = find_header(spec.column, headers)
+            if h is None:
+                missing.append(f"{f} → '{spec.column}'")
+            else:
+                cols[f] = self._resolve(f, h, spec.unit)
+        for el, c in (m.composition or {}).items():
+            h = find_header(c, headers)
+            if h is None:
+                missing.append(f"composition {el} → '{c}'")
+            else:
+                comp[el] = h
+        if missing:
+            raise Reject(f"export is missing required columns: {missing} (mapping '{m.name}'; the file has {headers})")
+        used = {c.header for c in cols.values()} | set(comp.values())
+        return cols, comp, [h for h in headers if h not in used]
+
+    @staticmethod
+    def _quantity(row: dict, col: MappedColumn | None):
+        if col is None:
+            return None
+        value = (row.get(col.header) or "").strip()
+        if value == "":
             return None
         try:
             magnitude = float(value.replace(",", "."))
         except ValueError:
-            raise Reject(f"non-numeric {name} {value!r}") from None
-        try:
-            u = ureg.Unit(self.unit_aliases.get(unit, unit.replace("Ohm", "ohm").replace("Ω", "ohm").replace("µ", "u")))
-        except (pint.errors.UndefinedUnitError, pint.errors.DefinitionSyntaxError, ValueError, TypeError, AttributeError):
-            raise Reject(f"unknown unit '{unit}' in column '{name}'") from None
-        ref = self.expected_units.get(name)
-        if ref and u.dimensionality != ureg.Unit(ref).dimensionality:
-            raise Reject(f"column '{name}' has unit '{unit}', which has the wrong dimension (expected something like {ref})")
-        return Q_(magnitude, u)
+            raise Reject(f"non-numeric {col.field.replace('_', ' ')} {value!r}") from None
+        if col.error:
+            raise Reject(col.error)
+        return magnitude / col.divisor if col.unit is None else Q_(magnitude, col.unit)
 
-    def adapt_csv(self, text: str, system: str, seen_ids: set[str] | None = None) -> tuple[list[ExperimentRecord], list[ImportReport]]:
+    def _composition(self, row: dict, cols: dict[str, MappedColumn], comp: dict[str, str]) -> dict[str, float]:
+        scale = 100.0 if self.mapping.composition_unit == "fraction" else 1.0
+        if comp:
+            names, amounts = [], []
+            for el, h in comp.items():
+                cell = (row.get(h) or "").strip()
+                try:
+                    amounts.append(scale * float(cell.replace(",", ".")))
+                except ValueError:
+                    raise Reject(f"unreadable {el} amount {cell!r} in column '{h}'") from None
+                names.append(el)
+            return cation_fractions(names, amounts)
+        txt = row.get(cols["composition"].header) or ""
+        parts = [p.split(":") for p in txt.split(";") if p.strip()]
+        try:
+            if not parts or any(len(p) != 2 for p in parts):
+                raise ValueError
+            return cation_fractions([p[0].strip() for p in parts], [scale * float(p[1]) for p in parts])
+        except ValueError as e:
+            if isinstance(e, Reject):
+                raise
+            raise Reject(f"unreadable composition {txt!r} (expected 'In:45.7;Zn:35.5')") from None
+
+    # ---------------------------------------------------------------- rows
+
+    def adapt_csv(self, text: str, system: str | None = None, seen_ids: set[str] | None = None) -> tuple[list[ExperimentRecord], list[ImportReport]]:
+        system = system or self.mapping.system
+        if not system:
+            raise Reject("which material system is this export? give it in the mapping (system: Co-Ni-O-Zn) or on the command line")
         seen = set() if seen_ids is None else seen_ids
-        reader = csv.DictReader(io.StringIO(text))
-        headers = {_unit_of(h)[0]: h for h in (reader.fieldnames or [])}
-        required = ["SampleID", "Library", "Composition"]
-        missing_cols = [c for c in required if c not in headers]
-        if missing_cols:
-            raise Reject(f"export is missing required columns: {missing_cols}")
+        reader = csv.DictReader(io.StringIO(text.lstrip("﻿")))
+        cols, comp, _ = self.plan(list(reader.fieldnames or []))
+        missing_reasons = {}
+        for prop, fields in PROPERTY_SOURCES.items():
+            have = [f.replace("_", " ") for f in fields if f in cols]
+            missing_reasons[prop] = f"no {' or '.join(have)} reported" if have else "not in this lab's export"
         reports: dict[str, ImportReport] = {}
         records: list[ExperimentRecord] = []
         for row in reader:
-            lid = (row.get(headers["Library"]) or "").strip() or "unknown"
+            lid = (row.get(cols["library"].header) or "").strip() if "library" in cols else ""
+            lid = lid or self.mapping.default_library
             rep = reports.setdefault(lid, ImportReport(source=self.source, source_library_id=lid, system=system, adapter=self.name))
             rep.received += 1
-            sid = (row.get(headers["SampleID"]) or "").strip()
+            sid = (row.get(cols["sample_id"].header) or "").strip()
             issues: list[RecordIssue] = []
             try:
                 if not re.fullmatch(r"[A-Za-z0-9_\-]+", sid or ""):
                     raise Reject(f"invalid sample id {sid!r}")
                 if sid in seen:
-                    raise Reject(f"duplicate sample id {sid}")
-                comp_txt = row.get(headers["Composition"]) or ""
-                parts = [p.split(":") for p in comp_txt.split(";") if p.strip()]
-                if not parts or any(len(p) != 2 for p in parts):
-                    raise Reject(f"unreadable composition {comp_txt!r} (expected 'In:45.7;Zn:35.5')")
-                comp = cation_fractions([p[0].strip() for p in parts], [float(p[1]) for p in parts])
-
-                def col(name):
-                    h = headers.get(name)
-                    if h is None:
-                        return None
-                    _, unit = _unit_of(h)
-                    return self._quantity(row.get(h), unit, name) if unit else row.get(h)
-
-                temp = col("Substrate T")
-                temp_c = None if temp is None else float(temp.to(ureg.degC).magnitude)
+                    raise Reject(f"duplicate sample id ({sid})")
+                composition = self._composition(row, cols, comp)
+                q = {f: self._quantity(row, cols.get(f)) for f in FIELDS if FIELDS[f][1] is not None}
+                temp_c = None if q["deposition_temperature"] is None else float(q["deposition_temperature"].to(ureg.degC).magnitude)
                 if temp_c is not None and not (TEMP_LIMITS_C[0] <= temp_c <= TEMP_LIMITS_C[1]):
                     raise Reject(f"substrate temperature {temp_c:.0f} °C is outside {TEMP_LIMITS_C}")
-                pressure = col("Process pressure")
-                rho = col("Rho")
-                edge = col("Optical edge")
-                tvis = row.get(headers.get("T_vis", ""), None) if "T_vis" in headers else None
-                thick = col("Thickness")
-                sigma = None
-                if rho is not None:
+                rho_sigma = None
+                if (rho := q["resistivity"]) is not None:
                     rho_ohm_cm = rho.to("ohm*cm").magnitude
                     if rho_ohm_cm <= 0:
                         issues.append(RecordIssue(source_sample_id=sid, level="dropped_measurement", field="conductivity",
                                                   reason=f"non-positive resistivity {rho.magnitude:g} {rho.units:~}"))
                     else:
-                        sigma = 1.0 / rho_ohm_cm
-                gap = None
-                if edge is not None:
+                        rho_sigma = 1.0 / rho_ohm_cm
+                gap = None if q["band_gap"] is None else float(q["band_gap"].to("eV").magnitude)
+                if (edge := q["optical_edge"]) is not None:
                     nm = edge.to("nm").magnitude
                     gap = EV_NM / nm if nm > 0 else -1.0
                 raw = {
-                    "conductivity": sigma,
+                    "conductivity": None if q["conductivity"] is None else float(q["conductivity"].to("S/cm").magnitude),
+                    "resistivity_derived_conductivity": rho_sigma,
+                    "sheet_resistance": None if q["sheet_resistance"] is None else float(q["sheet_resistance"].to("ohm").magnitude),
                     "band_gap": gap,
-                    "visible_transmittance": None if tvis in (None, "") else float(tvis) / 100.0,
-                    "thickness": None if thick is None else float(thick.to("um").magnitude),
+                    "visible_transmittance": q["transmittance"],
+                    "thickness": None if q["thickness"] is None else float(q["thickness"].to("um").magnitude),
                 }
-                date = (row.get(headers["Date"]) or "").strip() if "Date" in headers else ""
-                iso = datetime.strptime(date, "%d/%m/%Y").date().isoformat() if date else None
+                iso = None
+                if "date" in cols and (date := (row.get(cols["date"].header) or "").strip()):
+                    try:
+                        iso = datetime.strptime(date, self.mapping.date_format).date().isoformat()
+                    except ValueError:
+                        issues.append(RecordIssue(source_sample_id=sid, level="warning", field="date",
+                                                  reason=f"unreadable date, kept without one (got {date!r}, date_format is {self.mapping.date_format!r})"))
+                position = None
+                if "position" in cols and (pos := (row.get(cols["position"].header) or "").strip()):
+                    try:
+                        position = int(float(pos))
+                    except ValueError:
+                        issues.append(RecordIssue(source_sample_id=sid, level="warning", field="position",
+                                                  reason=f"position is not a number, kept without one (got {pos!r})"))
                 synthesis = SynthesisConditions(
-                    method="combinatorial sputtering (partner lab)",
+                    method=self.mapping.synthesis_method,
                     deposition_temp_c=temp_c,
-                    growth_pressure_mtorr=None if pressure is None else float(pressure.to("mtorr").magnitude),
+                    growth_pressure_mtorr=None if q["pressure"] is None else float(q["pressure"].to("mtorr").magnitude),
                 )
                 rec = build_record(
-                    system=system, sid=sid, lid=lid, composition=comp, synthesis=synthesis, raw=raw, method_temp_c=None,
+                    system=system, sid=sid, lid=lid, composition=composition, synthesis=synthesis, raw=raw, method_temp_c=None,
                     provenance={"source": self.source, "source_sample_id": sid, "source_library_id": lid,
-                                "position": int(row[headers["Spot"]]) if "Spot" in headers and row.get(headers["Spot"]) else None,
-                                "sample_date": iso, "url": None},
-                    adapter=self.name, issues=issues,
-                    missing_reasons={"conductivity": "no resistivity reported", "band_gap": "no optical edge reported",
-                                     "visible_transmittance": "no transmittance reported", "thickness": "no thickness reported",
-                                     "sheet_resistance": "not in this lab's export"},
+                                "position": position, "sample_date": iso, "url": None},
+                    adapter=self.name, issues=issues, missing_reasons=missing_reasons,
                 )
                 seen.add(sid)
                 records.append(rec)
@@ -380,11 +470,12 @@ class LabCSVAdapter:
         return records, list(reports.values())
 
 
+
 def to_partner_csv(records: list[ExperimentRecord]) -> str:
     """Re-export standard records in the partner lab's format (used to create the second lab's data)."""
     out = io.StringIO()
     w = csv.writer(out)
-    w.writerow(list(CSV_COLUMNS))
+    w.writerow(CSV_COLUMNS)
     for r in records:
         sigma = r.value("conductivity")
         gap = r.value("band_gap")

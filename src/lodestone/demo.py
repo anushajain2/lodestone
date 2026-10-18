@@ -35,15 +35,20 @@ def second_lab_csv(libraries: list[dict]) -> str:
     header, rows = lines[0], lines[1:]
     bad = []
     if len(rows) > 6:
+        # Each faulty row gets its own id ("-B"), so validation sees its actual fault rather than
+        # rejecting it as a duplicate; only the deliberate duplicate keeps an existing id.
         r = rows[3].split(",")
-        r[6] = "-" + r[6]  # negative resistivity
+        r[0] += "-B"
+        r[6] = "-" + r[6]  # negative resistivity → conductivity dropped, row kept
         bad.append(",".join(r))
         r = rows[5].split(",")
-        r[3] = r[3].replace(";", "/")  # unreadable composition
+        r[0] += "-B"
+        r[3] = r[3].replace(";", "/")  # unreadable composition → row rejected
         bad.append(",".join(r))
-        bad.append(rows[0])  # duplicate row
+        bad.append(rows[0])  # duplicate row → rejected
         r = rows[7].split(",")
-        r[7] = f"{float(r[7]) / 1000:.3f}" if r[7] else "0.3"  # edge written in µm instead of nm → impossible gap
+        r[0] += "-B"
+        r[7] = f"{float(r[7]) / 1000:.3f}" if r[7] else "0.3"  # edge written in µm instead of nm → impossible gap, dropped
         bad.append(",".join(r))
     return "\n".join([header] + rows + bad) + "\n"
 

@@ -24,7 +24,7 @@ import numpy as np
 from lodestone import config
 from lodestone.connectors import htem
 from lodestone.connectors.adapters import HTEMAdapter
-from lodestone.loop.engine import best_so_far, per_run, simulate, summarize_runs
+from lodestone.loop.engine import Trajectory, best_so_far, per_run, simulate, summarize_runs
 from lodestone.loop.problem import Problem, untransform
 from lodestone.schemas import PROPERTIES, CampaignSpec
 
@@ -90,8 +90,8 @@ def problem_for(key: str, failure_rate: float | None = None, batch: int | None =
     return Problem.from_records(public_records(spec.system), spec)
 
 
-def run_campaign(key: str, seeds: int, methods, failure_rate: float, batch: int | None = None, verbose=True) -> tuple[dict, dict]:
-    prob = problem_for(key, failure_rate, batch)
+def run_problem(prob: Problem, seeds: int, methods, tag: str = "", verbose=True) -> tuple[dict, dict, list[Trajectory]]:
+    """Replay one problem with every method over ``seeds`` seeds: summary, best-so-far curves, trajectories."""
     trajs, curves = [], {}
     for strat, sur in methods:
         t0 = time.time()
@@ -100,8 +100,13 @@ def run_campaign(key: str, seeds: int, methods, failure_rate: float, batch: int 
             trajs.append(t)
             curves.setdefault(t.method, []).append(best_so_far(prob, t).tolist())
         if verbose:
-            print(f"[{key}] {strat if strat != 'bayes' else 'bayes-' + sur}: {seeds} seeds in {time.time() - t0:.0f}s", flush=True)
-    return summarize_runs(prob, trajs), curves
+            print(f"[{tag}] {strat if strat != 'bayes' else 'bayes-' + sur}: {seeds} seeds in {time.time() - t0:.0f}s", flush=True)
+    return summarize_runs(prob, trajs), curves, trajs
+
+
+def run_campaign(key: str, seeds: int, methods, failure_rate: float, batch: int | None = None, verbose=True) -> tuple[dict, dict]:
+    summary, curves, _ = run_problem(problem_for(key, failure_rate, batch), seeds, methods, key, verbose)
+    return summary, curves
 
 
 def run_benchmark(cfg: BenchConfig = BenchConfig(), verbose: bool = True) -> dict:

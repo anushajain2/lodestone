@@ -1,0 +1,19 @@
+# Column mapping for the Helix demo lab's export (helix_second_lab_export.csv).
+# Units come from the headers, e.g. "Rho [mOhm*cm]", so no `unit:` is needed here.
+# Copy data/templates/mapping_template.yaml to start a mapping for your own lab.
+name: Helix Materials Lab, second-lab export
+system: Co-Ni-O-Zn
+synthesis_method: combinatorial sputtering (partner lab)
+columns:
+  sample_id: SampleID
+  library: Library
+  position: Spot
+  composition: Composition          # "Co:71.06;Ni:11.10;Zn:17.84", in at.%
+  deposition_temperature: Substrate T
+  pressure: Process pressure
+  resistivity: Rho                  # converted to conductivity
+  optical_edge: Optical edge        # absorption-edge wavelength, converted to a band gap
+  transmittance: T_vis
+  thickness: Thickness
+  date: Date
+date_format: "%d/%m/%Y"
