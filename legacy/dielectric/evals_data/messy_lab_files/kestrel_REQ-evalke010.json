@@ -1,0 +1,12 @@
+{
+  "lab": "Kestrel Characterization Institute",
+  "specimen": "REQ-evalke010",
+  "compound": "LiAsF6",
+  "day": 10.0,
+  "instrument": {
+    "impedance": "Keysight E4990A @ 1 MHz",
+    "optical": "UV-vis-NIR DRS, Tauc analysis"
+  },
+  "status": "failed",
+  "reason": "sample cracked"
+}

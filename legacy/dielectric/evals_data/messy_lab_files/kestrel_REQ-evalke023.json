@@ -1,0 +1,17 @@
+{
+  "lab": "Kestrel Characterization Institute",
+  "specimen": "REQ-evalke023",
+  "compound": "Rb2HgO2",
+  "day": 10.0,
+  "instrument": {
+    "impedance": "Keysight E4990A @ 1 MHz",
+    "optical": "UV-vis-NIR DRS, Tauc analysis"
+  },
+  "status": "complete",
+  "pellet": {
+    "electrode_area_mm2": 132.73,
+    "thickness_um": 519.2
+  },
+  "capacitance_pF": 16.7726,
+  "absorption_edge_nm": 2.02
+}

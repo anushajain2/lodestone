@@ -1,0 +1,1264 @@
+{
+  "systems": {
+    "Co-Ni-O-Zn": {
+      "libraries": 24,
+      "libraries_with_no_samples_served": 4,
+      "received": 880,
+      "accepted": 880,
+      "rejected": 0,
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 4
+      }
+    },
+    "In-O-Sn-Zn": {
+      "libraries": 22,
+      "libraries_with_no_samples_served": 18,
+      "received": 176,
+      "accepted": 176,
+      "rejected": 0,
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 18,
+        "warning: deposition temperature not recorded for this library": 4
+      }
+    },
+    "N-Sn-Zn": {
+      "libraries": 33,
+      "libraries_with_no_samples_served": 2,
+      "received": 1364,
+      "accepted": 999,
+      "rejected": 365,
+      "reasons": {
+        "rejected: no usable XRF composition": 352,
+        "warning: library lists 44 samples but the API served no sample records": 2,
+        "rejected: unreadable XRF entry 'Zn'=None": 13,
+        "dropped_measurement: impossible conductivity 140300 S/cm": 1,
+        "dropped_measurement: impossible conductivity 999700 S/cm": 1,
+        "dropped_measurement: impossible conductivity 283600 S/cm": 1,
+        "dropped_measurement: impossible conductivity 397300 S/cm": 1
+      }
+    }
+  },
+  "broken_records": {
+    "cases": 18,
+    "correct": 18,
+    "rows": [
+      {
+        "case": "negative conductivity",
+        "format": "htem",
+        "expected": "dropped_measurement",
+        "got": "dropped_measurement",
+        "correct": true,
+        "reason": "impossible conductivity -12 S/cm (allowed 1e-08\u2013100000)"
+      },
+      {
+        "case": "band gap of 40 eV",
+        "format": "htem",
+        "expected": "dropped_measurement",
+        "got": "dropped_measurement",
+        "correct": true,
+        "reason": "impossible direct band gap 40 eV (allowed 0.1\u20138)"
+      },
+      {
+        "case": "transmittance above 100%",
+        "format": "htem",
+        "expected": "dropped_measurement",
+        "got": "dropped_measurement",
+        "correct": true,
+        "reason": "impossible avg. visible transmittance 1.4 fraction (allowed 0\u20131)"
+      },
+      {
+        "case": "conductivity disagrees with resistivity",
+        "format": "htem",
+        "expected": "dropped_measurement",
+        "got": "dropped_measurement",
+        "correct": true,
+        "reason": "conductivity 0.2233 S/cm disagrees with 1/resistivity 0.2 S/cm by more than 5%"
+      },
+      {
+        "case": "missing composition",
+        "format": "htem",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "no usable XRF composition (compounds and concentrations missing or mismatched)"
+      },
+      {
+        "case": "composition sums to 250%",
+        "format": "htem",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "XRF concentrations sum to 250.0%, not ~100% (wrong units or truncated record)"
+      },
+      {
+        "case": "duplicate sample id",
+        "format": "htem",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "duplicate sample id 234890"
+      },
+      {
+        "case": "sample from another library",
+        "format": "htem",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "sample claims library 1, imported under 7541"
+      },
+      {
+        "case": "no four-point-probe value",
+        "format": "htem",
+        "expected": "accepted_missing",
+        "got": "accepted_missing",
+        "correct": true,
+        "reason": ""
+      },
+      {
+        "case": "clean record",
+        "format": "htem",
+        "expected": "accepted",
+        "got": "accepted",
+        "correct": true,
+        "reason": ""
+      },
+      {
+        "case": "unknown unit in header",
+        "format": "csv",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "unknown unit 'mOhm*cmm' in column 'Rho'"
+      },
+      {
+        "case": "wrong dimension in header",
+        "format": "csv",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "column 'Substrate T' has unit 'mm', which has the wrong dimension (expected something like kelvin)"
+      },
+      {
+        "case": "negative resistivity",
+        "format": "csv",
+        "expected": "dropped_measurement",
+        "got": "dropped_measurement",
+        "correct": true,
+        "reason": "non-positive resistivity -1.2 cm * m\u03a9"
+      },
+      {
+        "case": "edge in \u00b5m, not nm (gap 1200 eV)",
+        "format": "csv",
+        "expected": "dropped_measurement",
+        "got": "dropped_measurement",
+        "correct": true,
+        "reason": "impossible direct band gap 3542.41 eV (allowed 0.1\u20138)"
+      },
+      {
+        "case": "unreadable composition",
+        "format": "csv",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "unreadable composition 'Co/71;Ni:11' (expected 'In:45.7;Zn:35.5')"
+      },
+      {
+        "case": "invalid sample id",
+        "format": "csv",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "invalid sample id 'PL 12/3'"
+      },
+      {
+        "case": "temperature 4000 \u00b0C",
+        "format": "csv",
+        "expected": "rejected",
+        "got": "rejected",
+        "correct": true,
+        "reason": "substrate temperature 4000 \u00b0C is outside (-50.0, 1200.0)"
+      },
+      {
+        "case": "clean CSV row",
+        "format": "csv",
+        "expected": "accepted",
+        "got": "accepted",
+        "correct": true,
+        "reason": ""
+      }
+    ]
+  },
+  "libraries": [
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7541",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7536",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "6658",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7542",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "8296",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7150",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7564",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "6940",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 42,
+        "sheet_resistance": 42,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "6651",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7540",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "8305",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "6923",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "6931",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "8307",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "6876",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "6701",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7123",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7188",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "6710",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7113",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44,
+        "conductivity": 42,
+        "sheet_resistance": 42
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7360",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "8306",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7523",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 43,
+        "sheet_resistance": 43,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "library_id": "7561",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9940",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9934",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9876",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9892",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "7242",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9938",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9901",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9832",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9873",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "7461",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9854",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9932",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9903",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9898",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9862",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9910",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9920",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "7302",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9874",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9872",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9855",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "library_id": "9904",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "10058",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "8659",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "10028",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "9740",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "9990",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 3,
+        "sheet_resistance": 3,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7354",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "6856",
+      "received": 44,
+      "accepted": 42,
+      "rejected": 2,
+      "measurements": {
+        "conductivity": 42,
+        "sheet_resistance": 42,
+        "band_gap": 42,
+        "visible_transmittance": 42,
+        "thickness": 42
+      },
+      "reasons": {
+        "rejected: unreadable XRF entry 'Zn'=None": 2
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7073",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "6899",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "8622",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44,
+        "sheet_resistance": 40,
+        "conductivity": 36
+      },
+      "reasons": {
+        "dropped_measurement: impossible conductivity 140300 S/cm": 1,
+        "dropped_measurement: impossible conductivity 999700 S/cm": 1,
+        "dropped_measurement: impossible conductivity 283600 S/cm": 1,
+        "dropped_measurement: impossible conductivity 397300 S/cm": 1
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7473",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7086",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7321",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 43,
+        "sheet_resistance": 43,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7077",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 37,
+        "sheet_resistance": 37,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7363",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "6867",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "8626",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 38,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "6975",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "6648",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44,
+        "conductivity": 43,
+        "sheet_resistance": 43
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7002",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7287",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 43,
+        "sheet_resistance": 43,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "6768",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "6944",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7342",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "9814",
+      "received": 44,
+      "accepted": 33,
+      "rejected": 11,
+      "measurements": {
+        "conductivity": 24,
+        "sheet_resistance": 24,
+        "band_gap": 33,
+        "visible_transmittance": 33,
+        "thickness": 33
+      },
+      "reasons": {
+        "rejected: unreadable XRF entry 'Zn'=None": 11
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7031",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 43,
+        "sheet_resistance": 43,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7797",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7857",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7708",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7622",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 43,
+        "sheet_resistance": 43,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7906",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 42,
+        "sheet_resistance": 42,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "7286",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "N-Sn-Zn",
+      "library_id": "9991",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    }
+  ]
+}

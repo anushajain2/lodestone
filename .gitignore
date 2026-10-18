@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+var/
+data/raw/
+reports/ci_benchmark/
+.DS_Store
+.claude/settings.local.json

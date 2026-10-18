@@ -1,0 +1,45 @@
+{
+  "config": {
+    "seeds": 10,
+    "budget": 60,
+    "initial": 10,
+    "batch": 5,
+    "k_noise_rel": 0.06,
+    "gap_noise_eV": 0.1,
+    "feature_set": "curated",
+    "strategies": [
+      "greedy",
+      "bayes"
+    ],
+    "top_fraction": 0.01,
+    "ref": "default"
+  },
+  "pool_size": 862,
+  "n_top": 9,
+  "hv_max": 4.468006156325989,
+  "n_hits_in_pool": 9,
+  "final": {
+    "bayes": {
+      "hv_frac_mean": 0.743165456836861,
+      "hv_frac_std": 0.1582816627452043,
+      "top1_recall_mean": 0.22222222222222218,
+      "top1_recall_std": 0.17371910221568257,
+      "hits_mean": 1.9,
+      "cost_mean": 50.934,
+      "reached_90pct_hv": 2,
+      "experiments_to_90pct_hv_median": 60.0,
+      "experiments_to_90pct_hv_mean_reached": 60.0
+    },
+    "greedy": {
+      "hv_frac_mean": 0.6458886611168956,
+      "hv_frac_std": 0.15395196761870303,
+      "top1_recall_mean": 0.15555555555555556,
+      "top1_recall_std": 0.19737648288109966,
+      "hits_mean": 1.7,
+      "cost_mean": 51.626999999999995,
+      "reached_90pct_hv": 1,
+      "experiments_to_90pct_hv_median": 40.0,
+      "experiments_to_90pct_hv_mean_reached": 40.0
+    }
+  }
+}

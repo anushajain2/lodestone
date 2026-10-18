@@ -1,0 +1,16 @@
+{
+  "lab": "Kestrel Characterization Institute",
+  "specimen": "REQ-evalke016",
+  "compound": "Ca(SbO3)2",
+  "day": 10.0,
+  "instrument": {
+    "impedance": "Keysight E4990A @ 1 MHz",
+    "optical": "UV-vis-NIR DRS, Tauc analysis"
+  },
+  "status": "complete",
+  "pellet": {
+    "electrode_area_mm2": 132.73,
+    "thickness_um": 481.4
+  },
+  "capacitance_pF": 23.8998
+}

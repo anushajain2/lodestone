@@ -1,0 +1,58 @@
+[project]
+name = "lodestone"
+version = "0.1.0"
+description = "Lodestone: closed-loop discovery on a lab's own thin-film data, demonstrated on NREL HTEM DB"
+readme = "README.md"
+authors = [
+    { name = "Anusha Jain", email = "fhl.anusha@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=1.14",
+    "botorch>=0.11",
+    "fastapi>=0.110",
+    "gpytorch>=1.11",
+    "httpx>=0.28.1",
+    "mcp>=2.3",
+    "numpy<2.3",
+    "pandas>=2.2",
+    "plotly>=5.20",
+    "pydantic>=2.7",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.17.1",
+    "streamlit>=1.35",
+    "torch>=2.3",
+    "typer>=0.12",
+    "uvicorn>=0.29",
+    "pint>=0.25.3",
+    "matplotlib>=3.11.2",
+]
+
+
+[project.scripts]
+lodestone = "lodestone.cli:app"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -p no:cacheprovider"
+filterwarnings = ["ignore:A not p.d.", "ignore::DeprecationWarning", "ignore::FutureWarning", "ignore::UserWarning"]
+
+[build-system]
+requires = ["uv_build>=0.11.26,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-timeout>=2.4.0",
+]
+
+# CPU-only torch on Linux (CI, servers): avoids multi-GB CUDA wheels. macOS uses the default wheels.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

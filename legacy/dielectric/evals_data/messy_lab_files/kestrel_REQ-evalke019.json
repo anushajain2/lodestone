@@ -1,0 +1,17 @@
+{
+  "lab": "Kestrel Characterization Institute",
+  "specimen": "REQ-evalke0xx",
+  "compound": "SiC",
+  "day": 10.0,
+  "instrument": {
+    "impedance": "Keysight E4990A @ 1 MHz",
+    "optical": "UV-vis-NIR DRS, Tauc analysis"
+  },
+  "status": "complete",
+  "pellet": {
+    "electrode_area_mm2": 132.73,
+    "thickness_um": 490.4
+  },
+  "capacitance_pF": 25.3783,
+  "absorption_edge_nm": 635.8
+}

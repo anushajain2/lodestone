@@ -1,0 +1,1082 @@
+[
+  {
+    "file": "helios_REQ-evalhe000.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe000",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-1771",
+      "formula": "NO2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 2.58,
+    "gap_eV": 2.69
+  },
+  {
+    "file": "helios_REQ-evalhe001.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe001",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-1707",
+      "formula": "BaN6"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 7.57,
+    "gap_eV": 3.82
+  },
+  {
+    "file": "helios_REQ-evalhe002.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe002",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-28627",
+      "formula": "K4Br2O"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 11.22,
+    "gap_eV": 0.99
+  },
+  {
+    "file": "helios_REQ-evalhe003.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe003",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-864954",
+      "formula": "MgMoN2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 16.04,
+    "gap_eV": 0.74
+  },
+  {
+    "file": "helios_REQ-evalhe004.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe004",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-7812",
+      "formula": "GeO2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 5.71,
+    "gap_eV": 3.28
+  },
+  {
+    "file": "helios_REQ-evalhe005.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe005",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-27891",
+      "formula": "Bi2SO2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 259.32,
+    "gap_eV": 0.8200000000000001
+  },
+  {
+    "file": "helios_REQ-evalhe006.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe006",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-2672",
+      "formula": "K2O2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 6.31,
+    "gap_eV": 2.34
+  },
+  {
+    "file": "helios_REQ-evalhe007.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe007",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-714882",
+      "formula": "MnO"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 18.23,
+    "gap_eV": 1.68
+  },
+  {
+    "file": "helios_REQ-evalhe008.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe008",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-9631",
+      "formula": "AlAgO2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 10.73,
+    "gap_eV": 1.41
+  },
+  {
+    "file": "helios_REQ-evalhe009.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe009",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-9631",
+      "formula": "AlAgO2"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 10.73,
+    "gap_eV": 1.41
+  },
+  {
+    "file": "helios_REQ-evalhe010.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe010",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-864954",
+      "formula": "MgMoN2"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 16.04,
+    "gap_eV": 0.74
+  },
+  {
+    "file": "helios_REQ-evalhe011.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe011",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-4555",
+      "formula": "Ca(AsO3)2"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 10.65,
+    "gap_eV": 3.29
+  },
+  {
+    "file": "helios_REQ-evalhe012.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe012",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-7048",
+      "formula": "Al2O3"
+    },
+    "expect": "reject",
+    "bad_kind": "negative_k",
+    "k": 8.98,
+    "gap_eV": 4.46
+  },
+  {
+    "file": "helios_REQ-evalhe013.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe013",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-31050",
+      "formula": "Cl2O7"
+    },
+    "expect": "reject",
+    "bad_kind": "negative_k",
+    "k": 3.14,
+    "gap_eV": 3.66
+  },
+  {
+    "file": "helios_REQ-evalhe014.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe014",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-20066",
+      "formula": "CO2"
+    },
+    "expect": "reject",
+    "bad_kind": "negative_k",
+    "k": 2.08,
+    "gap_eV": 6.63
+  },
+  {
+    "file": "helios_REQ-evalhe015.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe015",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-18946",
+      "formula": "VBO3"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_gap",
+    "k": 9.62,
+    "gap_eV": 1.82
+  },
+  {
+    "file": "helios_REQ-evalhe016.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe016",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-5072",
+      "formula": "Rb2HgO2"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_gap",
+    "k": 7.41,
+    "gap_eV": 2.02
+  },
+  {
+    "file": "helios_REQ-evalhe017.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe017",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-11023",
+      "formula": "ScAuO2"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_gap",
+    "k": 15.27,
+    "gap_eV": 1.76
+  },
+  {
+    "file": "helios_REQ-evalhe018.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe018",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-510625",
+      "formula": "CrCuO2"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 9.9,
+    "gap_eV": 1.67
+  },
+  {
+    "file": "helios_REQ-evalhe019.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe019",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-559550",
+      "formula": "SiO2"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 3.39,
+    "gap_eV": 5.61
+  },
+  {
+    "file": "helios_REQ-evalhe020.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe020",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-1394",
+      "formula": "Rb2O"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 14.11,
+    "gap_eV": 1.32
+  },
+  {
+    "file": "helios_REQ-evalhe021.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe021",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-3098",
+      "formula": "AlCuO2"
+    },
+    "expect": "reject",
+    "bad_kind": "unit_mixup",
+    "k": 9.6,
+    "gap_eV": 1.81
+  },
+  {
+    "file": "helios_REQ-evalhe022.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe022",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-13150",
+      "formula": "BN"
+    },
+    "expect": "reject",
+    "bad_kind": "unit_mixup",
+    "k": 4.9,
+    "gap_eV": 4.39
+  },
+  {
+    "file": "helios_REQ-evalhe023.csv",
+    "lab_id": "helios",
+    "request": {
+      "request_id": "REQ-evalhe023",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-4547",
+      "formula": "La2TeO2"
+    },
+    "expect": "reject",
+    "bad_kind": "unit_mixup",
+    "k": 22.08,
+    "gap_eV": 2.03
+  },
+  {
+    "file": "kestrel_REQ-evalke000.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke000",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-3982",
+      "formula": "KCuO2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 6.17,
+    "gap_eV": 0.86
+  },
+  {
+    "file": "kestrel_REQ-evalke001.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke001",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-10644",
+      "formula": "TaTl3Se4"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 21.42,
+    "gap_eV": 2.25
+  },
+  {
+    "file": "kestrel_REQ-evalke002.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke002",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-30139",
+      "formula": "BeBr2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 3.23,
+    "gap_eV": 5.18
+  },
+  {
+    "file": "kestrel_REQ-evalke003.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke003",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-16763",
+      "formula": "KYTe2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 13.64,
+    "gap_eV": 1.3
+  },
+  {
+    "file": "kestrel_REQ-evalke004.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke004",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-8880",
+      "formula": "AlP"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 10.52,
+    "gap_eV": 1.96
+  },
+  {
+    "file": "kestrel_REQ-evalke005.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke005",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-12954",
+      "formula": "CuBS2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 9.65,
+    "gap_eV": 1.74
+  },
+  {
+    "file": "kestrel_REQ-evalke006.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke006",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-6984",
+      "formula": "K2SiAs2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 11.18,
+    "gap_eV": 1.0
+  },
+  {
+    "file": "kestrel_REQ-evalke007.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke007",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-10748",
+      "formula": "TaCu3S4"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 6.38,
+    "gap_eV": 1.92
+  },
+  {
+    "file": "kestrel_REQ-evalke008.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke008",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-570538",
+      "formula": "NaN3"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 5.16,
+    "gap_eV": 3.94
+  },
+  {
+    "file": "kestrel_REQ-evalke009.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke009",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-14116",
+      "formula": "CuRhO2"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 13.71,
+    "gap_eV": 0.96
+  },
+  {
+    "file": "kestrel_REQ-evalke010.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke010",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-9144",
+      "formula": "LiAsF6"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 5.96,
+    "gap_eV": 5.14
+  },
+  {
+    "file": "kestrel_REQ-evalke011.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke011",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-6949",
+      "formula": "InF3"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 6.1,
+    "gap_eV": 4.02
+  },
+  {
+    "file": "kestrel_REQ-evalke012.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke012",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-9254",
+      "formula": "Al2Te5"
+    },
+    "expect": "reject",
+    "bad_kind": "zero_thickness",
+    "k": 18.62,
+    "gap_eV": 1.04
+  },
+  {
+    "file": "kestrel_REQ-evalke013.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke013",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-22975",
+      "formula": "Rb2TeCl6"
+    },
+    "expect": "reject",
+    "bad_kind": "zero_thickness",
+    "k": 10.94,
+    "gap_eV": 2.64
+  },
+  {
+    "file": "kestrel_REQ-evalke014.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke014",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-29172",
+      "formula": "SeF4"
+    },
+    "expect": "reject",
+    "bad_kind": "zero_thickness",
+    "k": 6.68,
+    "gap_eV": 4.14
+  },
+  {
+    "file": "kestrel_REQ-evalke015.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke015",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-9732",
+      "formula": "BaNaP"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_edge",
+    "k": 21.1,
+    "gap_eV": 0.86
+  },
+  {
+    "file": "kestrel_REQ-evalke016.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke016",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-9125",
+      "formula": "Ca(SbO3)2"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_edge",
+    "k": 9.79,
+    "gap_eV": 2.69
+  },
+  {
+    "file": "kestrel_REQ-evalke017.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke017",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-306",
+      "formula": "B2O3"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_edge",
+    "k": 4.79,
+    "gap_eV": 6.3
+  },
+  {
+    "file": "kestrel_REQ-evalke018.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke018",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-8402",
+      "formula": "RbMgF3"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 6.48,
+    "gap_eV": 6.94
+  },
+  {
+    "file": "kestrel_REQ-evalke019.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke019",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-11713",
+      "formula": "SiC"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 10.59,
+    "gap_eV": 1.95
+  },
+  {
+    "file": "kestrel_REQ-evalke020.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke020",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-9732",
+      "formula": "BaNaP"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 21.1,
+    "gap_eV": 0.86
+  },
+  {
+    "file": "kestrel_REQ-evalke021.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke021",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-23263",
+      "formula": "LaBr3"
+    },
+    "expect": "reject",
+    "bad_kind": "edge_in_ev",
+    "k": 10.69,
+    "gap_eV": 2.92
+  },
+  {
+    "file": "kestrel_REQ-evalke022.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke022",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-241",
+      "formula": "CdF2"
+    },
+    "expect": "reject",
+    "bad_kind": "edge_in_ev",
+    "k": 9.02,
+    "gap_eV": 2.9
+  },
+  {
+    "file": "kestrel_REQ-evalke023.json",
+    "lab_id": "kestrel",
+    "request": {
+      "request_id": "REQ-evalke023",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-5072",
+      "formula": "Rb2HgO2"
+    },
+    "expect": "reject",
+    "bad_kind": "edge_in_ev",
+    "k": 7.41,
+    "gap_eV": 2.02
+  },
+  {
+    "file": "atlas_REQ-evalat000.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat000",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-8407",
+      "formula": "Li3LaP2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 31.35,
+    "gap_eV": 0.61
+  },
+  {
+    "file": "atlas_REQ-evalat001.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat001",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-7472",
+      "formula": "RbAuO2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 5.52,
+    "gap_eV": 1.46
+  },
+  {
+    "file": "atlas_REQ-evalat002.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat002",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-541899",
+      "formula": "CsCdBr3"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 18.54,
+    "gap_eV": 2.9
+  },
+  {
+    "file": "atlas_REQ-evalat003.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat003",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-8884",
+      "formula": "ZnTe"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 11.52,
+    "gap_eV": 1.1
+  },
+  {
+    "file": "atlas_REQ-evalat004.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat004",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-37091",
+      "formula": "Sr(AlTe2)2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 12.95,
+    "gap_eV": 1.45
+  },
+  {
+    "file": "atlas_REQ-evalat005.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat005",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-19299",
+      "formula": "CrBO3"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 8.5,
+    "gap_eV": 2.3
+  },
+  {
+    "file": "atlas_REQ-evalat006.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat006",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-5342",
+      "formula": "GaAgS2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 10.49,
+    "gap_eV": 0.96
+  },
+  {
+    "file": "atlas_REQ-evalat007.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat007",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-558838",
+      "formula": "NiPtF6"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 5.08,
+    "gap_eV": 2.04
+  },
+  {
+    "file": "atlas_REQ-evalat008.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat008",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-20782",
+      "formula": "LiInTe2"
+    },
+    "expect": "accept",
+    "bad_kind": null,
+    "k": 10.12,
+    "gap_eV": 1.3800000000000001
+  },
+  {
+    "file": "atlas_REQ-evalat009.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat009",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-19147",
+      "formula": "NiCO3"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 6.85,
+    "gap_eV": 3.4
+  },
+  {
+    "file": "atlas_REQ-evalat010.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat010",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-568619",
+      "formula": "SiC"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 10.49,
+    "gap_eV": 1.75
+  },
+  {
+    "file": "atlas_REQ-evalat011.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat011",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-31050",
+      "formula": "Cl2O7"
+    },
+    "expect": "failed_result",
+    "bad_kind": null,
+    "k": 3.14,
+    "gap_eV": 3.66
+  },
+  {
+    "file": "atlas_REQ-evalat012.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat012",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-3744",
+      "formula": "NaNbO2"
+    },
+    "expect": "reject",
+    "bad_kind": "gap_in_ev_not_mev",
+    "k": 11.2,
+    "gap_eV": 1.3800000000000001
+  },
+  {
+    "file": "atlas_REQ-evalat013.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat013",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-752753",
+      "formula": "SbO2F"
+    },
+    "expect": "reject",
+    "bad_kind": "gap_in_ev_not_mev",
+    "k": 12.54,
+    "gap_eV": 1.43
+  },
+  {
+    "file": "atlas_REQ-evalat014.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat014",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-571166",
+      "formula": "CaBr2"
+    },
+    "expect": "reject",
+    "bad_kind": "gap_in_ev_not_mev",
+    "k": 7.68,
+    "gap_eV": 4.45
+  },
+  {
+    "file": "atlas_REQ-evalat015.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat015",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-8623",
+      "formula": "K2Te2Pt"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_column",
+    "k": 12.08,
+    "gap_eV": 0.79
+  },
+  {
+    "file": "atlas_REQ-evalat016.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat016",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-20066",
+      "formula": "CO2"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_column",
+    "k": 2.08,
+    "gap_eV": 6.63
+  },
+  {
+    "file": "atlas_REQ-evalat017.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat017",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-720",
+      "formula": "TlF"
+    },
+    "expect": "reject",
+    "bad_kind": "missing_column",
+    "k": 20.91,
+    "gap_eV": 3.2
+  },
+  {
+    "file": "atlas_REQ-evalat018.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat018",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-5038",
+      "formula": "CsGaS2"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 10.2,
+    "gap_eV": 3.05
+  },
+  {
+    "file": "atlas_REQ-evalat019.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat019",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-11327",
+      "formula": "Rb2Se"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 6.79,
+    "gap_eV": 1.8
+  },
+  {
+    "file": "atlas_REQ-evalat020.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat020",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-13456",
+      "formula": "ZnS"
+    },
+    "expect": "reject",
+    "bad_kind": "wrong_sample",
+    "k": 9.27,
+    "gap_eV": 2.04
+  },
+  {
+    "file": "atlas_REQ-evalat021.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat021",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-27934",
+      "formula": "CdBr2"
+    },
+    "expect": "reject",
+    "bad_kind": "non_numeric",
+    "k": 7.48,
+    "gap_eV": 2.94
+  },
+  {
+    "file": "atlas_REQ-evalat022.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat022",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-560902",
+      "formula": "MnF2"
+    },
+    "expect": "reject",
+    "bad_kind": "non_numeric",
+    "k": 7.12,
+    "gap_eV": 2.87
+  },
+  {
+    "file": "atlas_REQ-evalat023.txt",
+    "lab_id": "atlas",
+    "request": {
+      "request_id": "REQ-evalat023",
+      "partner_id": "partner-eval",
+      "program_id": "prg-eval000000",
+      "material_id": "mp-1958",
+      "formula": "SrTe"
+    },
+    "expect": "reject",
+    "bad_kind": "non_numeric",
+    "k": 12.4,
+    "gap_eV": 1.76
+  }
+]

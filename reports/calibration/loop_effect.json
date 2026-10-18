@@ -1,0 +1,1440 @@
+{
+  "config": {
+    "seeds": 20,
+    "failure_rate": 0.05
+  },
+  "campaigns": {
+    "zsn-conductivity": {
+      "variants": {
+        "default": {
+          "options": {},
+          "runs": 20,
+          "experiments_to_top_median": 39.0,
+          "found_top_in_budget": 19,
+          "experiments_to_first_top5_median": 9.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 14.5,
+          "found_first_top1": 20,
+          "top_found_mean": 9.4,
+          "best_mean": 3.9622808220319947,
+          "failures_mean": 6.35
+        },
+        "CV variance scaling": {
+          "options": {
+            "calibrate": true
+          },
+          "runs": 20,
+          "experiments_to_top_median": 50.0,
+          "found_top_in_budget": 15,
+          "experiments_to_first_top5_median": 9.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 16.0,
+          "found_first_top1": 18,
+          "top_found_mean": 5.45,
+          "best_mean": 3.9529395515321264,
+          "failures_mean": 8.55
+        },
+        "fixed inflation (from other systems)": {
+          "options": {
+            "std_inflation": {
+              "conductivity": 1.5817102114404076,
+              "band_gap": 2.1292435709920436
+            }
+          },
+          "runs": 20,
+          "experiments_to_top_median": 40.0,
+          "found_top_in_budget": 19,
+          "experiments_to_first_top5_median": 9.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 15.5,
+          "found_first_top1": 18,
+          "top_found_mean": 7.5,
+          "best_mean": 3.9474781769929854,
+          "failures_mean": 7.3
+        }
+      },
+      "per_seed": {
+        "default": [
+          {
+            "seed": 0,
+            "to_k_top5": 42,
+            "top_found": 8
+          },
+          {
+            "seed": 1,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 2,
+            "to_k_top5": 50,
+            "top_found": 8
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 35,
+            "top_found": 14
+          },
+          {
+            "seed": 4,
+            "to_k_top5": 46,
+            "top_found": 8
+          },
+          {
+            "seed": 5,
+            "to_k_top5": 33,
+            "top_found": 9
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 42,
+            "top_found": 9
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 59,
+            "top_found": 5
+          },
+          {
+            "seed": 8,
+            "to_k_top5": 38,
+            "top_found": 13
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 43,
+            "top_found": 6
+          },
+          {
+            "seed": 10,
+            "to_k_top5": 35,
+            "top_found": 15
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 18,
+            "top_found": 12
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 40,
+            "top_found": 14
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 38,
+            "top_found": 11
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 26,
+            "top_found": 12
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 48,
+            "top_found": 8
+          },
+          {
+            "seed": 16,
+            "to_k_top5": 28,
+            "top_found": 8
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 31,
+            "top_found": 7
+          },
+          {
+            "seed": 18,
+            "to_k_top5": 32,
+            "top_found": 8
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 47,
+            "top_found": 9
+          }
+        ],
+        "CV variance scaling": [
+          {
+            "seed": 0,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 1,
+            "to_k_top5": 52,
+            "top_found": 5
+          },
+          {
+            "seed": 2,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 38,
+            "top_found": 7
+          },
+          {
+            "seed": 4,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 5,
+            "to_k_top5": 47,
+            "top_found": 6
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 39,
+            "top_found": 7
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 52,
+            "top_found": 5
+          },
+          {
+            "seed": 8,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 60,
+            "top_found": 5
+          },
+          {
+            "seed": 10,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 18,
+            "top_found": 8
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 47,
+            "top_found": 7
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 38,
+            "top_found": 7
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 26,
+            "top_found": 7
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 57,
+            "top_found": 5
+          },
+          {
+            "seed": 16,
+            "to_k_top5": 23,
+            "top_found": 6
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 42,
+            "top_found": 7
+          },
+          {
+            "seed": 18,
+            "to_k_top5": 54,
+            "top_found": 5
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 48,
+            "top_found": 5
+          }
+        ],
+        "fixed inflation (from other systems)": [
+          {
+            "seed": 0,
+            "to_k_top5": 41,
+            "top_found": 6
+          },
+          {
+            "seed": 1,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 2,
+            "to_k_top5": 58,
+            "top_found": 6
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 39,
+            "top_found": 7
+          },
+          {
+            "seed": 4,
+            "to_k_top5": 27,
+            "top_found": 10
+          },
+          {
+            "seed": 5,
+            "to_k_top5": 46,
+            "top_found": 5
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 36,
+            "top_found": 7
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 46,
+            "top_found": 5
+          },
+          {
+            "seed": 8,
+            "to_k_top5": 38,
+            "top_found": 8
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 50,
+            "top_found": 8
+          },
+          {
+            "seed": 10,
+            "to_k_top5": 34,
+            "top_found": 11
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 36,
+            "top_found": 9
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 47,
+            "top_found": 5
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 38,
+            "top_found": 10
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 31,
+            "top_found": 17
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 38,
+            "top_found": 8
+          },
+          {
+            "seed": 16,
+            "to_k_top5": 21,
+            "top_found": 8
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 44,
+            "top_found": 8
+          },
+          {
+            "seed": 18,
+            "to_k_top5": 56,
+            "top_found": 5
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 59,
+            "top_found": 5
+          }
+        ]
+      }
+    },
+    "cnzo-transparent-conductor": {
+      "variants": {
+        "default": {
+          "options": {},
+          "runs": 20,
+          "experiments_to_top_median": 31.0,
+          "found_top_in_budget": 18,
+          "experiments_to_first_top5_median": 16.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 51.5,
+          "found_first_top1": 10,
+          "top_found_mean": 11.9,
+          "best_mean": 0.9972578532559305,
+          "failures_mean": 3.3
+        },
+        "CV variance scaling": {
+          "options": {
+            "calibrate": true
+          },
+          "runs": 20,
+          "experiments_to_top_median": 58.0,
+          "found_top_in_budget": 12,
+          "experiments_to_first_top5_median": 17.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 55.5,
+          "found_first_top1": 10,
+          "top_found_mean": 5.3,
+          "best_mean": 0.964963464614551,
+          "failures_mean": 3.8
+        },
+        "fixed inflation (from other systems)": {
+          "options": {
+            "std_inflation": {
+              "conductivity": 1.6136000976694058,
+              "band_gap": 2.050238982849418
+            }
+          },
+          "runs": 20,
+          "experiments_to_top_median": 40.0,
+          "found_top_in_budget": 15,
+          "experiments_to_first_top5_median": 13.5,
+          "found_first_top5": 19,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 7,
+          "top_found_mean": 6.95,
+          "best_mean": 0.8556161597855677,
+          "failures_mean": 3.7
+        }
+      },
+      "per_seed": {
+        "default": [
+          {
+            "seed": 0,
+            "to_k_top5": 31,
+            "top_found": 13
+          },
+          {
+            "seed": 1,
+            "to_k_top5": 21,
+            "top_found": 15
+          },
+          {
+            "seed": 2,
+            "to_k_top5": 37,
+            "top_found": 13
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 46,
+            "top_found": 12
+          },
+          {
+            "seed": 4,
+            "to_k_top5": 20,
+            "top_found": 16
+          },
+          {
+            "seed": 5,
+            "to_k_top5": null,
+            "top_found": 1
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 20,
+            "top_found": 12
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 33,
+            "top_found": 13
+          },
+          {
+            "seed": 8,
+            "to_k_top5": 55,
+            "top_found": 7
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 25,
+            "top_found": 17
+          },
+          {
+            "seed": 10,
+            "to_k_top5": 49,
+            "top_found": 10
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 28,
+            "top_found": 14
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 25,
+            "top_found": 18
+          },
+          {
+            "seed": 13,
+            "to_k_top5": null,
+            "top_found": 1
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 31,
+            "top_found": 10
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 42,
+            "top_found": 14
+          },
+          {
+            "seed": 16,
+            "to_k_top5": 43,
+            "top_found": 10
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 24,
+            "top_found": 10
+          },
+          {
+            "seed": 18,
+            "to_k_top5": 26,
+            "top_found": 18
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 26,
+            "top_found": 14
+          }
+        ],
+        "CV variance scaling": [
+          {
+            "seed": 0,
+            "to_k_top5": 49,
+            "top_found": 6
+          },
+          {
+            "seed": 1,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 2,
+            "to_k_top5": 56,
+            "top_found": 6
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 37,
+            "top_found": 7
+          },
+          {
+            "seed": 4,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 5,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 38,
+            "top_found": 5
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 58,
+            "top_found": 6
+          },
+          {
+            "seed": 8,
+            "to_k_top5": 58,
+            "top_found": 7
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 18,
+            "top_found": 8
+          },
+          {
+            "seed": 10,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 50,
+            "top_found": 6
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 60,
+            "top_found": 5
+          },
+          {
+            "seed": 13,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 27,
+            "top_found": 9
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 30,
+            "top_found": 9
+          },
+          {
+            "seed": 16,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 51,
+            "top_found": 5
+          },
+          {
+            "seed": 18,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 19,
+            "to_k_top5": null,
+            "top_found": 4
+          }
+        ],
+        "fixed inflation (from other systems)": [
+          {
+            "seed": 0,
+            "to_k_top5": 41,
+            "top_found": 7
+          },
+          {
+            "seed": 1,
+            "to_k_top5": 36,
+            "top_found": 11
+          },
+          {
+            "seed": 2,
+            "to_k_top5": null,
+            "top_found": 0
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 28,
+            "top_found": 10
+          },
+          {
+            "seed": 4,
+            "to_k_top5": 29,
+            "top_found": 8
+          },
+          {
+            "seed": 5,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 54,
+            "top_found": 6
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 44,
+            "top_found": 8
+          },
+          {
+            "seed": 8,
+            "to_k_top5": 38,
+            "top_found": 6
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 26,
+            "top_found": 9
+          },
+          {
+            "seed": 10,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 11,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 28,
+            "top_found": 12
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 39,
+            "top_found": 8
+          },
+          {
+            "seed": 14,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 47,
+            "top_found": 6
+          },
+          {
+            "seed": 16,
+            "to_k_top5": 49,
+            "top_found": 7
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 25,
+            "top_found": 10
+          },
+          {
+            "seed": 18,
+            "to_k_top5": 30,
+            "top_found": 10
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 27,
+            "top_found": 9
+          }
+        ]
+      }
+    },
+    "zsn-gap-window": {
+      "variants": {
+        "default": {
+          "options": {},
+          "runs": 20,
+          "experiments_to_top_median": 50.5,
+          "found_top_in_budget": 16,
+          "experiments_to_first_top5_median": 12.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 54.5,
+          "found_first_top1": 12,
+          "top_found_mean": 7.2,
+          "best_mean": -0.01369999999999999,
+          "failures_mean": 3.15
+        },
+        "CV variance scaling": {
+          "options": {
+            "calibrate": true
+          },
+          "runs": 20,
+          "experiments_to_top_median": 55.0,
+          "found_top_in_budget": 11,
+          "experiments_to_first_top5_median": 12.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 27.5,
+          "found_first_top1": 14,
+          "top_found_mean": 5.15,
+          "best_mean": -0.02739999999999999,
+          "failures_mean": 3.05
+        },
+        "fixed inflation (from other systems)": {
+          "options": {
+            "std_inflation": {
+              "conductivity": 1.5817102114404076,
+              "band_gap": 2.1292435709920436
+            }
+          },
+          "runs": 20,
+          "experiments_to_top_median": 43.5,
+          "found_top_in_budget": 16,
+          "experiments_to_first_top5_median": 11.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 52.0,
+          "found_first_top1": 10,
+          "top_found_mean": 7.0,
+          "best_mean": -0.01845,
+          "failures_mean": 3.35
+        }
+      },
+      "per_seed": {
+        "default": [
+          {
+            "seed": 0,
+            "to_k_top5": 60,
+            "top_found": 5
+          },
+          {
+            "seed": 1,
+            "to_k_top5": 57,
+            "top_found": 6
+          },
+          {
+            "seed": 2,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 58,
+            "top_found": 5
+          },
+          {
+            "seed": 4,
+            "to_k_top5": 56,
+            "top_found": 5
+          },
+          {
+            "seed": 5,
+            "to_k_top5": 54,
+            "top_found": 5
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 46,
+            "top_found": 5
+          },
+          {
+            "seed": 7,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 8,
+            "to_k_top5": 46,
+            "top_found": 6
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 18,
+            "top_found": 15
+          },
+          {
+            "seed": 10,
+            "to_k_top5": 42,
+            "top_found": 10
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 28,
+            "top_found": 10
+          },
+          {
+            "seed": 12,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 39,
+            "top_found": 9
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 50,
+            "top_found": 6
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 40,
+            "top_found": 11
+          },
+          {
+            "seed": 16,
+            "to_k_top5": 24,
+            "top_found": 16
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 16,
+            "top_found": 10
+          },
+          {
+            "seed": 18,
+            "to_k_top5": 51,
+            "top_found": 9
+          },
+          {
+            "seed": 19,
+            "to_k_top5": null,
+            "top_found": 2
+          }
+        ],
+        "CV variance scaling": [
+          {
+            "seed": 0,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 1,
+            "to_k_top5": 59,
+            "top_found": 5
+          },
+          {
+            "seed": 2,
+            "to_k_top5": 22,
+            "top_found": 8
+          },
+          {
+            "seed": 3,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 4,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 5,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 6,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 7,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 8,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 51,
+            "top_found": 6
+          },
+          {
+            "seed": 10,
+            "to_k_top5": 48,
+            "top_found": 6
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 41,
+            "top_found": 7
+          },
+          {
+            "seed": 12,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 16,
+            "top_found": 7
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 48,
+            "top_found": 5
+          },
+          {
+            "seed": 15,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 16,
+            "to_k_top5": 28,
+            "top_found": 6
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 17,
+            "top_found": 11
+          },
+          {
+            "seed": 18,
+            "to_k_top5": 33,
+            "top_found": 9
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 48,
+            "top_found": 5
+          }
+        ],
+        "fixed inflation (from other systems)": [
+          {
+            "seed": 0,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 1,
+            "to_k_top5": 43,
+            "top_found": 12
+          },
+          {
+            "seed": 2,
+            "to_k_top5": 54,
+            "top_found": 7
+          },
+          {
+            "seed": 3,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 4,
+            "to_k_top5": 31,
+            "top_found": 9
+          },
+          {
+            "seed": 5,
+            "to_k_top5": null,
+            "top_found": 1
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 35,
+            "top_found": 7
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 23,
+            "top_found": 7
+          },
+          {
+            "seed": 8,
+            "to_k_top5": 44,
+            "top_found": 7
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 21,
+            "top_found": 10
+          },
+          {
+            "seed": 10,
+            "to_k_top5": 49,
+            "top_found": 5
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 37,
+            "top_found": 8
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 55,
+            "top_found": 6
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 35,
+            "top_found": 11
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 58,
+            "top_found": 5
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 53,
+            "top_found": 5
+          },
+          {
+            "seed": 16,
+            "to_k_top5": 24,
+            "top_found": 12
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 21,
+            "top_found": 11
+          },
+          {
+            "seed": 18,
+            "to_k_top5": null,
+            "top_found": 1
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 33,
+            "top_found": 9
+          }
+        ]
+      }
+    },
+    "izto-conductivity": {
+      "variants": {
+        "default": {
+          "options": {},
+          "runs": 20,
+          "experiments_to_top_median": 32.5,
+          "found_top_in_budget": 16,
+          "experiments_to_first_top5_median": 9.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 24.0,
+          "found_first_top1": 17,
+          "top_found_mean": 5.35,
+          "best_mean": 3.208504495214651,
+          "failures_mean": 2.65
+        },
+        "CV variance scaling": {
+          "options": {
+            "calibrate": true
+          },
+          "runs": 20,
+          "experiments_to_top_median": 41.0,
+          "found_top_in_budget": 3,
+          "experiments_to_first_top5_median": 9.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 41.0,
+          "found_first_top1": 9,
+          "top_found_mean": 3.4,
+          "best_mean": 3.177568017965176,
+          "failures_mean": 1.8
+        },
+        "fixed inflation (from other systems)": {
+          "options": {
+            "std_inflation": {
+              "conductivity": 1.4817773318969247,
+              "band_gap": 2.109868292488259
+            }
+          },
+          "runs": 20,
+          "experiments_to_top_median": 36.0,
+          "found_top_in_budget": 13,
+          "experiments_to_first_top5_median": 9.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 32.5,
+          "found_first_top1": 16,
+          "top_found_mean": 4.7,
+          "best_mean": 3.19028858250216,
+          "failures_mean": 2.3
+        }
+      },
+      "per_seed": {
+        "default": [
+          {
+            "seed": 0,
+            "to_k_top5": null,
+            "top_found": 1
+          },
+          {
+            "seed": 1,
+            "to_k_top5": 27,
+            "top_found": 6
+          },
+          {
+            "seed": 2,
+            "to_k_top5": 38,
+            "top_found": 5
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 32,
+            "top_found": 6
+          },
+          {
+            "seed": 4,
+            "to_k_top5": 38,
+            "top_found": 5
+          },
+          {
+            "seed": 5,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 19,
+            "top_found": 8
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 31,
+            "top_found": 6
+          },
+          {
+            "seed": 8,
+            "to_k_top5": 31,
+            "top_found": 6
+          },
+          {
+            "seed": 9,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 10,
+            "to_k_top5": 24,
+            "top_found": 8
+          },
+          {
+            "seed": 11,
+            "to_k_top5": 40,
+            "top_found": 5
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 31,
+            "top_found": 5
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 31,
+            "top_found": 7
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 19,
+            "top_found": 6
+          },
+          {
+            "seed": 15,
+            "to_k_top5": 33,
+            "top_found": 6
+          },
+          {
+            "seed": 16,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 26,
+            "top_found": 7
+          },
+          {
+            "seed": 18,
+            "to_k_top5": 36,
+            "top_found": 6
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 39,
+            "top_found": 5
+          }
+        ],
+        "CV variance scaling": [
+          {
+            "seed": 0,
+            "to_k_top5": 39,
+            "top_found": 5
+          },
+          {
+            "seed": 1,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 2,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 3,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 4,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 5,
+            "to_k_top5": null,
+            "top_found": 1
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 38,
+            "top_found": 5
+          },
+          {
+            "seed": 7,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 8,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 9,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 10,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 11,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 12,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 13,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 37,
+            "top_found": 5
+          },
+          {
+            "seed": 15,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 16,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 17,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 18,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 19,
+            "to_k_top5": null,
+            "top_found": 4
+          }
+        ],
+        "fixed inflation (from other systems)": [
+          {
+            "seed": 0,
+            "to_k_top5": 37,
+            "top_found": 5
+          },
+          {
+            "seed": 1,
+            "to_k_top5": 21,
+            "top_found": 6
+          },
+          {
+            "seed": 2,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 3,
+            "to_k_top5": 30,
+            "top_found": 7
+          },
+          {
+            "seed": 4,
+            "to_k_top5": 34,
+            "top_found": 5
+          },
+          {
+            "seed": 5,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 6,
+            "to_k_top5": 33,
+            "top_found": 7
+          },
+          {
+            "seed": 7,
+            "to_k_top5": 37,
+            "top_found": 5
+          },
+          {
+            "seed": 8,
+            "to_k_top5": null,
+            "top_found": 3
+          },
+          {
+            "seed": 9,
+            "to_k_top5": 36,
+            "top_found": 6
+          },
+          {
+            "seed": 10,
+            "to_k_top5": 32,
+            "top_found": 5
+          },
+          {
+            "seed": 11,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 12,
+            "to_k_top5": 36,
+            "top_found": 6
+          },
+          {
+            "seed": 13,
+            "to_k_top5": 35,
+            "top_found": 5
+          },
+          {
+            "seed": 14,
+            "to_k_top5": 32,
+            "top_found": 6
+          },
+          {
+            "seed": 15,
+            "to_k_top5": null,
+            "top_found": 4
+          },
+          {
+            "seed": 16,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 17,
+            "to_k_top5": 35,
+            "top_found": 6
+          },
+          {
+            "seed": 18,
+            "to_k_top5": null,
+            "top_found": 2
+          },
+          {
+            "seed": 19,
+            "to_k_top5": 26,
+            "top_found": 6
+          }
+        ]
+      }
+    }
+  }
+}

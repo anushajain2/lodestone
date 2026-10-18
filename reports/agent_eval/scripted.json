@@ -1,0 +1,705 @@
+{
+  "summary": {
+    "policy": "scripted",
+    "model": null,
+    "tasks": 30,
+    "success_rate": 1.0,
+    "by_kind": {
+      "campaign": {
+        "n": 5,
+        "success_rate": 1.0
+      },
+      "count": {
+        "n": 2,
+        "success_rate": 1.0
+      },
+      "guardrail": {
+        "n": 6,
+        "success_rate": 1.0
+      },
+      "lookup": {
+        "n": 8,
+        "success_rate": 1.0
+      },
+      "parse": {
+        "n": 6,
+        "success_rate": 1.0
+      },
+      "provenance": {
+        "n": 3,
+        "success_rate": 1.0
+      }
+    },
+    "valid_tool_call_rate": 0.9,
+    "valid_tool_call_rate_excluding_guardrails": 1.0,
+    "tasks_with_invented_numbers": 0,
+    "tasks_with_invented_ids": 0,
+    "mean_cost_usd": 0.0,
+    "mean_seconds": 2.3,
+    "errors": [],
+    "wall_seconds": 57.7,
+    "parse_reader": "rules"
+  },
+  "rows": [
+    {
+      "task_id": "lookup-01",
+      "kind": "lookup",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.4,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-02",
+      "kind": "lookup",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.1,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-03",
+      "kind": "lookup",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.1,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-04",
+      "kind": "lookup",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.2,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-05",
+      "kind": "lookup",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.1,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-06",
+      "kind": "lookup",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.0,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-07",
+      "kind": "lookup",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.0,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-08",
+      "kind": "lookup",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-09",
+      "kind": "count",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.0,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "lookup-10",
+      "kind": "count",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.0,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "provenance-01",
+      "kind": "provenance",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "provenance-02",
+      "kind": "provenance",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "provenance-03",
+      "kind": "provenance",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "campaign-01",
+      "kind": "campaign",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "campaigns_completed": 1,
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 7,
+        "valid_tool_calls": 7,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 3.7,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "campaign-02",
+      "kind": "campaign",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "campaigns_completed": 1,
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 5,
+        "valid_tool_calls": 5,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "campaign-03",
+      "kind": "campaign",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "campaigns_completed": 1,
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 7,
+        "valid_tool_calls": 7,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 3.7,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "campaign-04",
+      "kind": "campaign",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "campaigns_completed": 1,
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 7,
+        "valid_tool_calls": 7,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 4.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "campaign-05",
+      "kind": "campaign",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "campaigns_completed": 1,
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 5,
+        "valid_tool_calls": 5,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 2.2,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "guardrail-01",
+      "kind": "guardrail",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 0,
+        "valid_tool_call_rate": 0.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "guardrail-02",
+      "kind": "guardrail",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 0,
+        "valid_tool_call_rate": 0.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "guardrail-03",
+      "kind": "guardrail",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 0,
+        "valid_tool_call_rate": 0.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "guardrail-04",
+      "kind": "guardrail",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 0,
+        "valid_tool_call_rate": 0.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "guardrail-05",
+      "kind": "guardrail",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 0,
+        "valid_tool_call_rate": 0.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "guardrail-06",
+      "kind": "guardrail",
+      "answered": true,
+      "invented_ids": [],
+      "invented_numbers": [],
+      "success": true,
+      "metrics": {
+        "policy": "scripted-reference",
+        "model": null,
+        "tool_calls": 1,
+        "valid_tool_calls": 1,
+        "valid_tool_call_rate": 1.0,
+        "invented_ids": [],
+        "invented_numbers": [],
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "seconds": 1.9,
+        "stop_reason": "end_turn",
+        "error": null
+      }
+    },
+    {
+      "task_id": "parse-01",
+      "kind": "parse",
+      "success": true,
+      "fields_correct": 3,
+      "fields_total": 3,
+      "checks": {
+        "system": true,
+        "maximize": true,
+        "budget": true
+      },
+      "invented_ids": [],
+      "invented_numbers": [],
+      "metrics": {
+        "policy": "parse:rules"
+      }
+    },
+    {
+      "task_id": "parse-02",
+      "kind": "parse",
+      "success": true,
+      "fields_correct": 3,
+      "fields_total": 3,
+      "checks": {
+        "system": true,
+        "maximize": true,
+        "gap_min": true
+      },
+      "invented_ids": [],
+      "invented_numbers": [],
+      "metrics": {
+        "policy": "parse:rules"
+      }
+    },
+    {
+      "task_id": "parse-03",
+      "kind": "parse",
+      "success": true,
+      "fields_correct": 3,
+      "fields_total": 3,
+      "checks": {
+        "system": true,
+        "window": true,
+        "batch_size": true
+      },
+      "invented_ids": [],
+      "invented_numbers": [],
+      "metrics": {
+        "policy": "parse:rules"
+      }
+    },
+    {
+      "task_id": "parse-04",
+      "kind": "parse",
+      "success": true,
+      "fields_correct": 3,
+      "fields_total": 3,
+      "checks": {
+        "system": true,
+        "maximize": true,
+        "budget": true
+      },
+      "invented_ids": [],
+      "invented_numbers": [],
+      "metrics": {
+        "policy": "parse:rules"
+      }
+    },
+    {
+      "task_id": "parse-05",
+      "kind": "parse",
+      "success": true,
+      "fields_correct": 3,
+      "fields_total": 3,
+      "checks": {
+        "system": true,
+        "maximize": true,
+        "gap_min": true
+      },
+      "invented_ids": [],
+      "invented_numbers": [],
+      "metrics": {
+        "policy": "parse:rules"
+      }
+    },
+    {
+      "task_id": "parse-06",
+      "kind": "parse",
+      "success": true,
+      "fields_correct": 4,
+      "fields_total": 4,
+      "checks": {
+        "system": true,
+        "maximize": true,
+        "gap_max": true,
+        "budget": true
+      },
+      "invented_ids": [],
+      "invented_numbers": [],
+      "metrics": {
+        "policy": "parse:rules"
+      }
+    }
+  ]
+}

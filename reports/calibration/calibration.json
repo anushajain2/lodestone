@@ -1,0 +1,821 @@
+{
+  "config": {
+    "sizes": [
+      30,
+      60
+    ],
+    "reps": 20
+  },
+  "results": [
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 927,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.5226867335562988,
+      "cov95": 0.7532329988851728,
+      "r2": 0.6257282775691262,
+      "std_scale": 1.0,
+      "needed_scale": 1.570981348930086,
+      "cov68_sem": 0.02409192845174116
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 927,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.5517837235228539,
+      "cov95": 0.785340022296544,
+      "r2": 0.6525941508178477,
+      "std_scale": 1.0,
+      "needed_scale": 1.4352933281607425,
+      "cov68_sem": 0.019769430966071328
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 927,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.5450947603121515,
+      "cov95": 0.7583054626532887,
+      "r2": 0.6211294342698161,
+      "std_scale": 1.0,
+      "needed_scale": 1.5212836279952169,
+      "cov68_sem": 0.02306676962301969
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 927,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.8378483835005575,
+      "cov95": 0.9450390189520625,
+      "r2": 0.6257282775691462,
+      "std_scale": 2.9691039016010667,
+      "needed_scale": 0.5870021258827477,
+      "cov68_sem": 0.020856111208889656
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 927,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.5512687427912342,
+      "cov95": 0.7737024221453288,
+      "r2": 0.7492518310189105,
+      "std_scale": 1.0,
+      "needed_scale": 1.45635308732176,
+      "cov68_sem": 0.013173546999340466
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 927,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.5591118800461361,
+      "cov95": 0.789850057670127,
+      "r2": 0.7615211839695893,
+      "std_scale": 1.0,
+      "needed_scale": 1.4003404795907755,
+      "cov68_sem": 0.015133645072224896
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 927,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.5706459054209919,
+      "cov95": 0.7833910034602075,
+      "r2": 0.7515141805268637,
+      "std_scale": 1.0,
+      "needed_scale": 1.3848972637016586,
+      "cov68_sem": 0.012214170583212138
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 927,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.8683391003460207,
+      "cov95": 0.9618223760092273,
+      "r2": 0.7492518310189104,
+      "std_scale": 3.0464088168302332,
+      "needed_scale": 0.4954670241818275,
+      "cov68_sem": 0.011888051541565036
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 993,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.4265316718587747,
+      "cov95": 0.6566458982346833,
+      "r2": 0.27636344847930183,
+      "std_scale": 1.0,
+      "needed_scale": 2.1446084864554202,
+      "cov68_sem": 0.013072715562431192
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 993,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.4278816199376947,
+      "cov95": 0.6627725856697821,
+      "r2": 0.27976804846220904,
+      "std_scale": 1.0,
+      "needed_scale": 2.0989060693527515,
+      "cov68_sem": 0.013130674771140664
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 993,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.3896677050882658,
+      "cov95": 0.6258047767393562,
+      "r2": 0.27086086661538783,
+      "std_scale": 1.0,
+      "needed_scale": 2.398240033923399,
+      "cov68_sem": 0.01655620990863102
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 993,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.8505711318795433,
+      "cov95": 0.9481308411214954,
+      "r2": 0.27636344847932925,
+      "std_scale": 4.26192296850799,
+      "needed_scale": 0.5845121968251432,
+      "cov68_sem": 0.025443939042068205
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 993,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.4497856377277599,
+      "cov95": 0.6863879957127546,
+      "r2": 0.33700947647751095,
+      "std_scale": 1.0,
+      "needed_scale": 1.9558694792434157,
+      "cov68_sem": 0.017785929428739633
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 993,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.435209003215434,
+      "cov95": 0.6720793140407288,
+      "r2": 0.36614239458003317,
+      "std_scale": 1.0,
+      "needed_scale": 2.0453446030444282,
+      "cov68_sem": 0.024214458010158424
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 993,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.4493033226152197,
+      "cov95": 0.6879957127545553,
+      "r2": 0.33541215910470135,
+      "std_scale": 1.0,
+      "needed_scale": 1.9487251417740417,
+      "cov68_sem": 0.02090134848992822
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 993,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.9285637727759916,
+      "cov95": 0.985155412647374,
+      "r2": 0.33700947647765045,
+      "std_scale": 5.018199669735184,
+      "needed_scale": 0.4023892952002841,
+      "cov68_sem": 0.01124885380303375
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 875,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.5486390532544378,
+      "cov95": 0.7924260355029586,
+      "r2": 0.3000381887610177,
+      "std_scale": 1.0,
+      "needed_scale": 1.5072015764720894,
+      "cov68_sem": 0.020793868769708467
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 875,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.4802366863905325,
+      "cov95": 0.7402366863905325,
+      "r2": 0.2894328086858287,
+      "std_scale": 1.0,
+      "needed_scale": 1.7721642250768757,
+      "cov68_sem": 0.023734042304960307
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 875,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.5118934911242604,
+      "cov95": 0.7645562130177516,
+      "r2": 0.18663744343921904,
+      "std_scale": 1.0,
+      "needed_scale": 1.6574866635183003,
+      "cov68_sem": 0.017450257556800547
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 875,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.9070414201183432,
+      "cov95": 0.9778698224852072,
+      "r2": 0.30003818876102306,
+      "std_scale": 3.794197081376038,
+      "needed_scale": 0.4623722819546804,
+      "cov68_sem": 0.022102577145950146
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 875,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.6086503067484662,
+      "cov95": 0.8382208588957056,
+      "r2": 0.5089567983100022,
+      "std_scale": 1.0,
+      "needed_scale": 1.2310258005744479,
+      "cov68_sem": 0.018698651504212085
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 875,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.580122699386503,
+      "cov95": 0.8215337423312883,
+      "r2": 0.5260418611176706,
+      "std_scale": 1.0,
+      "needed_scale": 1.339014951407403,
+      "cov68_sem": 0.020649598596980852
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 875,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.5933742331288343,
+      "cov95": 0.8158282208588957,
+      "r2": 0.50063155597262,
+      "std_scale": 1.0,
+      "needed_scale": 1.3092582437052716,
+      "cov68_sem": 0.021566636666844333
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 875,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.9392024539877297,
+      "cov95": 0.9839263803680982,
+      "r2": 0.5089567983099947,
+      "std_scale": 3.8411178126727323,
+      "needed_scale": 0.34229811104494307,
+      "cov68_sem": 0.01068870903917345
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 880,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.46082352941176474,
+      "cov95": 0.6671176470588236,
+      "r2": 0.07341855140771589,
+      "std_scale": 1.0,
+      "needed_scale": 2.0751280985210974,
+      "cov68_sem": 0.022910768129921818
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 880,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.45982352941176474,
+      "cov95": 0.6868235294117647,
+      "r2": 0.15813944538565194,
+      "std_scale": 1.0,
+      "needed_scale": 1.9389074228355963,
+      "cov68_sem": 0.012330445387156067
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 880,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.423529411764706,
+      "cov95": 0.6501176470588235,
+      "r2": 0.1285244546179128,
+      "std_scale": 1.0,
+      "needed_scale": 2.183529507809714,
+      "cov68_sem": 0.01328696484195491
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 880,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.7951764705882353,
+      "cov95": 0.9158823529411764,
+      "r2": 0.07341855140771585,
+      "std_scale": 3.6814190855723465,
+      "needed_scale": 0.7269064801256417,
+      "cov68_sem": 0.033389136802007516
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 880,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.43085365853658536,
+      "cov95": 0.6484146341463415,
+      "r2": 0.19292245167089067,
+      "std_scale": 1.0,
+      "needed_scale": 2.1833590434629904,
+      "cov68_sem": 0.02287667266513389
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 880,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.41878048780487803,
+      "cov95": 0.6424390243902438,
+      "r2": 0.23811801830031842,
+      "std_scale": 1.0,
+      "needed_scale": 2.20827306994083,
+      "cov68_sem": 0.014164865477933513
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 880,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.37317073170731707,
+      "cov95": 0.6007926829268293,
+      "r2": 0.2139743201011622,
+      "std_scale": 1.0,
+      "needed_scale": 2.5227675341178606,
+      "cov68_sem": 0.012669527334681751
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 880,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.8751829268292681,
+      "cov95": 0.9714024390243903,
+      "r2": 0.19292245167089006,
+      "std_scale": 4.838128646927933,
+      "needed_scale": 0.48476111179506554,
+      "cov68_sem": 0.018203091474125466
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 176,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.5041095890410958,
+      "cov95": 0.7434931506849315,
+      "r2": 0.6467040105624384,
+      "std_scale": 1.0,
+      "needed_scale": 1.656218846408726,
+      "cov68_sem": 0.02642656755905605
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 176,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.4736301369863014,
+      "cov95": 0.7226027397260273,
+      "r2": 0.6778962821648375,
+      "std_scale": 1.0,
+      "needed_scale": 1.7713011401102374,
+      "cov68_sem": 0.028528705251694146
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 176,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.46780821917808213,
+      "cov95": 0.7000000000000001,
+      "r2": 0.6718139206537814,
+      "std_scale": 1.0,
+      "needed_scale": 1.8325705362850973,
+      "cov68_sem": 0.03172435191379919
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 176,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.9037671232876713,
+      "cov95": 0.9842465753424658,
+      "r2": 0.646704010562436,
+      "std_scale": 4.089649857154905,
+      "needed_scale": 0.44978319116207094,
+      "cov68_sem": 0.01954077551516941
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 176,
+      "variant": "default",
+      "options": {},
+      "cov68": 0.4862068965517241,
+      "cov95": 0.719396551724138,
+      "r2": 0.7437232652682214,
+      "std_scale": 1.0,
+      "needed_scale": 1.731921754169233,
+      "cov68_sem": 0.0162534566937783
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 176,
+      "variant": "noise floor 0.05",
+      "options": {
+        "noise_floor": 0.05
+      },
+      "cov68": 0.47801724137931034,
+      "cov95": 0.7176724137931034,
+      "r2": 0.7681180003540573,
+      "std_scale": 1.0,
+      "needed_scale": 1.7697706854708728,
+      "cov68_sem": 0.015171524371719777
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 176,
+      "variant": "Matérn-5/2 + lengthscale prior",
+      "options": {
+        "kernel": "matern52"
+      },
+      "cov68": 0.49482758620689654,
+      "cov95": 0.731896551724138,
+      "r2": 0.7619883969200594,
+      "std_scale": 1.0,
+      "needed_scale": 1.703941393429136,
+      "cov68_sem": 0.017336398784744946
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 176,
+      "variant": "CV variance scaling",
+      "options": {
+        "calibrate": true
+      },
+      "cov68": 0.9267241379310345,
+      "cov95": 0.9918103448275863,
+      "r2": 0.7437232652683486,
+      "std_scale": 4.110794385076997,
+      "needed_scale": 0.4322990713523215,
+      "cov68_sem": 0.010732672067231665
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 927,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.5817102114404076,
+          "band_gap": 2.1292435709920436
+        }
+      },
+      "cov68": 0.6845596432552955,
+      "cov95": 0.8674470457079153,
+      "r2": 0.6257282775691262,
+      "std_scale": 1.581710211440408,
+      "needed_scale": 0.9932169227759193,
+      "cov68_sem": 0.021285913838065877
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 927,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.5817102114404076,
+          "band_gap": 2.1292435709920436
+        }
+      },
+      "cov68": 0.710149942329873,
+      "cov95": 0.8781430219146482,
+      "r2": 0.7492518310189105,
+      "std_scale": 1.581710211440408,
+      "needed_scale": 0.9207458337109105,
+      "cov68_sem": 0.01057809435592356
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 993,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.5817102114404076,
+          "band_gap": 2.1292435709920436
+        }
+      },
+      "cov68": 0.6869678089304256,
+      "cov95": 0.8697819314641745,
+      "r2": 0.27636344847930194,
+      "std_scale": 2.129243570992044,
+      "needed_scale": 1.007216138009153,
+      "cov68_sem": 0.015237515955970863
+    },
+    {
+      "system": "N-Sn-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 993,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.5817102114404076,
+          "band_gap": 2.1292435709920436
+        }
+      },
+      "cov68": 0.7152197213290461,
+      "cov95": 0.9036977491961415,
+      "r2": 0.33700947647751084,
+      "std_scale": 2.129243570992044,
+      "needed_scale": 0.9185747961808517,
+      "cov68_sem": 0.01810579954846601
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 875,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.6136000976694058,
+          "band_gap": 2.050238982849418
+        }
+      },
+      "cov68": 0.7278698224852072,
+      "cov95": 0.9056213017751478,
+      "r2": 0.30003818876101773,
+      "std_scale": 1.6136000976694056,
+      "needed_scale": 0.9340614063230481,
+      "cov68_sem": 0.022963728324992137
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 875,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.6136000976694058,
+          "band_gap": 2.050238982849418
+        }
+      },
+      "cov68": 0.7802453987730062,
+      "cov95": 0.9273619631901839,
+      "r2": 0.5089567983100021,
+      "std_scale": 1.6136000976694056,
+      "needed_scale": 0.7629063746045083,
+      "cov68_sem": 0.015158242992993403
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 30,
+      "n_measured": 880,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.6136000976694058,
+          "band_gap": 2.050238982849418
+        }
+      },
+      "cov68": 0.6802941176470589,
+      "cov95": 0.8589411764705883,
+      "r2": 0.07341855140771587,
+      "std_scale": 2.050238982849419,
+      "needed_scale": 1.0121396168348613,
+      "cov68_sem": 0.01624746593580906
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "property": "band_gap",
+      "n_train": 60,
+      "n_measured": 880,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.6136000976694058,
+          "band_gap": 2.050238982849418
+        }
+      },
+      "cov68": 0.6626219512195121,
+      "cov95": 0.8514634146341462,
+      "r2": 0.19292245167089056,
+      "std_scale": 2.050238982849419,
+      "needed_scale": 1.064929045700106,
+      "cov68_sem": 0.016491388538464862
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 30,
+      "n_measured": 176,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.4817773318969247,
+          "band_gap": 2.109868292488259
+        }
+      },
+      "cov68": 0.6424657534246575,
+      "cov95": 0.8575342465753426,
+      "r2": 0.6467040105624385,
+      "std_scale": 1.4817773318969247,
+      "needed_scale": 1.117724512824399,
+      "cov68_sem": 0.024462498703653388
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "property": "conductivity",
+      "n_train": 60,
+      "n_measured": 176,
+      "variant": "fixed inflation (from other systems)",
+      "options": {
+        "std_inflation": {
+          "conductivity": 1.4817773318969247,
+          "band_gap": 2.109868292488259
+        }
+      },
+      "cov68": 0.6267241379310345,
+      "cov95": 0.8443965517241381,
+      "r2": 0.7437232652682216,
+      "std_scale": 1.4817773318969247,
+      "needed_scale": 1.1688137730870027,
+      "cov68_sem": 0.014574884159517208
+    }
+  ]
+}

@@ -1,0 +1,344 @@
+{
+  "sampled": 20,
+  "checked": 14,
+  "all_match": true,
+  "live": true,
+  "values_checked": 56,
+  "values_checked_live": 56,
+  "rows": [
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 225056,
+      "library_id": 7321,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "225056",
+        "source_library_id": "7321",
+        "url": "https://htem-api.nlr.gov/api/sample/225056",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 269666,
+      "library_id": 8626,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "269666",
+        "source_library_id": "8626",
+        "url": "https://htem-api.nlr.gov/api/sample/269666",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "htem_sample_id": 234960,
+      "library_id": 7542,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "234960",
+        "source_library_id": "7542",
+        "url": "https://htem-api.nlr.gov/api/sample/234960",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 320955,
+      "library_id": 10058,
+      "ok": null,
+      "checked": 0,
+      "live_checked": 0,
+      "note": "rejected at import: no usable XRF composition (compounds and concentrations missing or mismatched)"
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 309618,
+      "library_id": 9814,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "309618",
+        "source_library_id": "9814",
+        "url": "https://htem-api.nlr.gov/api/sample/309618",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 231323,
+      "library_id": 6944,
+      "ok": null,
+      "checked": 0,
+      "live_checked": 0,
+      "note": "rejected at import: no usable XRF composition (compounds and concentrations missing or mismatched)"
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 226399,
+      "library_id": 7363,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "226399",
+        "source_library_id": "7363",
+        "url": "https://htem-api.nlr.gov/api/sample/226399",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 226036,
+      "library_id": 7354,
+      "ok": null,
+      "checked": 0,
+      "live_checked": 0,
+      "note": "rejected at import: no usable XRF composition (compounds and concentrations missing or mismatched)"
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 230588,
+      "library_id": 6768,
+      "ok": null,
+      "checked": 0,
+      "live_checked": 0,
+      "note": "rejected at import: no usable XRF composition (compounds and concentrations missing or mismatched)"
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 229045,
+      "library_id": 7473,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "229045",
+        "source_library_id": "7473",
+        "url": "https://htem-api.nlr.gov/api/sample/229045",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 257488,
+      "library_id": 7286,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "257488",
+        "source_library_id": "7286",
+        "url": "https://htem-api.nlr.gov/api/sample/257488",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "htem_sample_id": 314880,
+      "library_id": 9940,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "314880",
+        "source_library_id": "9940",
+        "url": "https://htem-api.nlr.gov/api/sample/314880",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 233259,
+      "library_id": 7342,
+      "ok": null,
+      "checked": 0,
+      "live_checked": 0,
+      "note": "rejected at import: no usable XRF composition (compounds and concentrations missing or mismatched)"
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "htem_sample_id": 209098,
+      "library_id": 6701,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "209098",
+        "source_library_id": "6701",
+        "url": "https://htem-api.nlr.gov/api/sample/209098",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 272854,
+      "library_id": 9740,
+      "ok": null,
+      "checked": 0,
+      "live_checked": 0,
+      "note": "rejected at import: no usable XRF composition (compounds and concentrations missing or mismatched)"
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "htem_sample_id": 220373,
+      "library_id": 7123,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "220373",
+        "source_library_id": "7123",
+        "url": "https://htem-api.nlr.gov/api/sample/220373",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "htem_sample_id": 234869,
+      "library_id": 7540,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "234869",
+        "source_library_id": "7540",
+        "url": "https://htem-api.nlr.gov/api/sample/234869",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "In-O-Sn-Zn",
+      "htem_sample_id": 224612,
+      "library_id": 7302,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "224612",
+        "source_library_id": "7302",
+        "url": "https://htem-api.nlr.gov/api/sample/224612",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "N-Sn-Zn",
+      "htem_sample_id": 245215,
+      "library_id": 7797,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "245215",
+        "source_library_id": "7797",
+        "url": "https://htem-api.nlr.gov/api/sample/245215",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    },
+    {
+      "system": "Co-Ni-O-Zn",
+      "htem_sample_id": 220395,
+      "library_id": 7123,
+      "ok": true,
+      "checked": 4,
+      "live_checked": 4,
+      "provenance": {
+        "source_sample_id": "220395",
+        "source_library_id": "7123",
+        "url": "https://htem-api.nlr.gov/api/sample/220395",
+        "methods": {
+          "conductivity": "four-point probe",
+          "sheet_resistance": "four-point probe",
+          "band_gap": "UV-vis-NIR transmittance/reflectance (Tauc, direct)",
+          "visible_transmittance": "UV-vis transmittance",
+          "thickness": "X-ray fluorescence"
+        }
+      }
+    }
+  ]
+}

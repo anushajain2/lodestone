@@ -1,0 +1,4 @@
+# Atlas National Laboratory - Dielectric & Optical Characterisation
+# report_day;10,0
+sample_ref;formula;eps_rel;Eg_meV;method;remark
+REQ-evalat008;LiInTe2;10,120;1380;broadband dielectric spectroscopy + ellipsometry;

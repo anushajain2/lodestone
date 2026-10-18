@@ -1,0 +1,17 @@
+{
+  "lab": "Kestrel Characterization Institute",
+  "specimen": "REQ-evalke003",
+  "compound": "KYTe2",
+  "day": 10.0,
+  "instrument": {
+    "impedance": "Keysight E4990A @ 1 MHz",
+    "optical": "UV-vis-NIR DRS, Tauc analysis"
+  },
+  "status": "complete",
+  "pellet": {
+    "electrode_area_mm2": 132.73,
+    "thickness_um": 469.6
+  },
+  "capacitance_pF": 34.1353,
+  "absorption_edge_nm": 953.7
+}

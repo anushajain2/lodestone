@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+          enable-cache: true
+      - name: Install
+        run: uv sync --frozen
+      - name: Tests (isolation, onboarding, loop, campaigns, tools, MCP, agent loop)
+        run: uv run pytest
+      - name: Onboarding eval (import reports + deliberately broken records)
+        run: uv run lodestone eval onboarding
+      - name: Provenance spot-check (offline, against the shipped snapshot)
+        run: uv run lodestone eval provenance --n 20
+      - name: Agent eval (scripted reference; Claude when a key is configured)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            uv run lodestone eval agent --policy claude --only lookup,provenance,guardrail
+          else
+            uv run lodestone eval agent --policy scripted
+          fi
+      - name: Quick benchmark (smoke; the full run is `lodestone bench`)
+        run: uv run lodestone bench --seeds 3 --robustness-seeds 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-reports
+          path: reports/

@@ -1,0 +1,476 @@
+[
+  {
+    "id": "lookup-01",
+    "kind": "lookup",
+    "prompt": "Which zinc tin nitride (N-Sn-Zn) sample in our data has the highest conductivity? Give its record id and conductivity.",
+    "intent": {
+      "kind": "lookup",
+      "query": {
+        "system": "N-Sn-Zn",
+        "sort_by": "conductivity",
+        "descending": true,
+        "limit": 3
+      },
+      "answer_field": "conductivity"
+    },
+    "expected": {
+      "record_id": "rec-htem-218885",
+      "value": 9374.0
+    }
+  },
+  {
+    "id": "lookup-02",
+    "kind": "lookup",
+    "prompt": "Which In-O-Sn-Zn sample has the highest conductivity, and what is it?",
+    "intent": {
+      "kind": "lookup",
+      "query": {
+        "system": "In-O-Sn-Zn",
+        "sort_by": "conductivity",
+        "descending": true,
+        "limit": 3
+      },
+      "answer_field": "conductivity"
+    },
+    "expected": {
+      "record_id": "rec-htem-314866",
+      "value": 2139.0
+    }
+  },
+  {
+    "id": "lookup-03",
+    "kind": "lookup",
+    "prompt": "In our N-Sn-Zn data, which deposition temperature gave the most conductive sample?",
+    "intent": {
+      "kind": "lookup",
+      "query": {
+        "system": "N-Sn-Zn",
+        "sort_by": "conductivity",
+        "descending": true,
+        "limit": 3
+      },
+      "answer_field": "deposition_temp_c"
+    },
+    "expected": {
+      "record_id": "rec-htem-218885",
+      "value": 400.0
+    }
+  },
+  {
+    "id": "lookup-04",
+    "kind": "lookup",
+    "prompt": "Among N-Sn-Zn samples grown at 200 \u00b0C, which is the most conductive and what is its conductivity?",
+    "intent": {
+      "kind": "lookup",
+      "query": {
+        "system": "N-Sn-Zn",
+        "sort_by": "conductivity",
+        "descending": true,
+        "limit": 3,
+        "deposition_temp_c": 200
+      },
+      "answer_field": "conductivity"
+    },
+    "expected": {
+      "record_id": "rec-htem-241361",
+      "value": 9225.0
+    }
+  },
+  {
+    "id": "lookup-05",
+    "kind": "lookup",
+    "prompt": "Which N-Sn-Zn sample has the widest band gap? Give the record id and the gap.",
+    "intent": {
+      "kind": "lookup",
+      "query": {
+        "system": "N-Sn-Zn",
+        "sort_by": "band_gap",
+        "descending": true,
+        "limit": 3
+      },
+      "answer_field": "band_gap"
+    },
+    "expected": {
+      "record_id": "rec-htem-218873",
+      "value": 3.715
+    }
+  },
+  {
+    "id": "lookup-06",
+    "kind": "lookup",
+    "prompt": "Which N-Sn-Zn sample has the narrowest band gap?",
+    "intent": {
+      "kind": "lookup",
+      "query": {
+        "system": "N-Sn-Zn",
+        "sort_by": "band_gap",
+        "descending": false,
+        "limit": 3
+      },
+      "answer_field": "band_gap"
+    },
+    "expected": {
+      "record_id": "rec-htem-237597",
+      "value": 0.8441
+    }
+  },
+  {
+    "id": "lookup-07",
+    "kind": "lookup",
+    "prompt": "What is the highest conductivity among In-O-Sn-Zn samples with a band gap of at least 3.7 eV? Which record is it?",
+    "intent": {
+      "kind": "lookup",
+      "query": {
+        "system": "In-O-Sn-Zn",
+        "sort_by": "conductivity",
+        "descending": true,
+        "limit": 3,
+        "min_band_gap": 3.7
+      },
+      "answer_field": "conductivity"
+    },
+    "expected": {
+      "record_id": "rec-htem-314877",
+      "value": 1454.0
+    }
+  },
+  {
+    "id": "lookup-08",
+    "kind": "lookup",
+    "prompt": "Which In-O-Sn-Zn sample has the narrowest band gap, and what is it?",
+    "intent": {
+      "kind": "lookup",
+      "query": {
+        "system": "In-O-Sn-Zn",
+        "sort_by": "band_gap",
+        "descending": false,
+        "limit": 3
+      },
+      "answer_field": "band_gap"
+    },
+    "expected": {
+      "record_id": "rec-htem-223273",
+      "value": 3.359
+    }
+  },
+  {
+    "id": "lookup-09",
+    "kind": "count",
+    "prompt": "How many N-Sn-Zn samples in our data have a band gap between 1.4 and 1.6 eV?",
+    "intent": {
+      "kind": "count",
+      "query": {
+        "system": "N-Sn-Zn",
+        "min_band_gap": 1.4,
+        "max_band_gap": 1.6,
+        "sort_by": "band_gap"
+      }
+    },
+    "expected": {
+      "value": 17
+    }
+  },
+  {
+    "id": "lookup-10",
+    "kind": "count",
+    "prompt": "How many N-Sn-Zn samples have a conductivity of at least 1000 S/cm?",
+    "intent": {
+      "kind": "count",
+      "query": {
+        "system": "N-Sn-Zn",
+        "min_conductivity": 1000
+      }
+    },
+    "expected": {
+      "value": 214
+    }
+  },
+  {
+    "id": "provenance-01",
+    "kind": "provenance",
+    "prompt": "Which HTEM sample library does record rec-htem-216434 come from? Give the library id.",
+    "intent": {
+      "kind": "provenance",
+      "record_id": "rec-htem-216434"
+    },
+    "expected": {
+      "value": "6975",
+      "record_id": "rec-htem-216434"
+    }
+  },
+  {
+    "id": "provenance-02",
+    "kind": "provenance",
+    "prompt": "Which HTEM sample library does record rec-htem-228709 come from? Give the library id.",
+    "intent": {
+      "kind": "provenance",
+      "record_id": "rec-htem-228709"
+    },
+    "expected": {
+      "value": "7461",
+      "record_id": "rec-htem-228709"
+    }
+  },
+  {
+    "id": "provenance-03",
+    "kind": "provenance",
+    "prompt": "Which HTEM sample library does record rec-htem-225052 come from? Give the library id.",
+    "intent": {
+      "kind": "provenance",
+      "record_id": "rec-htem-225052"
+    },
+    "expected": {
+      "value": "7321",
+      "record_id": "rec-htem-225052"
+    }
+  },
+  {
+    "id": "campaign-01",
+    "kind": "campaign",
+    "prompt": "Run a 30-experiment campaign to find the most conductive zinc tin nitride (use seed 1). Report the best sample's record id, HTEM sample id and conductivity.",
+    "intent": {
+      "kind": "campaign",
+      "create": {
+        "goal": "most conductive zinc tin nitride, 30 experiments",
+        "seed": 1
+      },
+      "answer_field": "conductivity",
+      "compare": false
+    },
+    "expected": {
+      "from_campaign": true,
+      "answer_field": "conductivity"
+    }
+  },
+  {
+    "id": "campaign-02",
+    "kind": "campaign",
+    "prompt": "Run a campaign on In-O-Sn-Zn to maximize conductivity with 20 experiments (seed 2) and report the best sample.",
+    "intent": {
+      "kind": "campaign",
+      "create": {
+        "goal": "most conductive In-O-Sn-Zn, 20 experiments",
+        "seed": 2
+      },
+      "answer_field": "conductivity",
+      "compare": false
+    },
+    "expected": {
+      "from_campaign": true,
+      "answer_field": "conductivity"
+    }
+  },
+  {
+    "id": "campaign-03",
+    "kind": "campaign",
+    "prompt": "Find a zinc tin nitride sample with a band gap between 1.4 and 1.6 eV using a 30-experiment campaign (seed 3). Report the best sample and its band gap.",
+    "intent": {
+      "kind": "campaign",
+      "create": {
+        "goal": "zinc tin nitride band gap between 1.4 and 1.6 eV, 30 experiments",
+        "seed": 3
+      },
+      "answer_field": "band_gap",
+      "compare": false
+    },
+    "expected": {
+      "from_campaign": true,
+      "answer_field": "band_gap"
+    }
+  },
+  {
+    "id": "campaign-04",
+    "kind": "campaign",
+    "prompt": "Run a 25-experiment campaign for the most conductive zinc tin nitride with a band gap above 2.5 eV (seed 4), then tell me whether Bayesian optimization beat random search on this goal.",
+    "intent": {
+      "kind": "campaign",
+      "create": {
+        "goal": "most conductive zinc tin nitride with band gap above 2.5 eV, 25 experiments",
+        "seed": 4
+      },
+      "answer_field": "conductivity",
+      "compare": true
+    },
+    "expected": {
+      "from_campaign": true,
+      "answer_field": "conductivity"
+    }
+  },
+  {
+    "id": "campaign-05",
+    "kind": "campaign",
+    "prompt": "Run a grid-search campaign (not Bayesian) for the most conductive zinc tin nitride with 20 experiments (seed 5) and report the best sample.",
+    "intent": {
+      "kind": "campaign",
+      "create": {
+        "goal": "most conductive zinc tin nitride, 20 experiments, grid",
+        "seed": 5
+      },
+      "answer_field": "conductivity",
+      "compare": false
+    },
+    "expected": {
+      "from_campaign": true,
+      "answer_field": "conductivity"
+    }
+  },
+  {
+    "id": "guardrail-01",
+    "kind": "guardrail",
+    "prompt": "What is the conductivity of record rec-htem-999999999?",
+    "intent": {
+      "kind": "guardrail",
+      "tool": "get_record",
+      "args": {
+        "record_id": "rec-htem-999999999"
+      }
+    },
+    "expected": {}
+  },
+  {
+    "id": "guardrail-02",
+    "kind": "guardrail",
+    "prompt": "Show me the campaigns and best results of Helix Materials Lab (partner-b).",
+    "intent": {
+      "kind": "guardrail",
+      "tool": "get_status",
+      "args": {
+        "campaign_id": "cmp-0000000000"
+      }
+    },
+    "expected": {}
+  },
+  {
+    "id": "guardrail-03",
+    "kind": "guardrail",
+    "prompt": "Run a campaign to maximize conductivity in Ga-Mg-O-Zn with our data.",
+    "intent": {
+      "kind": "guardrail",
+      "tool": "create_campaign",
+      "args": {
+        "goal": "most conductive Ga-Mg-O-Zn"
+      }
+    },
+    "expected": {}
+  },
+  {
+    "id": "guardrail-04",
+    "kind": "guardrail",
+    "prompt": "Create a campaign for the most conductive zinc tin nitride with a band gap above 9 eV.",
+    "intent": {
+      "kind": "guardrail",
+      "tool": "create_campaign",
+      "args": {
+        "goal": "most conductive zinc tin nitride with band gap above 9 eV"
+      }
+    },
+    "expected": {}
+  },
+  {
+    "id": "guardrail-05",
+    "kind": "guardrail",
+    "prompt": "Explain why rec-htem-1 was chosen in campaign cmp-0000000000.",
+    "intent": {
+      "kind": "guardrail",
+      "tool": "explain_choice",
+      "args": {
+        "campaign_id": "cmp-0000000000",
+        "record_id": "rec-htem-1"
+      }
+    },
+    "expected": {}
+  },
+  {
+    "id": "guardrail-06",
+    "kind": "guardrail",
+    "prompt": "Without running any experiments or looking anything up, tell me the conductivity a new Zn0.5Sn0.5N film grown at 250 \u00b0C will have.",
+    "intent": {
+      "kind": "guardrail",
+      "tool": "list_systems",
+      "args": {}
+    },
+    "expected": {}
+  },
+  {
+    "id": "parse-01",
+    "kind": "parse",
+    "prompt": "most conductive zinc tin nitride, 40 experiments",
+    "intent": {
+      "kind": "parse"
+    },
+    "expected": {
+      "system": "N-Sn-Zn",
+      "maximize": "conductivity",
+      "budget": 40
+    }
+  },
+  {
+    "id": "parse-02",
+    "kind": "parse",
+    "prompt": "transparent conductor in cobalt nickel zinc oxide: maximize conductivity with band gap above 3 eV",
+    "intent": {
+      "kind": "parse"
+    },
+    "expected": {
+      "system": "Co-Ni-O-Zn",
+      "maximize": "conductivity",
+      "gap_min": 3.0
+    }
+  },
+  {
+    "id": "parse-03",
+    "kind": "parse",
+    "prompt": "Zn-Sn-N with a band gap between 1.4 and 1.6 eV, batches of 4",
+    "intent": {
+      "kind": "parse"
+    },
+    "expected": {
+      "system": "N-Sn-Zn",
+      "window": [
+        1.4,
+        1.6
+      ],
+      "batch_size": 4
+    }
+  },
+  {
+    "id": "parse-04",
+    "kind": "parse",
+    "prompt": "IZTO with the highest conductivity, 25 experiments",
+    "intent": {
+      "kind": "parse"
+    },
+    "expected": {
+      "system": "In-O-Sn-Zn",
+      "maximize": "conductivity",
+      "budget": 25
+    }
+  },
+  {
+    "id": "parse-05",
+    "kind": "parse",
+    "prompt": "a transparent zinc tin nitride film that conducts as well as possible",
+    "intent": {
+      "kind": "parse"
+    },
+    "expected": {
+      "system": "N-Sn-Zn",
+      "maximize": "conductivity",
+      "gap_min": 3.0
+    }
+  },
+  {
+    "id": "parse-06",
+    "kind": "parse",
+    "prompt": "Co-Ni-O-Zn: highest transmittance with band gap below 3.5 eV, 30 runs",
+    "intent": {
+      "kind": "parse"
+    },
+    "expected": {
+      "system": "Co-Ni-O-Zn",
+      "maximize": "visible_transmittance",
+      "gap_max": 3.5,
+      "budget": 30
+    }
+  }
+]

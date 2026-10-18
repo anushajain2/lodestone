@@ -1,0 +1,4 @@
+# Atlas National Laboratory - Dielectric & Optical Characterisation
+# report_day;10,0
+sample_ref;formula;eps_rel;Eg_meV;method;remark
+REQ-evalat014;CaBr2;7,680;4,450;broadband dielectric spectroscopy + ellipsometry;

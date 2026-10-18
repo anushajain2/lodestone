@@ -1,0 +1,66 @@
+{
+  "seeds": 5,
+  "rates": {
+    "failure": 0.3,
+    "late": 0.4,
+    "bad_data": 0.15
+  },
+  "completed": 5,
+  "rows": [
+    {
+      "seed": 0,
+      "completed": true,
+      "error": null,
+      "experiments": 40,
+      "returned": 20,
+      "failed": 10,
+      "rejected": 10,
+      "pending_at_end": 0,
+      "hits": 1
+    },
+    {
+      "seed": 1,
+      "completed": true,
+      "error": null,
+      "experiments": 40,
+      "returned": 23,
+      "failed": 10,
+      "rejected": 7,
+      "pending_at_end": 0,
+      "hits": 0
+    },
+    {
+      "seed": 2,
+      "completed": true,
+      "error": null,
+      "experiments": 40,
+      "returned": 20,
+      "failed": 13,
+      "rejected": 7,
+      "pending_at_end": 0,
+      "hits": 1
+    },
+    {
+      "seed": 3,
+      "completed": true,
+      "error": null,
+      "experiments": 40,
+      "returned": 23,
+      "failed": 10,
+      "rejected": 7,
+      "pending_at_end": 0,
+      "hits": 2
+    },
+    {
+      "seed": 4,
+      "completed": true,
+      "error": null,
+      "experiments": 40,
+      "returned": 16,
+      "failed": 14,
+      "rejected": 10,
+      "pending_at_end": 0,
+      "hits": 1
+    }
+  ]
+}

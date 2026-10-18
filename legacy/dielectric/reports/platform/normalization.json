@@ -1,0 +1,792 @@
+{
+  "summary": {
+    "files": 72,
+    "correct": 72,
+    "rate": 1.0,
+    "by_lab": {
+      "helios": {
+        "files": 24,
+        "correct": 24
+      },
+      "kestrel": {
+        "files": 24,
+        "correct": 24
+      },
+      "atlas": {
+        "files": 24,
+        "correct": 24
+      }
+    },
+    "by_expectation": {
+      "accept": {
+        "files": 27,
+        "correct": 27
+      },
+      "failed_result": {
+        "files": 9,
+        "correct": 9
+      },
+      "reject": {
+        "files": 36,
+        "correct": 36
+      }
+    },
+    "mistakes": [],
+    "sample_rejections": [
+      {
+        "file": "helios_REQ-evalhe012.csv",
+        "reason": "failed the result contract: relative permittivity -8.98 is outside 1\u20132000"
+      },
+      {
+        "file": "helios_REQ-evalhe013.csv",
+        "reason": "failed the result contract: relative permittivity -3.14 is outside 1\u20132000"
+      },
+      {
+        "file": "helios_REQ-evalhe014.csv",
+        "reason": "failed the result contract: relative permittivity -2.08 is outside 1\u20132000"
+      },
+      {
+        "file": "helios_REQ-evalhe015.csv",
+        "reason": "missing value for Eg (eV)"
+      },
+      {
+        "file": "helios_REQ-evalhe016.csv",
+        "reason": "missing value for Eg (eV)"
+      },
+      {
+        "file": "helios_REQ-evalhe017.csv",
+        "reason": "missing value for Eg (eV)"
+      },
+      {
+        "file": "helios_REQ-evalhe018.csv",
+        "reason": "sample reference 'REQ-evalhe0xx' does not match request 'REQ-evalhe018'"
+      },
+      {
+        "file": "helios_REQ-evalhe019.csv",
+        "reason": "sample reference 'REQ-evalhe0xx' does not match request 'REQ-evalhe019'"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "file": "helios_REQ-evalhe000.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe001.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k from capacitance density 703.32 nF/cm\u00b2 and thickness 9.53 nm"
+    },
+    {
+      "file": "helios_REQ-evalhe002.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k from capacitance density 1038.08 nF/cm\u00b2 and thickness 9.57 nm"
+    },
+    {
+      "file": "helios_REQ-evalhe003.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe004.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe005.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k from capacitance density 23477.2 nF/cm\u00b2 and thickness 9.78 nm"
+    },
+    {
+      "file": "helios_REQ-evalhe006.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe007.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe008.csv",
+      "lab_id": "helios",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe009.csv",
+      "lab_id": "helios",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe010.csv",
+      "lab_id": "helios",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe011.csv",
+      "lab_id": "helios",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe012.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "negative_k",
+      "got": "reject",
+      "correct": true,
+      "reason": "failed the result contract: relative permittivity -8.98 is outside 1\u20132000",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe013.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "negative_k",
+      "got": "reject",
+      "correct": true,
+      "reason": "failed the result contract: relative permittivity -3.14 is outside 1\u20132000",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe014.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "negative_k",
+      "got": "reject",
+      "correct": true,
+      "reason": "failed the result contract: relative permittivity -2.08 is outside 1\u20132000",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe015.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "missing_gap",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing value for Eg (eV)",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe016.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "missing_gap",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing value for Eg (eV)",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe017.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "missing_gap",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing value for Eg (eV)",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe018.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalhe0xx' does not match request 'REQ-evalhe018'",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe019.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalhe0xx' does not match request 'REQ-evalhe019'",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe020.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalhe0xx' does not match request 'REQ-evalhe020'",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe021.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "unit_mixup",
+      "got": "reject",
+      "correct": true,
+      "reason": "failed the result contract: band gap 685 eV is outside 0\u201315 eV",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe022.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "unit_mixup",
+      "got": "reject",
+      "correct": true,
+      "reason": "failed the result contract: band gap 282 eV is outside 0\u201315 eV",
+      "conversions": ""
+    },
+    {
+      "file": "helios_REQ-evalhe023.csv",
+      "lab_id": "helios",
+      "expect": "reject",
+      "bad_kind": "unit_mixup",
+      "got": "reject",
+      "correct": true,
+      "reason": "failed the result contract: band gap 611 eV is outside 0\u201315 eV",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke000.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 13.5814 pF, 533.9 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 1441.7 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke001.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 50.691 pF, 496.6 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 551 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke002.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 7.2456 pF, 523.9 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 239.4 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke003.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 34.1353 pF, 469.6 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 953.7 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke004.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 24.2512 pF, 509.8 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 632.6 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke005.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 21.0171 pF, 539.6 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 712.6 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke006.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 24.767 pF, 530.5 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 1239.8 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke007.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 15.987 pF, 469 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 645.8 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke008.json",
+      "lab_id": "kestrel",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "k = C\u00b7d/(\u03b50\u00b7A) from 13.4221 pF, 451.8 \u00b5m, 132.73 mm\u00b2; Eg = hc/\u03bb from 314.7 nm"
+    },
+    {
+      "file": "kestrel_REQ-evalke009.json",
+      "lab_id": "kestrel",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke010.json",
+      "lab_id": "kestrel",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke011.json",
+      "lab_id": "kestrel",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke012.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "zero_thickness",
+      "got": "reject",
+      "correct": true,
+      "reason": "pellet geometry must be positive (area 132.73 mm\u00b2, thickness 0.0 \u00b5m)",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke013.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "zero_thickness",
+      "got": "reject",
+      "correct": true,
+      "reason": "pellet geometry must be positive (area 132.73 mm\u00b2, thickness 0.0 \u00b5m)",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke014.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "zero_thickness",
+      "got": "reject",
+      "correct": true,
+      "reason": "pellet geometry must be positive (area 132.73 mm\u00b2, thickness 0.0 \u00b5m)",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke015.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "missing_edge",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing absorption_edge_nm",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke016.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "missing_edge",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing absorption_edge_nm",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke017.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "missing_edge",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing absorption_edge_nm",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke018.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalke0xx' does not match request 'REQ-evalke018'",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke019.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalke0xx' does not match request 'REQ-evalke019'",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke020.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalke0xx' does not match request 'REQ-evalke020'",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke021.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "edge_in_ev",
+      "got": "reject",
+      "correct": true,
+      "reason": "absorption edge 2.92 nm is outside the UV-vis-NIR range (150\u20132500 nm); likely wrong units",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke022.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "edge_in_ev",
+      "got": "reject",
+      "correct": true,
+      "reason": "absorption edge 2.9 nm is outside the UV-vis-NIR range (150\u20132500 nm); likely wrong units",
+      "conversions": ""
+    },
+    {
+      "file": "kestrel_REQ-evalke023.json",
+      "lab_id": "kestrel",
+      "expect": "reject",
+      "bad_kind": "edge_in_ev",
+      "got": "reject",
+      "correct": true,
+      "reason": "absorption edge 2.02 nm is outside the UV-vis-NIR range (150\u20132500 nm); likely wrong units",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat000.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 610 meV \u2192 0.610 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat001.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 1460 meV \u2192 1.460 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat002.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 2900 meV \u2192 2.900 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat003.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 1100 meV \u2192 1.100 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat004.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 1450 meV \u2192 1.450 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat005.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 2300 meV \u2192 2.300 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat006.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 960 meV \u2192 0.960 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat007.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 2040 meV \u2192 2.040 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat008.txt",
+      "lab_id": "atlas",
+      "expect": "accept",
+      "bad_kind": null,
+      "got": "accept",
+      "correct": true,
+      "reason": null,
+      "conversions": "decimal commas; Eg 1380 meV \u2192 1.380 eV"
+    },
+    {
+      "file": "atlas_REQ-evalat009.txt",
+      "lab_id": "atlas",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat010.txt",
+      "lab_id": "atlas",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat011.txt",
+      "lab_id": "atlas",
+      "expect": "failed_result",
+      "bad_kind": null,
+      "got": "failed_result",
+      "correct": true,
+      "reason": null,
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat012.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "gap_in_ev_not_mev",
+      "got": "reject",
+      "correct": true,
+      "reason": "Eg_meV value '1,380' looks like eV, not meV; refusing to guess the unit",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat013.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "gap_in_ev_not_mev",
+      "got": "reject",
+      "correct": true,
+      "reason": "Eg_meV value '1,430' looks like eV, not meV; refusing to guess the unit",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat014.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "gap_in_ev_not_mev",
+      "got": "reject",
+      "correct": true,
+      "reason": "Eg_meV value '4,450' looks like eV, not meV; refusing to guess the unit",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat015.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "missing_column",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing column 'eps_rel' in report header",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat016.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "missing_column",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing column 'eps_rel' in report header",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat017.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "missing_column",
+      "got": "reject",
+      "correct": true,
+      "reason": "missing column 'eps_rel' in report header",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat018.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalat0xx' does not match request 'REQ-evalat018'",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat019.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalat0xx' does not match request 'REQ-evalat019'",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat020.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "wrong_sample",
+      "got": "reject",
+      "correct": true,
+      "reason": "sample reference 'REQ-evalat0xx' does not match request 'REQ-evalat020'",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat021.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "non_numeric",
+      "got": "reject",
+      "correct": true,
+      "reason": "non-numeric value 'n/a (drift)' for eps_rel",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat022.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "non_numeric",
+      "got": "reject",
+      "correct": true,
+      "reason": "non-numeric value 'n/a (drift)' for eps_rel",
+      "conversions": ""
+    },
+    {
+      "file": "atlas_REQ-evalat023.txt",
+      "lab_id": "atlas",
+      "expect": "reject",
+      "bad_kind": "non_numeric",
+      "got": "reject",
+      "correct": true,
+      "reason": "non-numeric value 'n/a (drift)' for eps_rel",
+      "conversions": ""
+    }
+  ]
+}
