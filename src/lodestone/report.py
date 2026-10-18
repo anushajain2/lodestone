@@ -77,6 +77,27 @@ def _calibration_section(cal: dict, eff: dict | None, bench: dict | None) -> lis
     return out
 
 
+def _library_bullet(R: Path) -> list[str]:
+    lib, bench = _load(R / "benchmark" / "library.json"), _load(R / "benchmark" / "summary.json")
+    if not lib or not lib["campaigns"]:
+        return []
+    C = lib["campaigns"]
+    ratio = [c["methods"]["bayes-gp"]["top_found_mean"] / c["methods"]["random"]["top_found_mean"] for c in C.values()]
+    first = [v["experiments_to_first_top5_median"] for c in C.values() for v in c["methods"].values()]
+    return [f"- **Counted in deposition runs, the savings shrink.** When one experiment is a whole library ({lib['config']['budget_runs']}-run budget), every method finds its first "
+            f"top-5% sample in a median of {min(first):.0f}–{max(first):.0f} runs, and the Bayesian loop finds {min(ratio):.1f}–{max(ratio):.1f}× as many top-5% samples as random"
+            + (f" ({min(sens):.1f}–{max(sens):.1f}× across all the run budgets and seed-run counts tried)" if (sens := _sensitivity_ratios(R)) else "")
+            + ", down from the spot-level gain. IZTO has too few libraries to test (see 'One experiment = one deposition run')."]
+
+
+def _sensitivity_ratios(R: Path) -> list[float]:
+    out = []
+    for p in sorted((R / "benchmark" / "library_sensitivity").glob("*.json")) + [R / "benchmark" / "library.json"]:
+        for c in (_load(p) or {}).get("campaigns", {}).values():
+            out.append(c["methods"]["bayes-gp"]["top_found_mean"] / c["methods"]["random"]["top_found_mean"])
+    return out
+
+
 def _calibration_bullet(R: Path) -> list[str]:
     import numpy as np
 
@@ -93,6 +114,121 @@ def _calibration_bullet(R: Path) -> list[str]:
     return [f"- **The GP's error bars are too narrow, and fixing them made the loop worse.** Its 68% intervals contain the real value only "
             f"{min(d68):.0%}–{max(d68):.0%} of the time on held-out samples. Widening them to near-nominal coverage made the Bayesian loop find fewer top-5% samples "
             f"(clearly fewer on {len(worse)} of {len(eff['campaigns'])} campaigns, see 'Is the model's uncertainty honest?'), so the optimizer keeps the overconfident default; only the ± shown to people is widened to the held-out calibration."]
+
+
+def _seed_hit_chance(n_libs: int, n_top: int, k: int) -> float:
+    """Chance that k random libraries out of n_libs include one of the n_top libraries with a top sample."""
+    from math import comb
+
+    return 1 - comb(n_libs - n_top, k) / comb(n_libs, k)
+
+
+def _library_section(lib: dict, bench: dict | None) -> list[str]:
+    """The benchmark again with one experiment = one library (a whole deposition run)."""
+    cfg = lib["config"]
+    out = ["### One experiment = one deposition run (library level)", "",
+           "The spot-level benchmark above treats each HTEM sample as its own experiment. In the lab one deposition run makes a whole library: "
+           "~44 spots on a composition gradient at one temperature and pressure. So the lab's real decision is which run to do next. "
+           f"Here one experiment is one library: choosing it reveals every spot on it. Budget **{cfg['budget_runs']} runs**, "
+           f"{cfg['initial_runs']} shared random seed runs, then {cfg['batch_runs']} run per round, {cfg['failure_rate']:.0%} simulated mishaps per spot "
+           f"on top of the real missing measurements, {cfg['seeds']} seeds. The Bayesian loop ranks each untried library by the joint expected improvement "
+           "of all its spots (qLogNEI on the library as one batch; `loop.select.select_bayes_libraries` says why). The grid sweep plans runs over each library's "
+           "mean composition and temperature. A run that never finds a top-5% sample counts as budget + 1.", ""]
+    for key, s in lib["skipped"].items():
+        out += [f"**Skipped: {s['name']}.** It has {s['reason']} ({s['samples']} samples). The test would measure how fast a method exhausts the system, not how well it chooses.", ""]
+    out += ["| Campaign | Method | Runs to the first top-5% sample (runs that got there) | Runs to 5 of the top 5% | Top-5% samples found | vs random, paired (± s.e.m.) | Libraries with a top-5% sample run | Spots measured |",
+            "|---|---|---|---|---|---|---|---|"]
+    for key, c in lib["campaigns"].items():
+        for i, (m, v) in enumerate(c["methods"].items()):
+            name = f"{c['spec']['name']} ({c['libraries']} libraries, {c['pool']} spots; top 5% = {c['top_size']} spots in {c['libraries_with_top']} libraries)" if i == 0 else ""
+            diff = "—" if m == "random" else f"{v['top_found_minus_random_mean']:+.1f} ± {v['top_found_minus_random_sem']:.1f}"
+            out.append(f"| {name} | {LABELS.get(m, m)} | **{_fmt(v['experiments_to_first_top5_median'])}** ({v['found_first_top5']}/{v['runs']}) | "
+                       f"{_fmt(v['experiments_to_top_median'])} ({v['found_top_in_budget']}/{v['runs']}) | {v['top_found_mean']:.1f} of {c['top_size']} | {diff} | "
+                       f"{v['top_libraries_found_mean']:.1f} of {c['libraries_with_top']} | {v['spots_measured_mean']:.0f} |")
+    out.append("")
+    conc = [f"{c['spec']['name']}: {c['top_per_library'][0]} of its {c['top_size']} top-5% spots are on one library, and "
+            f"{c['libraries_with_top']} of {c['libraries']} libraries have any" for c in lib["campaigns"].values()]
+    out += ["**Where the top samples sit.** " + "; ".join(conc) + ". At library level, finding one top sample means finding one of a handful of runs, "
+            "and the count of top-5% samples found swings on whether the richest library is run.", ""]
+    C = lib["campaigns"]
+    first = [v["experiments_to_first_top5_median"] for c in C.values() for v in c["methods"].values()]
+    luck = [_seed_hit_chance(c["libraries"], c["libraries_with_top"], cfg["initial_runs"]) for c in C.values()]
+    ratio = [c["methods"]["bayes-gp"]["top_found_mean"] / c["methods"]["random"]["top_found_mean"] for c in C.values()]
+    gain = [c["methods"]["bayes-gp"]["top_found_minus_random_mean"] for c in C.values()]
+    spot = [bench["campaigns"][k]["methods"]["bayes-gp"]["top_found_mean"] / bench["campaigns"][k]["methods"]["random"]["top_found_mean"]
+            for k in C if bench and k in bench["campaigns"]]
+    frac = [v["spots_measured_mean"] / c["pool"] for c in C.values() for v in c["methods"].values()]
+    g = {k: c["methods"]["grid"] for k, c in C.items() if "grid" in c["methods"]}
+    grid_better = [C[k]["spec"]["name"].lower() for k, v in g.items() if v["top_found_minus_random_mean"] - 2 * v["top_found_minus_random_sem"] > 0]
+    grid_text = (f"Grid search beats random clearly (by more than two standard errors) only on {', '.join(grid_better)}, and is within noise of it on the other {len(g) - len(grid_better)}. "
+                 if grid_better else "Grid search is within noise of random on every campaign. ")
+    out += [f"**The headline metric stops separating the methods.** Every method needs a median of {min(first):.0f}–{max(first):.0f} runs to its first top-5% sample. "
+            f"The {cfg['initial_runs']} random seed runs alone include a library with a top-5% sample {min(luck):.0%}–{max(luck):.0%} of the time "
+            "(exact, from the library counts above), so luck decides it, as it did for the first-hit metric at spot level.", "",
+            f"**What survives is smaller.** The Bayesian loop still finds more top-5% samples than random in the same {cfg['budget_runs']} runs: "
+            f"{min(ratio):.1f}–{max(ratio):.1f}× as many ({min(gain):+.0f} to {max(gain):+.0f} samples, paired)"
+            + (f", against {min(spot):.1f}–{max(spot):.1f}× at spot level on the same campaigns" if spot else "") + ". "
+            + grid_text +
+            f"After {cfg['budget_runs']} runs every method has measured {min(frac):.0%}–{max(frac):.0%} of the system's spots, so the room to save runs is small: "
+            "these systems have about 20 libraries each. The spot-level numbers above overstate the savings a lab choosing runs would see.", ""]
+    return out
+
+
+SENS_LABEL = {"budget-5": "5 runs, 2 seed runs", "main": "10 runs, 2 seed runs (above)", "budget-15": "15 runs, 2 seed runs", "seed-runs-1": "10 runs, 1 seed run"}
+
+
+def _library_sensitivity(R: Path, lib: dict) -> list[str]:
+    """The library-level comparison at other run budgets and seed-run counts."""
+    import numpy as np
+
+    d = R / "benchmark" / "library_sensitivity"
+    runs = {"main": lib, **{k: v for k in ("budget-5", "budget-15", "seed-runs-1") if (v := _load(d / f"{k}.json"))}}
+    runs = {k: runs[k] for k in SENS_LABEL if k in runs}
+    if len(runs) < 2:
+        return []
+    out = ["#### Does this depend on the budget or the seed runs?", "",
+           "The same comparison at other run budgets and with one random seed run instead of two (same seeds, same 20-library threshold, so IZTO is still skipped). "
+           "Each cell is random / grid / Bayesian.", "",
+           "| Design | Campaign | Runs to the first top-5% sample | Top-5% samples found | Bayesian ÷ random | Bayesian − random, paired (± s.e.m.) | Spots measured |",
+           "|---|---|---|---|---|---|---|"]
+    ratios: dict[str, list[float]] = {}
+    clear: dict[str, int] = {}
+    first_sep: dict[str, list[float]] = {}
+    for name, r in runs.items():
+        for i, (key, c) in enumerate(r["campaigns"].items()):
+            m = c["methods"]
+            b, rnd = m["bayes-gp"], m["random"]
+            ratio = b["top_found_mean"] / rnd["top_found_mean"] if rnd["top_found_mean"] else float("nan")
+            ratios.setdefault(name, []).append(ratio)
+            clear[name] = clear.get(name, 0) + int(b["top_found_minus_random_mean"] - 2 * b["top_found_minus_random_sem"] > 0)
+            first_sep.setdefault(name, []).append(rnd["experiments_to_first_top5_median"] - b["experiments_to_first_top5_median"])
+            frac = np.mean([v["spots_measured_mean"] for v in m.values()]) / c["pool"]
+            out.append(f"| {SENS_LABEL[name] if i == 0 else ''} | {c['spec']['name']} | "
+                       + " / ".join(_fmt(m[x]["experiments_to_first_top5_median"]) for x in ("random", "grid", "bayes-gp")) + " | "
+                       + " / ".join(f"{m[x]['top_found_mean']:.1f}" for x in ("random", "grid", "bayes-gp")) + f" of {c['top_size']} | "
+                       f"{ratio:.1f}× | {b['top_found_minus_random_mean']:+.1f} ± {b['top_found_minus_random_sem']:.1f} | {frac:.0%} |")
+    out.append("")
+    n_c = len(lib["campaigns"])
+    def rng_txt(v, f="{:.1f}", unit="×", sep="–"):
+        lo, hi = f.format(min(v)), f.format(max(v))
+        return (lo if lo == hi else f"{lo}{sep}{hi}") + unit
+    short = {k: SENS_LABEL[k].replace(" (above)", "") for k in runs}
+    gains = [c["methods"]["bayes-gp"]["top_found_minus_random_mean"] for r in runs.values() for c in r["campaigns"].values()]
+    grid_wins = [f"the {c['spec']['name'][0].lower() + c['spec']['name'][1:]} campaign at {short[k]}" for k, r in runs.items() for c in r["campaigns"].values()
+                 if c["methods"]["grid"]["top_found_mean"] > c["methods"]["bayes-gp"]["top_found_mean"]]
+    budgets = [k for k in ("budget-5", "main", "budget-15") if k in ratios]
+    falls = len(budgets) > 1 and all(max(ratios[a]) >= max(ratios[b]) for a, b in zip(budgets, budgets[1:]))
+    out += ["**Reading.** Bayesian ÷ random: " + "; ".join(f"{short[k]}: {rng_txt(v)}" for k, v in ratios.items()) + ". "
+            + ("The ratio falls as the budget grows, because by 15 runs random has also run most of each system's libraries; "
+               if falls else "The ratio does not fall steadily with the budget; ")
+            + f"the paired gain in samples stays between {min(gains):+.0f} and {max(gains):+.0f}. "
+            "The Bayesian loop beats random by more than two standard errors on " + ", ".join(f"{clear[k]} of {n_c} campaigns at {short[k]}" for k in ratios) + ". "
+            + (f"Grid search finds more top-5% samples than the Bayesian loop on {', '.join(grid_wins)}. " if grid_wins else "")
+            + "Median runs saved to the first top-5% sample (random − Bayesian) are "
+            + rng_txt([x for v in first_sep.values() for x in v], "{:+.0f}", " runs", " to ").replace("+0 ", "0 ") + " in every design, so that metric never separates the methods. "
+            f"So the {rng_txt(ratios['main'])} above is specific to the 10-run budget. Across these designs the Bayesian loop finds "
+            f"{rng_txt([x for v in ratios.values() for x in v])} as many top-5% samples as random" + (", more when the lab can afford fewer runs." if falls else "."), ""]
+    return out
 
 
 def write_report() -> Path:
@@ -156,6 +292,10 @@ def write_report() -> Path:
         for b, ms in rob["batch_size"].items():
             out.append(f"| {b} | " + " | ".join(f"{_fmt(v['experiments_to_top_median'])} exp · {v['top_found_mean']:.1f} found" for v in ms.values()) + " |")
         out.append("")
+    lib = _load(R / "benchmark" / "library.json")
+    if lib:
+        out += _library_section(lib, bench)
+        out += _library_sensitivity(R, lib)
 
     ob = _load(R / "onboarding" / "onboarding.json")
     prov = _load(R / "onboarding" / "provenance.json")
@@ -206,6 +346,7 @@ def write_report() -> Path:
     out += ["## What didn't work (or isn't shown)", "",
             "- **'Experiments to the first top-5% sample' doesn't separate methods** on pools of ~1,000 with 10 random seed experiments: luck dominates. The stricter metrics (5 of the top 5%, first top-1%, top-5% samples found) do.",
             "- **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign the Bayesian loop finds four times as many top-5% samples as random, yet the *median best value* it reaches (3.2 S/cm) is no higher than random's (4.0 S/cm), and no method reliably finds the extreme outlier (an 85 S/cm Co-Ni-Zn-O film). The first top-1% sample arrives no sooner than with random search on the constrained campaign.",
+            *_library_bullet(R),
             "- **Grid search is a strong baseline for the very first hits** when a system has only one or two composition dimensions: a systematic sweep covers the space quickly. The optimizer pulls ahead once it has data to exploit.",
             "- **The random-forest surrogate is uneven**: excellent on conductivity, weak on constraints and windows, where its uncertainty estimates (tree spread) are poor.",
             "- **Replay can only choose among samples that were made.** A real campaign would propose new recipes; the 'suggest recipes' feature does that, but its predictions are unverified by construction.",

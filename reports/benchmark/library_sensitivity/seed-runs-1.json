@@ -1,0 +1,429 @@
+{
+  "config": {
+    "seeds": 20,
+    "budget_runs": 10,
+    "initial_runs": 1,
+    "batch_runs": 1,
+    "failure_rate": 0.05,
+    "min_libraries": 20,
+    "methods": [
+      "random",
+      "grid",
+      "bayes"
+    ]
+  },
+  "campaigns": {
+    "zsn-conductivity": {
+      "top_size": 50,
+      "top1_size": 10,
+      "headline_k": 5,
+      "pool": 999,
+      "best_possible": 3.9719249491841913,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 4.5,
+          "found_top_in_budget": 18,
+          "experiments_to_first_top5_median": 4.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 4.5,
+          "found_first_top1": 17,
+          "top_found_mean": 20.95,
+          "best_mean": 3.9366058729866893,
+          "failures_mean": 55.75,
+          "spots_measured_mean": 431.75,
+          "top_libraries_found_mean": 2.7,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0,
+          "top_found_per_run_mean": [
+            1.75,
+            2.95,
+            4.15,
+            8.7,
+            10.8,
+            13.9,
+            14.8,
+            16.0,
+            17.8,
+            20.95
+          ]
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 2.5,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 2.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 3.0,
+          "found_first_top1": 20,
+          "top_found_mean": 30.75,
+          "best_mean": 3.97186463691099,
+          "failures_mean": 52.1,
+          "spots_measured_mean": 428.0,
+          "top_libraries_found_mean": 3.05,
+          "top_found_minus_random_mean": 9.8,
+          "top_found_minus_random_sem": 3.7272820632395613,
+          "top_found_per_run_mean": [
+            1.75,
+            4.75,
+            10.05,
+            11.2,
+            15.65,
+            16.65,
+            18.9,
+            21.4,
+            26.0,
+            30.75
+          ]
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 2.0,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 2.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 5.0,
+          "found_first_top1": 19,
+          "top_found_mean": 38.15,
+          "best_mean": 3.9607474483421514,
+          "failures_mean": 54.75,
+          "spots_measured_mean": 430.9,
+          "top_libraries_found_mean": 3.25,
+          "top_found_minus_random_mean": 17.2,
+          "top_found_minus_random_sem": 3.366710091781777,
+          "top_found_per_run_mean": [
+            1.75,
+            8.25,
+            11.55,
+            17.25,
+            24.25,
+            26.5,
+            30.1,
+            31.9,
+            34.05,
+            38.15
+          ]
+        }
+      },
+      "spec": {
+        "name": "Most conductive zinc tin nitride",
+        "system": "N-Sn-Zn",
+        "plain_text": null,
+        "objectives": [
+          {
+            "property": "conductivity",
+            "direction": "max"
+          }
+        ],
+        "constraints": [],
+        "window": null,
+        "experiment_unit": "library",
+        "budget": 10,
+        "batch_size": 1,
+        "initial": 1,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "N-Sn-Zn: maximize conductivity; budget 10, 1/round, bayes",
+      "libraries": 23,
+      "spots_per_library": [
+        33,
+        44
+      ],
+      "libraries_with_top": 6,
+      "top_per_library": [
+        24,
+        10,
+        7,
+        7,
+        1,
+        1
+      ]
+    },
+    "cnzo-transparent-conductor": {
+      "top_size": 44,
+      "top1_size": 9,
+      "headline_k": 5,
+      "pool": 880,
+      "best_possible": 1.9320676922007216,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 4.0,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 1.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 2.0,
+          "found_first_top1": 20,
+          "top_found_mean": 18.35,
+          "best_mean": 1.6001766871617948,
+          "failures_mean": 23.45,
+          "spots_measured_mean": 440.0,
+          "top_libraries_found_mean": 4.95,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0,
+          "top_found_per_run_mean": [
+            0.95,
+            7.1,
+            7.8,
+            8.95,
+            9.35,
+            10.35,
+            10.95,
+            14.15,
+            16.45,
+            18.35
+          ]
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 6.5,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 1.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 2.0,
+          "found_first_top1": 20,
+          "top_found_mean": 23.05,
+          "best_mean": 1.8785543969163456,
+          "failures_mean": 22.45,
+          "spots_measured_mean": 440.0,
+          "top_libraries_found_mean": 5.6,
+          "top_found_minus_random_mean": 4.7,
+          "top_found_minus_random_sem": 4.2859009984390735,
+          "top_found_per_run_mean": [
+            0.95,
+            1.7,
+            3.6,
+            6.6,
+            8.6,
+            9.6,
+            14.2,
+            17.4,
+            19.65,
+            23.05
+          ]
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 4.5,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 1.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 2.0,
+          "found_first_top1": 20,
+          "top_found_mean": 27.75,
+          "best_mean": 1.577961312863738,
+          "failures_mean": 23.85,
+          "spots_measured_mean": 440.0,
+          "top_libraries_found_mean": 5.2,
+          "top_found_minus_random_mean": 9.4,
+          "top_found_minus_random_sem": 3.633470140672398,
+          "top_found_per_run_mean": [
+            0.95,
+            2.35,
+            4.6,
+            8.8,
+            9.95,
+            10.75,
+            14.7,
+            17.6,
+            23.3,
+            27.75
+          ]
+        }
+      },
+      "spec": {
+        "name": "Transparent p-type conductor (gap \u2265 3 eV)",
+        "system": "Co-Ni-O-Zn",
+        "plain_text": null,
+        "objectives": [
+          {
+            "property": "conductivity",
+            "direction": "max"
+          }
+        ],
+        "constraints": [
+          {
+            "property": "band_gap",
+            "op": ">=",
+            "value": 3.0
+          }
+        ],
+        "window": null,
+        "experiment_unit": "library",
+        "budget": 10,
+        "batch_size": 1,
+        "initial": 1,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "Co-Ni-O-Zn: maximize conductivity with direct band gap >= 3 eV; budget 10, 1/round, bayes",
+      "libraries": 20,
+      "spots_per_library": [
+        44,
+        44
+      ],
+      "libraries_with_top": 10,
+      "top_per_library": [
+        26,
+        6,
+        3,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "zsn-gap-window": {
+      "top_size": 50,
+      "top1_size": 17,
+      "headline_k": 5,
+      "pool": 999,
+      "best_possible": -0.0,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 4.5,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 2.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 4.0,
+          "found_first_top1": 19,
+          "top_found_mean": 20.4,
+          "best_mean": -0.005699999999999994,
+          "failures_mean": 23.95,
+          "spots_measured_mean": 431.75,
+          "top_libraries_found_mean": 3.35,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0,
+          "top_found_per_run_mean": [
+            2.1,
+            3.3,
+            4.45,
+            7.1,
+            8.2,
+            11.45,
+            13.65,
+            16.4,
+            19.45,
+            20.4
+          ]
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 3.5,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 2.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 2.5,
+          "found_first_top1": 20,
+          "top_found_mean": 22.5,
+          "best_mean": 0.0,
+          "failures_mean": 24.05,
+          "spots_measured_mean": 428.0,
+          "top_libraries_found_mean": 4.15,
+          "top_found_minus_random_mean": 2.1,
+          "top_found_minus_random_sem": 2.2859985725464074,
+          "top_found_per_run_mean": [
+            2.1,
+            4.2,
+            6.65,
+            8.9,
+            11.25,
+            13.6,
+            14.55,
+            17.1,
+            20.35,
+            22.5
+          ]
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 3.0,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 2.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 2.0,
+          "found_first_top1": 20,
+          "top_found_mean": 33.0,
+          "best_mean": 0.0,
+          "failures_mean": 23.55,
+          "spots_measured_mean": 428.65,
+          "top_libraries_found_mean": 6.05,
+          "top_found_minus_random_mean": 12.6,
+          "top_found_minus_random_sem": 1.5667599822899687,
+          "top_found_per_run_mean": [
+            2.1,
+            5.2,
+            9.85,
+            15.0,
+            20.45,
+            24.45,
+            28.0,
+            29.8,
+            31.25,
+            33.0
+          ]
+        }
+      },
+      "spec": {
+        "name": "Band gap in the 1.4\u20131.6 eV solar window",
+        "system": "N-Sn-Zn",
+        "plain_text": null,
+        "objectives": [],
+        "constraints": [],
+        "window": {
+          "property": "band_gap",
+          "low": 1.4,
+          "high": 1.6
+        },
+        "experiment_unit": "library",
+        "budget": 10,
+        "batch_size": 1,
+        "initial": 1,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "N-Sn-Zn: direct band gap in 1.4\u20131.6 eV; budget 10, 1/round, bayes",
+      "libraries": 23,
+      "spots_per_library": [
+        33,
+        44
+      ],
+      "libraries_with_top": 8,
+      "top_per_library": [
+        13,
+        9,
+        8,
+        6,
+        6,
+        4,
+        3,
+        1
+      ]
+    }
+  },
+  "skipped": {
+    "izto-conductivity": {
+      "libraries": 4,
+      "samples": 176,
+      "name": "Most conductive indium zinc tin oxide",
+      "reason": "only 4 libraries with samples; a 10-run budget needs at least 20"
+    }
+  }
+}

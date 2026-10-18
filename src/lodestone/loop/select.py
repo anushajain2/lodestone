@@ -13,6 +13,10 @@
   sample per cell per pass.
 
 Every strategy starts with the same seeded random batch (``initial``), so comparisons are paired.
+
+Library level (``CampaignSpec.experiment_unit = "library"``): one experiment is one deposition run, and
+the same three strategies pick whole libraries (``select_*_libraries``; the acquisition is explained
+in ``select_bayes_libraries``).
 """
 
 from __future__ import annotations
@@ -57,11 +61,13 @@ def select_random(problem: Problem, unavailable: set[int], q: int, rng: np.rando
     return [Pick(index=int(i), strategy="random") for i in rng.choice(avail, size=min(q, len(avail)), replace=False)]
 
 
-def grid_order(problem: Problem, budget: int, seed: int) -> list[int]:
-    """A hand-planned sweep: regular grid over composition (+ temperature), raster order, random start."""
-    rng = np.random.default_rng(10_000 + seed)
+def _sweep_dims(problem: Problem) -> list[int]:
     dims = [j for j, n in enumerate(problem.feature_names) if n.startswith("x_") or n == "deposition_temp_c"]
-    Z = problem.X[:, dims] if dims else problem.X[:, :1]
+    return dims or [0]
+
+
+def _sweep(Z: np.ndarray, budget: int, rng: np.random.Generator) -> list[int]:
+    """Rows of Z in hand-planned sweep order: regular grid, raster order from a random start, one row per cell per pass."""
     lo, hi = Z.min(0), Z.max(0)
     U = (Z - lo) / np.where(hi > lo, hi - lo, 1.0)
     d = U.shape[1]
@@ -76,7 +82,7 @@ def grid_order(problem: Problem, budget: int, seed: int) -> list[int]:
     start = int(rng.integers(len(raster)))
     raster = raster[start:] + raster[:start]
     order, depth = [], 0
-    while len(order) < problem.n:
+    while len(order) < len(Z):
         added = False
         for c in raster:
             if depth < len(members[c]):
@@ -86,6 +92,12 @@ def grid_order(problem: Problem, budget: int, seed: int) -> list[int]:
             break
         depth += 1
     return order
+
+
+def grid_order(problem: Problem, budget: int, seed: int) -> list[int]:
+    """A hand-planned sweep: regular grid over composition (+ temperature), raster order, random start."""
+    rng = np.random.default_rng(10_000 + seed)
+    return _sweep(problem.X[:, _sweep_dims(problem)], budget, rng)
 
 
 def select_grid(problem: Problem, unavailable: set[int], q: int, order: list[int]) -> list[Pick]:
@@ -226,4 +238,103 @@ def select_bayes(
                 thr = float(transform(c.property, np.array([c.value]))[0])
                 pf *= norm.sf(thr, m, s) if c.op == ">=" else norm.cdf(thr, m, s)
             pk.p_feasible = float(pf)
+    return picks, meta
+
+
+# ------------------------------------------------------------------------------- library level
+#
+# A deposition run makes a whole library (~44 spots on a composition gradient at one temperature and
+# pressure), so a lab's real decision is which run to do next, not which spot. Here one experiment is
+# one library: choosing it reveals every spot on it. Libraries are named by id (``Problem.libraries``).
+
+
+@dataclass
+class LibraryPick:
+    library: str
+    strategy: str
+    acquisition: float | None = None
+    notes: list[str] = field(default_factory=list)
+
+
+def select_random_libraries(problem: Problem, unavailable: set[str], q: int, rng: np.random.Generator) -> list[LibraryPick]:
+    avail = [lib for lib in problem.libraries() if lib not in unavailable]
+    return [LibraryPick(library=avail[i], strategy="random") for i in rng.choice(len(avail), size=min(q, len(avail)), replace=False)]
+
+
+def library_grid_order(problem: Problem, budget: int, seed: int) -> list[str]:
+    """The run-level sweep a person would plan: the same grid as ``grid_order`` (composition + temperature),
+    over each library's mean composition and its deposition temperature, visited in raster order."""
+    rng = np.random.default_rng(15_000 + seed)
+    libs = problem.libraries()
+    names = list(libs)
+    Z = np.stack([problem.X[idx][:, _sweep_dims(problem)].mean(0) for idx in libs.values()])
+    return [names[i] for i in _sweep(Z, budget, rng)]
+
+
+def select_grid_libraries(unavailable: set[str], q: int, order: list[str]) -> list[LibraryPick]:
+    picks = [LibraryPick(library=lib, strategy="grid", notes=["next run in the planned composition/temperature sweep"]) for lib in order if lib not in unavailable]
+    return picks[:q]
+
+
+def select_bayes_libraries(
+    problem: Problem, obs: Observations, unavailable: set[str], pending: list[str], q: int,
+    rng: np.random.Generator, seed: int = 0,
+) -> tuple[list[LibraryPick], dict]:
+    """Rank whole libraries by the batch expected improvement of their spots, taken jointly.
+
+    A library is a q-batch whose members are fixed by the deposition: running it reveals all of its
+    spots at once, and the run is worth as much as the best spot it turns up. The exact value of that
+    batch is ``E[max(0, max_j f(x_j) - f*)]`` over the library's spots ``x_j``, which is what BoTorch's
+    qLogNoisyExpectedImprovement computes when it is given the library's spots as one q-batch (the
+    joint GP posterior, Monte-Carlo, constraints as feasibility weights, the window as minus the
+    distance). So that is the acquisition, with no new approximation. Two alternatives were rejected:
+
+    * the max of each spot's single-point EI ignores that the run reveals all its spots, so it
+      undervalues a library whose spots are each a moderate bet;
+    * the sum of single-point EIs (or a greedy q-batch over any spots, then aggregated) treats 44
+      neighbouring spots on one gradient as 44 independent tickets, so it overvalues big, flat
+      libraries. The joint posterior counts their correlation once.
+
+    It values the best spot only, not how many good spots a run contains; the benchmark reports both
+    "runs to the first top-5% sample" (what this optimizes) and "top-5% samples found".
+
+    Libraries still running (``pending``) and earlier picks in the same batch are set as pending
+    points, so a batch doesn't pay twice for one idea. The per-spot success model used at spot level
+    is not applied here: a library is deposited whole, and conductivity failures already reach the
+    GP as censored low values. Pareto (two-objective) campaigns aren't supported at library level:
+    hypervolume improvement over a 44-point batch is too expensive to compute exactly.
+    """
+    spec = problem.spec
+    if spec.kind == "pareto":
+        raise ValueError("library-level campaigns don't support two objectives")
+    props = spec.properties_needed()
+    data = training_data(obs, props)
+    if any(len(data[p][0]) < 2 for p in props):
+        picks = select_random_libraries(problem, unavailable, q, rng)
+        for p in picks:
+            p.notes.append("not enough measurements yet to fit a model; exploring at random")
+        return picks, {"note": "fallback to random"}
+    libs = problem.libraries()
+    avail = [lib for lib in libs if lib not in unavailable]
+    sur = Surrogate(problem.X, "gp", seed=seed).fit(data)
+    X_base = torch.as_tensor(problem.X[sorted({int(i) for p in props for i in data[p][0]})])
+    sampler = SobolQMCNormalSampler(sample_shape=torch.Size([128]), seed=int(rng.integers(1 << 30)))
+    obj, cons = _gp_objective_and_constraints(problem, props)
+    acqf = qLogNoisyExpectedImprovement(
+        model=sur.model, X_baseline=X_base, objective=obj, constraints=cons or None,
+        prune_baseline=True, sampler=sampler, cache_root=False,
+    )
+    pend = [int(i) for lib in pending for i in libs[lib]]
+    picks: list[LibraryPick] = []
+    for _ in range(min(q, len(avail))):
+        if pend:
+            acqf.set_X_pending(torch.as_tensor(problem.X[pend]))
+        cand = [lib for lib in avail if lib not in {p.library for p in picks}]
+        with torch.no_grad():
+            vals = np.array([float(acqf(torch.as_tensor(problem.X[libs[lib]]).unsqueeze(0))) for lib in cand])
+        b = int(np.argmax(vals))
+        picks.append(LibraryPick(library=cand[b], strategy="bayes", acquisition=float(vals[b]),
+                                 notes=[f"{len(libs[cand[b]])} spots; highest joint expected improvement of {len(cand)} untried runs"]))
+        pend += [int(i) for i in libs[cand[b]]]
+    meta = {"surrogate": "gp", "props": props, "train_sizes": {p: int(len(data[p][0])) for p in props}, "features": problem.feature_names}
     return picks, meta

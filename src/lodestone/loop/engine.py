@@ -3,6 +3,11 @@
 ``simulate`` runs a whole campaign in memory (no store) with any strategy. The benchmark and the
 "compare with baselines" tool both use it, so the numbers a partner sees for their campaign and the
 numbers in the evaluation report come from the same code.
+
+With ``experiment_unit = "library"`` an experiment is one deposition run: choosing a library reveals
+every spot on it, and budget, seed batch and batch size count libraries. Every spot still gets its
+own ``Step`` (its own real measurement or failure), and ``Step.n`` is the run that revealed it, so
+"experiments to a top sample" reads as runs.
 """
 
 from __future__ import annotations
@@ -14,19 +19,23 @@ import numpy as np
 from lodestone.loop.models import Observations
 from lodestone.loop.problem import Problem
 from lodestone.loop.replay import LabReplay, seeded_rng
-from lodestone.loop.select import Pick, grid_order, select_bayes, select_grid, select_random
+from lodestone.loop.select import (
+    LibraryPick, Pick, grid_order, library_grid_order, select_bayes, select_bayes_libraries, select_grid,
+    select_grid_libraries, select_random, select_random_libraries,
+)
 
 MAX_RANDOM_RETRIES = 1
 
 
 @dataclass
 class Step:
-    n: int  # experiment number (1-based, submission order)
+    n: int  # experiment number (1-based, submission order); the run number at library level
     index: int
     round: int
     status: str = "pending"
     kind: str | None = None
     reason: str | None = None
+    library: str | None = None  # library level: the library (run) this spot came from
 
 
 @dataclass
@@ -64,6 +73,8 @@ def simulate(problem: Problem, strategy: str, surrogate: str = "gp", seed: int =
     initial = initial or spec.initial
     failure_rate = spec.failure_rate if failure_rate is None else failure_rate
     delay = spec.delay_rounds if delay is None else delay
+    if spec.experiment_unit == "library":
+        return simulate_libraries(problem, strategy, surrogate, seed, budget, batch, initial, failure_rate, delay)
     replay = LabReplay(problem, failure_rate, seed)
     grid = grid_order(problem, budget, seed) if strategy == "grid" else None
     traj = Trajectory(method_name(strategy, surrogate), seed)
@@ -102,6 +113,65 @@ def simulate(problem: Problem, strategy: str, surrogate: str = "gp", seed: int =
     return traj
 
 
+def initial_libraries(problem: Problem, q: int, seed: int) -> list[LibraryPick]:
+    """The shared seed runs at library level: identical for every strategy with the same seed."""
+    return select_random_libraries(problem, set(), q, np.random.default_rng(30_000 + seed))
+
+
+def next_libraries(problem: Problem, obs: Observations, unavailable: set[str], pending: list[str], q: int,
+                   strategy: str, seed: int, round_no: int, grid: list[str] | None = None) -> list[LibraryPick]:
+    rng = seeded_rng(seed, "select-library", round_no)
+    if strategy == "random":
+        return select_random_libraries(problem, unavailable, q, rng)
+    if strategy == "grid":
+        return select_grid_libraries(unavailable, q, grid or library_grid_order(problem, problem.spec.budget, seed))
+    return select_bayes_libraries(problem, obs, unavailable, pending, q, rng, seed=seed + round_no)[0]
+
+
+def simulate_libraries(problem: Problem, strategy: str, surrogate: str = "gp", seed: int = 0, budget: int = 10,
+                       batch: int = 1, initial: int = 2, failure_rate: float = 0.05, delay: int = 0) -> Trajectory:
+    """A campaign in which each experiment is a whole library (one deposition run).
+
+    Every spot of a chosen library is replayed: its real measurement, a real missing value, or a
+    simulated mishap at ``failure_rate`` (a lost or damaged spot). A spot can't be retried on its own,
+    and a library is never run twice, so the budget is at most the number of libraries."""
+    if strategy == "bayes" and surrogate != "gp":
+        raise ValueError("library-level campaigns use the GP surrogate")
+    libs = problem.libraries()
+    budget = min(budget, len(libs))
+    replay = LabReplay(problem, failure_rate, seed)
+    grid = library_grid_order(problem, budget, seed) if strategy == "grid" else None
+    traj = Trajectory(method_name(strategy, surrogate), seed)
+    obs = Observations()
+    in_flight: list[tuple[str, int, int, int]] = []  # (library, run number, submitted round, due round)
+    done: set[str] = set()
+    used, rnd = 0, 0
+    while used < budget or in_flight:
+        rnd += 1
+        if used < budget:
+            q = min(initial if used == 0 else batch, budget - used)
+            if used == 0:
+                picks = initial_libraries(problem, q, seed)
+            else:
+                busy = [lib for lib, *_ in in_flight]
+                picks = next_libraries(problem, obs, done | set(busy), busy, q, strategy, seed, rnd, grid)
+            for pk in picks:
+                used += 1
+                in_flight.append((pk.library, used, rnd, rnd + delay))
+        arrived = [f for f in in_flight if f[3] <= rnd]
+        in_flight = [f for f in in_flight if f[3] > rnd]
+        for lib, n, sub, _ in arrived:
+            done.add(lib)
+            for i in libs[lib]:
+                out = replay.run(int(i), 1)
+                traj.steps.append(Step(n=n, index=int(i), round=sub, status=out.status, kind=out.kind, reason=out.reason, library=lib))
+                obs.add(int(i), out.values, out.kind, out.reason)
+        if used >= budget and not in_flight:
+            break
+    traj.steps.sort(key=lambda st: st.n)
+    return traj
+
+
 # ------------------------------------------------------------------------------------- metrics
 
 
@@ -114,6 +184,22 @@ def best_so_far(problem: Problem, traj: Trajectory) -> np.ndarray:
             best = max(best, sc[st.index])
         out.append(best)
     return np.array(out)
+
+
+def per_run(problem: Problem, traj: Trajectory, top: np.ndarray) -> tuple[list[float], list[int]]:
+    """Library level: best true score and number of distinct top samples found after each run."""
+    sc = problem.true_scores()
+    top_set = set(int(i) for i in top)
+    best, found, bests, counts = -np.inf, set(), [], []
+    for n in sorted({st.n for st in traj.steps}):
+        for st in traj.steps:
+            if st.n == n and st.status == "ok":
+                best = max(best, sc[st.index])
+                if st.index in top_set:
+                    found.add(st.index)
+        bests.append(float(best))
+        counts.append(len(found))
+    return bests, counts
 
 
 def experiments_to_top(problem: Problem, traj: Trajectory, top: np.ndarray, k: int = 1) -> int | None:
@@ -157,7 +243,7 @@ def summarize_runs(problem: Problem, trajs: list[Trajectory], top_fraction: floa
             "failures": sum(s.status == "failed" for s in t.steps),
         })
     out = {"top_size": int(len(top)), "top1_size": int(len(top1)), "headline_k": k, "pool": problem.n, "best_possible": best_possible, "methods": {}}
-    budget = max(len(t.steps) for t in trajs)
+    budget = max(t.steps[-1].n for t in trajs if t.steps)  # experiments (runs at library level) in the longest campaign
 
     def med(rows, key):
         e = np.array([r[key] if r[key] is not None else np.nan for r in rows], float)

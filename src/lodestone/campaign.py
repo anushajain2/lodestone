@@ -49,6 +49,9 @@ class CampaignService:
     # ------------------------------------------------------------------------------ set up
 
     def create(self, spec: CampaignSpec) -> dict:
+        if spec.experiment_unit == "library":
+            raise CampaignError("library-level campaigns (one experiment = one deposition run) run in simulation only in this prototype: "
+                                "`uv run lodestone bench --level library`. The interactive loop proposes samples.")
         records = self.scope.list_records(system=spec.system)
         if not records:
             have = ", ".join(self.scope.systems()) or "nothing yet"
