@@ -156,11 +156,13 @@ class CampaignService:
         out = {}
         for p, (m, s) in pk.prediction.items():
             lo, mid, hi = untransform(p, np.array([m - s, m, m + s]))
-            out[p] = {"mean": float(mid), "low": float(lo), "high": float(hi), "unit": PROPERTIES[p]["unit"], **_interval_note(pk.std_inflation, p)}
+            out[p] = {"mean": float(mid), "low": float(lo), "high": float(hi), "unit": PROPERTIES[p]["unit"], **_interval_note(pk.std_inflation, p, RECIPE_INTERVAL_LABEL if pk.new_run else INTERVAL_LABEL)}
         if pk.p_feasible is not None:
             out["p_feasible"] = pk.p_feasible
         if pk.p_success is not None:
             out["p_success"] = pk.p_success
+        if pk.new_run:
+            out["new_run"] = True  # no measurements from this sample's deposition run yet: widened for a new run
         return out
 
     def submit(self, campaign_id: str, record_ids: list[str] | None = None) -> list[dict]:
@@ -342,7 +344,8 @@ class CampaignService:
         main = spec.window.property if spec.window else spec.objectives[0].property
         m, s = pk.prediction[main]
         lo, mid, hi = untransform(main, np.array([m - s, m, m + s]))
-        rng_text = f"{INTERVAL_LABEL}: {fmt(main, lo)} to {fmt(main, hi)}" if main in pk.std_inflation else f"likely {fmt(main, lo)} to {fmt(main, hi)}"
+        label = RECIPE_INTERVAL_LABEL if pk.new_run else INTERVAL_LABEL
+        rng_text = f"{label}: {fmt(main, lo)} to {fmt(main, hi)}" if main in pk.std_inflation else f"likely {fmt(main, lo)} to {fmt(main, hi)}"
         parts.append(f"Predicted {PROPERTIES[main]['label'].lower()} ≈ {fmt(main, mid)} ({rng_text})")
         if spec.window:
             inside = spec.window.low <= mid <= spec.window.high
@@ -354,6 +357,8 @@ class CampaignService:
             if feas:
                 best = max((vals[i] for i in feas), key=lambda v: v if spec.objectives[0].direction == "max" else -v)
                 parts.append(f"best so far is {fmt(main, best)}")
+        if pk.new_run:
+            parts.append("no measurements from this deposition run yet, so the range is wider: the model was much less accurate on runs it had not seen")
         if pk.p_feasible is not None:
             parts.append(f"{100 * pk.p_feasible:.0f}% chance it meets {', '.join(c.text() for c in spec.constraints)}")
         rel_unc = s / (np.std(transform(main, np.array(list(obs.values.get(main, {0: 1}).values())))) + 1e-9)

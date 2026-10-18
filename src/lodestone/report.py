@@ -135,7 +135,8 @@ def _held_out_libraries_section(lib: dict, cal: dict | None) -> list[str]:
                 + ", ".join(f"{r['library']['cov68_recipe']:.0%} ({r['system']} {PROP_LABEL.get(r['property'], r['property'])}, n={r['n_train']})" for r in rows)
                 + ". With three systems, one of them (In-O-Sn-Zn) far worse than the others, a single factor is too wide for some systems and still too narrow for others; "
                 "too wide is the safer error for recipes nobody has made. Each suggestion also carries a warning that predictions for a new run were weak in this check "
-                "(`campaign.suggest_recipes`, `loop.held_out_libraries`). The optimizer's picks among existing samples are unchanged. "
+                "(`campaign.suggest_recipes`, `loop.held_out_libraries`). The same wider factor and label are used for the loop's picks from a library it has no measurements from yet "
+                "(`select.select_bayes`, `Pick.new_run`). Both are display only: the optimizer's picks are unchanged. "
                 "`uv run lodestone eval calibration --no-random` reruns only this check.", ""]
     return out
 

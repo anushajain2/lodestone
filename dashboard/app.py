@@ -334,8 +334,9 @@ with tabs[2]:
                         st.markdown(f"**{c['label']}** <span class='mf-note'>· {c['record_id']} · {c['status']}</span>", unsafe_allow_html=True)
                         st.markdown(f"<div class='mf-why'>{c['why']}</div>", unsafe_allow_html=True)
                 if any(any(isinstance(v, dict) and "std_inflation" in v for v in (c.get("prediction") or {}).values()) for c in cands if c["round"] == latest):
-                    st.caption("Ranges are 68% intervals calibrated on held-out data: the model's ±1σ, widened by a factor learned on held-out samples of other material systems "
-                               "(reports/calibration). The optimizer itself ranks with the unwidened model.")
+                    st.caption("Ranges are 68% intervals calibrated on held-out data: the model's ±1σ, widened by a factor learned on held-out samples of other material systems, "
+                               "and by a larger one for samples from a deposition run the model has no data from yet (reports/calibration). "
+                               "The optimizer itself ranks with the unwidened model.")
             else:
                 st.caption("Run a round to see the optimizer's picks.")
 

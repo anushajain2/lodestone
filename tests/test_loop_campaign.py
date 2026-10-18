@@ -146,6 +146,7 @@ def _tc_obs(tc, n=12):
 def test_display_inflation_widens_what_people_see_but_not_the_picks(monkeypatch):
     from lodestone.loop import select
     from lodestone.loop.calibration import display_inflation
+    from lodestone.loop.held_out_libraries import recipe_inflation
     from lodestone.loop.models import GP_OPTIONS
 
     tc = Problem.from_records(public_records(TC.system), TC)
@@ -159,14 +160,19 @@ def test_display_inflation_widens_what_people_see_but_not_the_picks(monkeypatch)
 
     shown = picks()
     monkeypatch.setattr(select, "display_inflation", lambda system: {})
+    monkeypatch.setattr(select, "recipe_inflation", lambda system: {})
     raw = picks()
     assert [p.index for p in shown] == [p.index for p in raw]
     assert [p.acquisition for p in shown] == [p.acquisition for p in raw]
+    new = recipe_inflation(TC.system)
+    seen = {tc.library[i] for i in obs.tested()}
     for a, b in zip(shown, raw):
-        assert a.std_inflation == infl and b.std_inflation == {}
+        assert a.new_run == (tc.library[a.index] not in seen) and not b.new_run
+        assert a.std_inflation == (new if a.new_run else infl) and b.std_inflation == {}
+        infl_a = a.std_inflation
         for prop in ("conductivity", "band_gap"):
             assert a.prediction[prop][0] == b.prediction[prop][0]
-            assert a.prediction[prop][1] == pytest.approx(b.prediction[prop][1] * infl[prop])
+            assert a.prediction[prop][1] == pytest.approx(b.prediction[prop][1] * infl_a[prop])
         assert abs(a.p_feasible - 0.5) <= abs(b.p_feasible - 0.5) + 1e-12  # wider σ → less certain about the gap constraint
     assert GP_OPTIONS["std_inflation"] is None and not GP_OPTIONS["calibrate"]
 
@@ -178,6 +184,7 @@ def test_seeded_simulate_picks_the_same_samples_with_and_without_display_inflati
     tc = Problem.from_records(public_records(TC.system), TC)
     after = [s.index for s in simulate(tc, "bayes", surrogate, seed=3).steps]
     monkeypatch.setattr(select, "display_inflation", lambda system: {})
+    monkeypatch.setattr(select, "recipe_inflation", lambda system: {})
     before = [s.index for s in simulate(tc, "bayes", surrogate, seed=3).steps]
     assert after == before
 
@@ -189,9 +196,27 @@ def test_explanations_label_the_calibrated_interval():
     tc = Problem.from_records(public_records(TC.system), TC)
     pk = select.select_bayes(tc, _tc_obs(tc), set(), [], 1, np.random.default_rng(5), "gp", seed=5)[0][0]
     why = CampaignService.why(None, tc, _tc_obs(tc), pk)
-    assert "calibrated on held-out data" in why
     pj = CampaignService._prediction_json(tc, pk)
-    assert pj["conductivity"]["interval"].startswith("68% interval, calibrated") and pj["band_gap"]["std_inflation"] > 1
+    label = "calibrated on held-out deposition runs" if pk.new_run else "calibrated on held-out data"
+    assert label in why and pj["conductivity"]["interval"] == f"68% interval, {label}" and pj["band_gap"]["std_inflation"] > 1
+    assert pj.get("new_run", False) == pk.new_run
+
+
+def test_picks_from_a_deposition_run_with_no_data_get_the_wider_new_run_range():
+    from lodestone.campaign import CampaignService
+    from lodestone.loop import select
+    from lodestone.loop.calibration import display_inflation
+    from lodestone.loop.held_out_libraries import recipe_inflation
+
+    tc = Problem.from_records(public_records(TC.system), TC)
+    obs = _tc_obs(tc, 6)  # 6 samples cannot cover the 20 libraries, so unseen-run picks exist
+    seen = {tc.library[i] for i in obs.tested()}
+    seen_runs = {i for i in range(tc.n) if tc.library[i] in seen}  # make every sample from a seen run unavailable
+    picks, _ = select.select_bayes(tc, obs, seen_runs, [], 3, np.random.default_rng(1), "gp", seed=1)
+    new, disp = recipe_inflation(TC.system), display_inflation(TC.system)
+    assert picks and all(pk.new_run and pk.std_inflation == {p: new[p] for p in pk.std_inflation} for pk in picks)
+    assert all(new[p] >= disp[p] for p in ("conductivity", "band_gap"))
+    assert "deposition run" in CampaignService.why(None, tc, obs, picks[0])
 
 
 def test_recipe_inflation_is_never_narrower_than_the_display_factor():
