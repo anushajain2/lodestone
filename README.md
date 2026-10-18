@@ -16,7 +16,7 @@ Lodestone takes a lab's experimental records, cleans them into one format with u
 
 ## Key takeaways
 
-On four campaigns over real HTEM data (20 seeds each), the number of experiments needed to find 5 of the top-5% samples was:
+On four campaigns over real HTEM data (20 seeds each), counting each sample as one experiment, the number of experiments needed to find 5 of the top-5% samples was:
 
 | Campaign (real HTEM data) | Random | Grid sweep | **Bayesian (GP)** |
 |---|---|---|---|
@@ -27,11 +27,12 @@ On four campaigns over real HTEM data (20 seeds each), the number of experiments
 
 "61" means most runs didn't get there within the 60-experiment budget.
 
-- **The optimizer finds 2.5–4× as many top-5% samples** as random or grid search on the same budget. The gain holds at 0–20% lab failure rates and at batch sizes of 1, 5 and 10.
+- **Counted per sample, the optimizer finds 2.5–4× as many top-5% samples** as random or grid search on the same budget. The gain holds at 0–20% lab failure rates and at batch sizes of 1, 5 and 10.
 - **Counted in deposition runs, the savings shrink.** When one experiment is a whole library (~44 spots made in one run; 10-run budget, 20 seeds), every method finds its first top-5% sample within 2–4 runs, and the optimizer finds 1.4–1.6× as many top-5% samples as random, not 2.5–4×. The ratio depends on the budget: 1.7–1.9× at 5 runs, 1.2× at 15. IZTO has only 4 libraries, too few to test.
 - **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign, the optimizer's median *best* value is no higher than random's.
 - **Pick a metric that can lose.** "Experiments to the *first* top-5% sample" doesn't separate the methods, because the 10 random starting experiments often get lucky.
 - **Honest error bars didn't help the optimizer.** The model's 68% intervals contain the real value only 43–61% of the time. Widening them to the right size made the loop find *fewer* good samples, so the optimizer keeps the narrow ones. The error bars shown to people are widened to the calibrated size.
+- **A deposition run the model has never seen is hard to predict.** Holding out a whole run instead of random samples, with 30–60 training samples, R² falls to a median of 0.04 (0.41 on matched random splits). Suggested recipes are new runs by definition, so they carry wider error bars and a warning.
 - **Real lab data is messy, and handling that openly is most of the work.** 365 HTEM zinc tin nitride samples have no composition, and some libraries are listed but serve no samples. These are rejected with a reason, not guessed.
 
 Every number, with robustness runs, data-import results and the agent evaluation, is in **[reports/EVALUATION.md](reports/EVALUATION.md)**.
@@ -191,7 +192,8 @@ src/lodestone/
   replay_report.py        replay savings report on a lab's own export (one HTML page)
   onboarding.py           import into a lab workspace
   goals.py                plain-English goal reader
-  loop/                   problem, models (GP/RF, censoring, success model, calibration), selection, replay, benchmark
+  loop/                   problem, models (GP/RF, censoring, success model), selection, replay, benchmark
+                          (spot and deposition-run level), calibration and held-out-run checks
   campaign.py             campaigns as a lab-scoped service (rounds, status, explain, compare, recipes)
   store.py                lab-scoped SQLite store and audit log
   tools.py, mcp_server.py, agent.py   MCP tools, server, Claude agent and a scripted reference policy
@@ -206,7 +208,7 @@ legacy/dielectric/        an earlier version on computed dielectrics, kept for r
 
 ## Limits
 
-- The replay can only choose among samples that were made. The "suggest recipes" feature proposes new ones, but those predictions are unverified.
+- The replay can only choose among samples that were made. The "suggest recipes" feature proposes new ones, but predictions for a new deposition run are weak (see the key takeaways), so treat them as leads to test.
 - CSV exports are read through a column mapping, so a new layout needs a mapping file, not code. Formats that aren't one row per sample (spectra, instrument files, several header rows) still need adapter work. Measurement methods are recorded as the HTEM defaults (four-point probe, Tauc fit, XRF thickness) whatever the lab used.
 - The Claude agent's evaluation is built, but so far only the scripted reference policy has been scored.
 
