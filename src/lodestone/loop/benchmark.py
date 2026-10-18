@@ -138,24 +138,25 @@ LIBRARY_BATCH = 1
 MIN_LIBRARIES = 2 * LIBRARY_BUDGET  # below this the budget covers most of the system and the test measures exhaustion
 
 
-def library_problem(key: str, failure_rate: float = 0.05, budget: int = LIBRARY_BUDGET) -> Problem:
+def library_problem(key: str, failure_rate: float = 0.05, budget: int = LIBRARY_BUDGET, initial: int = LIBRARY_INITIAL) -> Problem:
     spec = DEMO_CAMPAIGNS[key].model_copy(update={
-        "experiment_unit": "library", "budget": budget, "initial": LIBRARY_INITIAL, "batch_size": LIBRARY_BATCH, "failure_rate": failure_rate,
+        "experiment_unit": "library", "budget": budget, "initial": initial, "batch_size": LIBRARY_BATCH, "failure_rate": failure_rate,
     })
     return Problem.from_records(public_records(spec.system), spec)
 
 
 def run_library_benchmark(seeds: int = 20, campaigns: tuple[str, ...] = tuple(DEMO_CAMPAIGNS), failure_rate: float = 0.05,
-                          budget: int = LIBRARY_BUDGET, verbose: bool = True, write: bool = True) -> dict:
-    out = {"config": {"seeds": seeds, "budget_runs": budget, "initial_runs": LIBRARY_INITIAL, "batch_runs": LIBRARY_BATCH,
-                      "failure_rate": failure_rate, "min_libraries": MIN_LIBRARIES, "methods": [m for m, _ in LIBRARY_METHODS]},
+                          budget: int = LIBRARY_BUDGET, initial: int = LIBRARY_INITIAL, min_libraries: int = MIN_LIBRARIES,
+                          verbose: bool = True, write: bool = True, out_name: str = "library.json") -> dict:
+    out = {"config": {"seeds": seeds, "budget_runs": budget, "initial_runs": initial, "batch_runs": LIBRARY_BATCH,
+                      "failure_rate": failure_rate, "min_libraries": min_libraries, "methods": [m for m, _ in LIBRARY_METHODS]},
            "campaigns": {}, "skipped": {}}
     for key in campaigns:
-        prob = library_problem(key, failure_rate, budget)
+        prob = library_problem(key, failure_rate, budget, initial)
         libs = prob.libraries()
-        if len(libs) < MIN_LIBRARIES:
+        if len(libs) < min_libraries:
             out["skipped"][key] = {"libraries": len(libs), "samples": prob.n, "name": prob.spec.name,
-                                   "reason": f"only {len(libs)} libraries with samples; a {budget}-run budget needs at least {MIN_LIBRARIES}"}
+                                   "reason": f"only {len(libs)} libraries with samples; a {budget}-run budget needs at least {min_libraries}"}
             if verbose:
                 print(f"[{key}] skipped: {out['skipped'][key]['reason']}", flush=True)
             continue
@@ -177,7 +178,7 @@ def run_library_benchmark(seeds: int = 20, campaigns: tuple[str, ...] = tuple(DE
                     "top_found": found[-1],
                 })
             if verbose:
-                print(f"[{key}] library {t.method}: {seeds} seeds in {time.time() - t0:.0f}s", flush=True)
+                print(f"[{key}] library {t.method} (budget {budget}, {initial} seed runs): {seeds} seeds in {time.time() - t0:.0f}s", flush=True)
         summary = summarize_runs(prob, trajs)
         base = np.array([r["top_found"] for r in paired["random"]], float)
         for m, rows in paired.items():
@@ -199,8 +200,22 @@ def run_library_benchmark(seeds: int = 20, campaigns: tuple[str, ...] = tuple(DE
     if write:
         path = config.REPORTS_DIR / "benchmark"
         path.mkdir(parents=True, exist_ok=True)
-        (path / "library.json").write_text(json.dumps(out, indent=2))
+        (path / out_name).write_text(json.dumps(out, indent=2))
     return out
+
+
+# Does the library-level result depend on the run budget and the number of random seed runs? The main
+# design (10 runs, 2 seed runs) is in library.json; these variants keep the same 20-library threshold,
+# so at 15 runs a method sees 65-75% of each system.
+LIBRARY_VARIANTS = {"budget-5": {"budget": 5, "initial": 2}, "budget-15": {"budget": 15, "initial": 2}, "seed-runs-1": {"budget": 10, "initial": 1}}
+
+
+def run_library_variant(name: str, seeds: int = 20, verbose: bool = True) -> dict:
+    """One sensitivity variant, written to reports/benchmark/library_sensitivity/<name>.json."""
+    v = LIBRARY_VARIANTS[name]
+    (config.REPORTS_DIR / "benchmark" / "library_sensitivity").mkdir(parents=True, exist_ok=True)
+    return run_library_benchmark(seeds=seeds, budget=v["budget"], initial=v["initial"], min_libraries=MIN_LIBRARIES,
+                                 verbose=verbose, out_name=f"library_sensitivity/{name}.json")
 
 
 def _natural(spec: CampaignSpec, score: np.ndarray) -> tuple[np.ndarray, str, bool]:

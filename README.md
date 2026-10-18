@@ -28,7 +28,7 @@ On four campaigns over real HTEM data (20 seeds each), the number of experiments
 "61" means most runs didn't get there within the 60-experiment budget.
 
 - **The optimizer finds 2.5–4× as many top-5% samples** as random or grid search on the same budget. The gain holds at 0–20% lab failure rates and at batch sizes of 1, 5 and 10.
-- **Counted in deposition runs, the savings shrink.** When one experiment is a whole library (~44 spots made in one run; 10-run budget, 20 seeds), every method finds its first top-5% sample within 2–4 runs, and the optimizer finds 1.4–1.6× as many top-5% samples as random, not 2.5–4×. IZTO has only 4 libraries, too few to test.
+- **Counted in deposition runs, the savings shrink.** When one experiment is a whole library (~44 spots made in one run; 10-run budget, 20 seeds), every method finds its first top-5% sample within 2–4 runs, and the optimizer finds 1.4–1.6× as many top-5% samples as random, not 2.5–4×. The ratio depends on the budget: 1.7–1.9× at 5 runs, 1.2× at 15. IZTO has only 4 libraries, too few to test.
 - **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign, the optimizer's median *best* value is no higher than random's.
 - **Pick a metric that can lose.** "Experiments to the *first* top-5% sample" doesn't separate the methods, because the 10 random starting experiments often get lucky.
 - **Honest error bars didn't help the optimizer.** The model's 68% intervals contain the real value only 43–61% of the time. Widening them to the right size made the loop find *fewer* good samples, so the optimizer keeps the narrow ones. The error bars shown to people are widened to the calibrated size.

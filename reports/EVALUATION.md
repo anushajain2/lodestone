@@ -92,6 +92,27 @@ The spot-level benchmark above treats each HTEM sample as its own experiment. In
 
 **What survives is smaller.** The Bayesian loop still finds more top-5% samples than random in the same 10 runs: 1.4–1.6× as many (+8 to +12 samples, paired), against 2.6–4.2× at spot level on the same campaigns. Grid search is within noise of random on every campaign. After 10 runs every method has measured 43%–50% of the system's spots, so the room to save runs is small: these systems have about 20 libraries each. The spot-level numbers above overstate the savings a lab choosing runs would see.
 
+#### Does this depend on the budget or the seed runs?
+
+The same comparison at other run budgets and with one random seed run instead of two (same seeds, same 20-library threshold, so IZTO is still skipped). Each cell is random / grid / Bayesian.
+
+| Design | Campaign | Runs to the first top-5% sample | Top-5% samples found | Bayesian ÷ random | Bayesian − random, paired (± s.e.m.) | Spots measured |
+|---|---|---|---|---|---|---|
+| 5 runs, 2 seed runs | Most conductive zinc tin nitride | 4 / 3 / 3 | 11.3 / 9.5 / 19.9 of 50 | 1.8× | +8.7 ± 2.7 | 22% |
+|  | Transparent p-type conductor (gap ≥ 3 eV) | 2 / 2 / 2 | 8.7 / 15.8 / 14.4 of 44 | 1.7× | +5.8 ± 3.4 | 25% |
+|  | Band gap in the 1.4–1.6 eV solar window | 2 / 2 / 2 | 8.9 / 12.4 / 17.3 of 50 | 1.9× | +8.3 ± 1.8 | 22% |
+| 10 runs, 2 seed runs (above) | Most conductive zinc tin nitride | 4 / 3 / 3 | 23.5 / 29.9 / 32.9 of 50 | 1.4× | +9.4 ± 2.7 | 43% |
+|  | Transparent p-type conductor (gap ≥ 3 eV) | 2 / 2 / 2 | 21.6 / 21.1 / 29.9 of 44 | 1.4× | +8.2 ± 3.2 | 50% |
+|  | Band gap in the 1.4–1.6 eV solar window | 2 / 2 / 2 | 22.1 / 21.2 / 34.5 of 50 | 1.6× | +12.4 ± 1.9 | 43% |
+| 15 runs, 2 seed runs | Most conductive zinc tin nitride | 4 / 3 / 3 | 34.2 / 31.9 / 42.8 of 50 | 1.2× | +8.6 ± 2.6 | 65% |
+|  | Transparent p-type conductor (gap ≥ 3 eV) | 2 / 2 / 2 | 31.4 / 35.5 / 38.0 of 44 | 1.2× | +6.7 ± 2.5 | 75% |
+|  | Band gap in the 1.4–1.6 eV solar window | 2 / 2 / 2 | 34.6 / 35.6 / 41.8 of 50 | 1.2× | +7.2 ± 2.0 | 65% |
+| 10 runs, 1 seed run | Most conductive zinc tin nitride | 4 / 2 / 2 | 20.9 / 30.8 / 38.1 of 50 | 1.8× | +17.2 ± 3.4 | 43% |
+|  | Transparent p-type conductor (gap ≥ 3 eV) | 1 / 1 / 1 | 18.4 / 23.1 / 27.8 of 44 | 1.5× | +9.4 ± 3.6 | 50% |
+|  | Band gap in the 1.4–1.6 eV solar window | 2 / 2 / 2 | 20.4 / 22.5 / 33.0 of 50 | 1.6× | +12.6 ± 1.6 | 43% |
+
+**Reading.** Bayesian ÷ random: 5 runs, 2 seed runs: 1.7–1.9×; 10 runs, 2 seed runs: 1.4–1.6×; 15 runs, 2 seed runs: 1.2×; 10 runs, 1 seed run: 1.5–1.8×. The ratio falls as the budget grows, because by 15 runs random has also run most of each system's libraries; the paired gain in samples stays between +6 and +17. The Bayesian loop beats random by more than two standard errors on 2 of 3 campaigns at 5 runs, 2 seed runs, 3 of 3 campaigns at 10 runs, 2 seed runs, 3 of 3 campaigns at 15 runs, 2 seed runs, 3 of 3 campaigns at 10 runs, 1 seed run. Grid search finds more top-5% samples than the Bayesian loop on the transparent p-type conductor (gap ≥ 3 eV) campaign at 5 runs, 2 seed runs. Median runs saved to the first top-5% sample (random − Bayesian) are 0 to +2 runs in every design, so that metric never separates the methods. So the 1.4–1.6× above is specific to the 10-run budget. Across these designs the Bayesian loop finds 1.2–1.9× as many top-5% samples as random, more when the lab can afford fewer runs.
+
 ### Is the model's uncertainty honest?
 
 Fit the GP on n random measured samples of a system, predict every other measured sample, and count how often the real value falls inside the predicted 68% and 95% intervals (20 random splits each). A calibrated model scores 68% and 95%. Two fixes were tried. **CV variance scaling** widens the intervals by a factor from 5-fold cross-validation on the campaign's own data. **Fixed inflation** widens each property's intervals by a constant learned only from the *other* systems' held-out checks. A noise floor and a Matérn-5/2 kernel were also tried; neither raised 68% coverage meaningfully (it moved by at most 7 percentage points, in either direction; `reports/calibration/calibration.json`). Neither fix changes the predicted values, so R² is the same for all three.
@@ -152,7 +173,7 @@ Provenance spot-check: 20 random samples, 56 values compared with the raw HTEM r
 
 - **'Experiments to the first top-5% sample' doesn't separate methods** on pools of ~1,000 with 10 random seed experiments: luck dominates. The stricter metrics (5 of the top 5%, first top-1%, top-5% samples found) do.
 - **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign the Bayesian loop finds four times as many top-5% samples as random, yet the *median best value* it reaches (3.2 S/cm) is no higher than random's (4.0 S/cm), and no method reliably finds the extreme outlier (an 85 S/cm Co-Ni-Zn-O film). The first top-1% sample arrives no sooner than with random search on the constrained campaign.
-- **Counted in deposition runs, the savings shrink.** When one experiment is a whole library (10-run budget), every method finds its first top-5% sample in a median of 2–4 runs, and the Bayesian loop finds 1.4–1.6× as many top-5% samples as random, down from the spot-level gain. IZTO has too few libraries to test (see 'One experiment = one deposition run').
+- **Counted in deposition runs, the savings shrink.** When one experiment is a whole library (10-run budget), every method finds its first top-5% sample in a median of 2–4 runs, and the Bayesian loop finds 1.4–1.6× as many top-5% samples as random (1.2–1.9× across all the run budgets and seed-run counts tried), down from the spot-level gain. IZTO has too few libraries to test (see 'One experiment = one deposition run').
 - **Grid search is a strong baseline for the very first hits** when a system has only one or two composition dimensions: a systematic sweep covers the space quickly. The optimizer pulls ahead once it has data to exploit.
 - **The random-forest surrogate is uneven**: excellent on conductivity, weak on constraints and windows, where its uncertainty estimates (tree spread) are poor.
 - **Replay can only choose among samples that were made.** A real campaign would propose new recipes; the 'suggest recipes' feature does that, but its predictions are unverified by construction.

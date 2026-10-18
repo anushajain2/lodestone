@@ -85,8 +85,17 @@ def _library_bullet(R: Path) -> list[str]:
     ratio = [c["methods"]["bayes-gp"]["top_found_mean"] / c["methods"]["random"]["top_found_mean"] for c in C.values()]
     first = [v["experiments_to_first_top5_median"] for c in C.values() for v in c["methods"].values()]
     return [f"- **Counted in deposition runs, the savings shrink.** When one experiment is a whole library ({lib['config']['budget_runs']}-run budget), every method finds its first "
-            f"top-5% sample in a median of {min(first):.0f}–{max(first):.0f} runs, and the Bayesian loop finds {min(ratio):.1f}–{max(ratio):.1f}× as many top-5% samples as random, "
-            "down from the spot-level gain. IZTO has too few libraries to test (see 'One experiment = one deposition run')."]
+            f"top-5% sample in a median of {min(first):.0f}–{max(first):.0f} runs, and the Bayesian loop finds {min(ratio):.1f}–{max(ratio):.1f}× as many top-5% samples as random"
+            + (f" ({min(sens):.1f}–{max(sens):.1f}× across all the run budgets and seed-run counts tried)" if (sens := _sensitivity_ratios(R)) else "")
+            + ", down from the spot-level gain. IZTO has too few libraries to test (see 'One experiment = one deposition run')."]
+
+
+def _sensitivity_ratios(R: Path) -> list[float]:
+    out = []
+    for p in sorted((R / "benchmark" / "library_sensitivity").glob("*.json")) + [R / "benchmark" / "library.json"]:
+        for c in (_load(p) or {}).get("campaigns", {}).values():
+            out.append(c["methods"]["bayes-gp"]["top_found_mean"] / c["methods"]["random"]["top_found_mean"])
+    return out
 
 
 def _calibration_bullet(R: Path) -> list[str]:
@@ -165,6 +174,63 @@ def _library_section(lib: dict, bench: dict | None) -> list[str]:
     return out
 
 
+SENS_LABEL = {"budget-5": "5 runs, 2 seed runs", "main": "10 runs, 2 seed runs (above)", "budget-15": "15 runs, 2 seed runs", "seed-runs-1": "10 runs, 1 seed run"}
+
+
+def _library_sensitivity(R: Path, lib: dict) -> list[str]:
+    """The library-level comparison at other run budgets and seed-run counts."""
+    import numpy as np
+
+    d = R / "benchmark" / "library_sensitivity"
+    runs = {"main": lib, **{k: v for k in ("budget-5", "budget-15", "seed-runs-1") if (v := _load(d / f"{k}.json"))}}
+    runs = {k: runs[k] for k in SENS_LABEL if k in runs}
+    if len(runs) < 2:
+        return []
+    out = ["#### Does this depend on the budget or the seed runs?", "",
+           "The same comparison at other run budgets and with one random seed run instead of two (same seeds, same 20-library threshold, so IZTO is still skipped). "
+           "Each cell is random / grid / Bayesian.", "",
+           "| Design | Campaign | Runs to the first top-5% sample | Top-5% samples found | Bayesian ÷ random | Bayesian − random, paired (± s.e.m.) | Spots measured |",
+           "|---|---|---|---|---|---|---|"]
+    ratios: dict[str, list[float]] = {}
+    clear: dict[str, int] = {}
+    first_sep: dict[str, list[float]] = {}
+    for name, r in runs.items():
+        for i, (key, c) in enumerate(r["campaigns"].items()):
+            m = c["methods"]
+            b, rnd = m["bayes-gp"], m["random"]
+            ratio = b["top_found_mean"] / rnd["top_found_mean"] if rnd["top_found_mean"] else float("nan")
+            ratios.setdefault(name, []).append(ratio)
+            clear[name] = clear.get(name, 0) + int(b["top_found_minus_random_mean"] - 2 * b["top_found_minus_random_sem"] > 0)
+            first_sep.setdefault(name, []).append(rnd["experiments_to_first_top5_median"] - b["experiments_to_first_top5_median"])
+            frac = np.mean([v["spots_measured_mean"] for v in m.values()]) / c["pool"]
+            out.append(f"| {SENS_LABEL[name] if i == 0 else ''} | {c['spec']['name']} | "
+                       + " / ".join(_fmt(m[x]["experiments_to_first_top5_median"]) for x in ("random", "grid", "bayes-gp")) + " | "
+                       + " / ".join(f"{m[x]['top_found_mean']:.1f}" for x in ("random", "grid", "bayes-gp")) + f" of {c['top_size']} | "
+                       f"{ratio:.1f}× | {b['top_found_minus_random_mean']:+.1f} ± {b['top_found_minus_random_sem']:.1f} | {frac:.0%} |")
+    out.append("")
+    n_c = len(lib["campaigns"])
+    def rng_txt(v, f="{:.1f}", unit="×", sep="–"):
+        lo, hi = f.format(min(v)), f.format(max(v))
+        return (lo if lo == hi else f"{lo}{sep}{hi}") + unit
+    short = {k: SENS_LABEL[k].replace(" (above)", "") for k in runs}
+    gains = [c["methods"]["bayes-gp"]["top_found_minus_random_mean"] for r in runs.values() for c in r["campaigns"].values()]
+    grid_wins = [f"the {c['spec']['name'][0].lower() + c['spec']['name'][1:]} campaign at {short[k]}" for k, r in runs.items() for c in r["campaigns"].values()
+                 if c["methods"]["grid"]["top_found_mean"] > c["methods"]["bayes-gp"]["top_found_mean"]]
+    budgets = [k for k in ("budget-5", "main", "budget-15") if k in ratios]
+    falls = len(budgets) > 1 and all(max(ratios[a]) >= max(ratios[b]) for a, b in zip(budgets, budgets[1:]))
+    out += ["**Reading.** Bayesian ÷ random: " + "; ".join(f"{short[k]}: {rng_txt(v)}" for k, v in ratios.items()) + ". "
+            + ("The ratio falls as the budget grows, because by 15 runs random has also run most of each system's libraries; "
+               if falls else "The ratio does not fall steadily with the budget; ")
+            + f"the paired gain in samples stays between {min(gains):+.0f} and {max(gains):+.0f}. "
+            "The Bayesian loop beats random by more than two standard errors on " + ", ".join(f"{clear[k]} of {n_c} campaigns at {short[k]}" for k in ratios) + ". "
+            + (f"Grid search finds more top-5% samples than the Bayesian loop on {', '.join(grid_wins)}. " if grid_wins else "")
+            + "Median runs saved to the first top-5% sample (random − Bayesian) are "
+            + rng_txt([x for v in first_sep.values() for x in v], "{:+.0f}", " runs", " to ").replace("+0 ", "0 ") + " in every design, so that metric never separates the methods. "
+            f"So the {rng_txt(ratios['main'])} above is specific to the 10-run budget. Across these designs the Bayesian loop finds "
+            f"{rng_txt([x for v in ratios.values() for x in v])} as many top-5% samples as random" + (", more when the lab can afford fewer runs." if falls else "."), ""]
+    return out
+
+
 def write_report() -> Path:
     R = config.REPORTS_DIR
     out = ["# Lodestone evaluation report", "",
@@ -229,6 +295,7 @@ def write_report() -> Path:
     lib = _load(R / "benchmark" / "library.json")
     if lib:
         out += _library_section(lib, bench)
+        out += _library_sensitivity(R, lib)
 
     ob = _load(R / "onboarding" / "onboarding.json")
     prov = _load(R / "onboarding" / "provenance.json")

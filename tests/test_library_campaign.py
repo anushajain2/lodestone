@@ -58,6 +58,12 @@ def test_seed_runs_are_shared_across_strategies(zsn):
     assert first[0] == first[1] == first[2]
 
 
+def test_one_seed_run_then_one_run_per_round(zsn):
+    t = simulate(zsn, "random", seed=0, initial=1)
+    rounds = {st.n: st.round for st in t.steps}
+    assert rounds == {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
+
+
 def test_library_replay_returns_each_spots_real_measurements(zsn):
     t = simulate(zsn, "random", seed=1, failure_rate=0.0)
     rep = LabReplay(zsn, 0.0, 1)
