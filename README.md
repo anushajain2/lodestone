@@ -123,13 +123,13 @@ uv run lodestone campaign run "most conductive zinc tin nitride, 40 experiments"
    uv run lodestone replay-report path/to/export.csv --mapping my_mapping.yaml --goal "maximize conductivity with band gap >= 3 eV" --cost-per-experiment 1500
    ```
 
-   Try it on the Helix demo export (about two minutes for the default 10 seeds):
+   Try it on the Helix demo export (about five minutes for the default 30 seeds):
 
    ```bash
    uv run lodestone replay-report data/partner_lab/helix_second_lab_export.csv --mapping data/partner_lab/helix_mapping.yaml --goal "maximize conductivity with band gap >= 3 eV" --cost-per-experiment 1500
    ```
 
-   On that file (176 of 180 rows accepted; the 4 rejected rows are duplicate sample ids) the honest answer is **not proven**. Bayesian optimization found 5 of the 9 top-5% samples in a median of 53.5 experiments, against 61 for random picks (random found them within 60 experiments in only 2 of 10 runs, Bayesian in 6). That is 7.5 experiments, or $11,250 at $1,500 each, but the 90% interval runs from 0 to 16.5 experiments, so the report does not claim a saving.
+   On that file, 178 of 180 rows are accepted: one row is rejected as a duplicate sample id, one for an unreadable composition, and two keep their row but lose a value (a negative resistivity, and an absorption edge written in µm that gives a 3,179 eV band gap). With 30 seeds the report's verdict is a **clear saving**. Bayesian optimization found 5 of the 9 top-5% samples in a median of 44.5 experiments (within the 60-experiment budget in 26 of 30 runs). Random picks managed it in only 3 of 30 runs and the grid sweep in 1, so their median is counted as 61. That is 16.5 experiments saved, or $24,750 at $1,500 each, with a 90% interval of 13 to 21 experiments. Because random search rarely finished within the budget, the true gap is larger than that. With only 10 seeds the same file can come out "not proven" (one 10-seed run of an earlier version gave 7.5 saved, interval 0 to 16.5), which is why the default is 30.
 
    The report says plainly when a result is weak: if the 90% interval of the saving includes zero it is marked "not proven", and if Bayesian optimization was slower it says so. It also refuses to run on fewer than 30 accepted samples. The replay can only choose among samples you already made, "top 5%" is relative to your own file, and one experiment means one row of your export: if your lab makes samples in combinatorial libraries, the real cost is per library.
 

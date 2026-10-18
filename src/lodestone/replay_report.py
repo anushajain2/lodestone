@@ -132,8 +132,8 @@ def _verdict(save: dict, bayes: dict, rand: dict, k: int, budget: int, seeds: in
     if rand["found_top_in_budget"] < rand["runs"] / 2:
         notes.append(f"Random picks found {k} top-5% samples within {budget} experiments in only {rand['found_top_in_budget']} of "
                      f"{rand['runs']} runs. Runs that never found them count as {budget + 1}, so the true gap could be larger than shown.")
-    if seeds < 10:
-        notes.append(f"Only {seeds} seeds were run, so the interval is wide. Use --seeds 10 or more for a number to quote.")
+    if seeds < 20:
+        notes.append(f"Only {seeds} seeds were run, so the interval is wide and the verdict can change with more runs. Use --seeds 30 for a number to quote.")
     lo, hi = save["interval"]
     if b_frac < 0.5:
         return "weak", (f"Bayesian optimization did not reliably find {k} of the top-5% samples within {budget} experiments "
@@ -153,7 +153,7 @@ def _verdict(save: dict, bayes: dict, rand: dict, k: int, budget: int, seeds: in
 
 def run_replay_report(
     csv_path: str | Path, goal: str, mapping_path: str | Path | None = None, system: str | None = None,
-    cost_per_experiment: float = 1500.0, currency: str = "$", seeds: int = 10, budget: int | None = None,
+    cost_per_experiment: float = 1500.0, currency: str = "$", seeds: int = 30, budget: int | None = None,
     batch_size: int | None = None, failure_rate: float = 0.05, verbose: bool = False,
 ) -> dict:
     """Import, replay and summarize. Returns a JSON-serializable dict that :func:`render_html` draws."""

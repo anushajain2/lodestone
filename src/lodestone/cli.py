@@ -105,7 +105,7 @@ def replay_report(
     cost_per_experiment: float = typer.Option(1500.0, help="What one experiment (one row) costs you"),
     currency: str = typer.Option("$"),
     system: str = typer.Option(None, help="Element system, if the mapping doesn't name it"),
-    seeds: int = typer.Option(10, help="Replays per method; more seeds give a tighter interval"),
+    seeds: int = typer.Option(30, help="Replays per method; fewer than 20 gives an interval too wide to quote"),
     budget: int = typer.Option(None, help="Experiments per replay (default: from the goal, else min(60, half the samples))"),
     failure_rate: float = typer.Option(0.05, help="Simulated random lab failures on top of real missing measurements"),
     out: str = typer.Option(None, help="Output HTML (default: <export>-replay-report.html next to the export)"),

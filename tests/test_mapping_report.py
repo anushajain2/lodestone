@@ -25,8 +25,16 @@ BASE = {"system": "In-O-Sn-Zn", "columns": {"sample_id": "id", "composition": {"
 
 def test_helix_export_imports_through_its_mapping():
     recs, reps = LabCSVAdapter(load_mapping(HELIX_MAPPING)).adapt_csv(HELIX_CSV.read_text())
-    assert len(recs) == 176 and sum(r.rejected for r in reps) == 4
-    assert all(i.reason.startswith("duplicate sample id") for r in reps for i in r.issues)
+    # the demo export's four broken rows each show their own fault
+    assert len(recs) == 178 and sum(r.rejected for r in reps) == 2
+    issues = {(i.source_sample_id, i.level, i.field): i.reason for r in reps for i in r.issues}
+    assert issues[("PL-234890", "rejected", "record")] == "duplicate sample id (PL-234890)"
+    assert issues[("PL-234896-B", "rejected", "record")].startswith("unreadable composition")
+    assert issues[("PL-234894-B", "dropped_measurement", "conductivity")].startswith("non-positive resistivity")
+    assert issues[("PL-234898-B", "dropped_measurement", "band_gap")].startswith("impossible direct band gap")
+    assert len(issues) == 4
+    kept = {r.provenance.source_sample_id: r for r in recs}
+    assert "conductivity" not in kept["PL-234894-B"].measurements and "band_gap" not in kept["PL-234898-B"].measurements
     r = recs[0]  # PL-234890: 773.1 K, 1.3332 Pa, 4478.28 mOhm*cm, edge 336.55 nm, 107.4 nm, 45.7 %
     assert r.synthesis.deposition_temp_c == pytest.approx(499.95)
     assert r.synthesis.growth_pressure_mtorr == pytest.approx(10.0, abs=1e-3)
@@ -154,11 +162,11 @@ def test_replay_report_command_on_helix_export(tmp_path):
         "--cost-per-experiment", "1500", "--seeds", "3", "--budget", "20", "--out", str(out),
     ])
     assert res.exit_code == 0, res.output
-    assert "imported 176 of 180 rows" in res.output
+    assert "imported 178 of 180 rows (2 rejected, 2 values dropped)" in res.output
     page = out.read_text()
     data = json.loads(re.search(r'<script type="application/json" id="replay-data">(.*?)</script>', page, re.S).group(1))
-    assert data["import"]["accepted"] == 176 and data["import"]["rejected"] == 4
-    assert data["pool"] == 176 and data["budget"] == 20 and data["seeds"] == 3
+    assert data["import"]["accepted"] == 178 and data["import"]["rejected"] == 2 and data["import"]["dropped"] == 2
+    assert data["pool"] == 178 and data["budget"] == 20 and data["seeds"] == 3
     assert set(data["methods"]) == {"bayes-gp", "random", "grid"} and all(len(m["per_seed"]) == 3 for m in data["methods"].values())
     assert data["verdict"] in {"positive", "inconclusive", "weak", "negative"}
     s = data["savings"]["random"]
@@ -166,7 +174,7 @@ def test_replay_report_command_on_helix_export(tmp_path):
     assert s["bayes_faster"] + s["tied"] + s["bayes_slower"] == 3
     assert any("Only 3 seeds" in n for n in data["verdict_notes"])
     # one self-contained page: chart, import summary, caveats, no external resources
-    assert "<svg" in page and "duplicate sample id" in page and "This is a replay, not a forecast" in page
+    assert "<svg" in page and "duplicate sample id" in page and "unreadable composition" in page and "This is a replay, not a forecast" in page
     assert not re.search(r'(src|href)="(https?:)?//', page)
 
 
