@@ -390,6 +390,75 @@ def _more_systems_bullet(R: Path) -> list[str]:
             "(see 'Five more systems, chosen by rule')."]
 
 
+def _published_section(pub: dict) -> list[str]:
+    """P3HT/CNT from Liang et al. 2021: the paper's protocol and metrics, then Lodestone's own."""
+    imp, pp, lp = pub["import"], pub["paper_protocol"], pub["lodestone_protocol"]
+    names = {"random": "Random (simulated)", "bayes-gp": "Bayesian (GP)", "bayes-rf": "Bayesian (random forest)"}
+    short = {"bayes-gp": "GP", "bayes-rf": "random forest"}
+    out = ["### A published benchmark: P3HT/CNT blends (Liang et al. 2021)", "",
+           f"[{pub['paper']['citation']}](https://doi.org/10.1038/s41524-021-00656-9) benchmarked Bayesian optimization on five public experimental datasets. "
+           "P3HT/CNT shares Lodestone's objective: the electrical conductivity of drop-cast films blended from a polymer (P3HT) and four carbon-nanotube types. "
+           f"Imported through a column mapping (`data/benchmarks/p3ht_cnt/`): {imp['received']} rows, repeated recipes averaged as the paper does, "
+           f"**{imp['accepted']} blends**, and the same {pp['top_size']} top-5% blends as the paper's own code.", "",
+           f"**The paper's protocol and metrics.** {pp['initial']} random starting experiments, then one experiment per cycle, no simulated failures, "
+           f"{pp['seeds']} seeds, up to {pp['budget']} of the {pp['pool']} blends. Top% = share of the top-5% blends found. "
+           "Enhancement factor (EF) = Top% divided by the paper's analytic random baseline, per run, median over runs; EF_max is its peak. "
+           "Acceleration factor (AF) = experiments random needs to reach a Top% level divided by experiments the method needs (median run).", "",
+           "| Method | EF_max (median; IQR) at experiment | EF after 20 / 40 / 60 experiments | Top% after 20 / 40 / 60 | Experiments to Top% 0.5 (AF) | Experiments to Top% 0.8 (AF) |",
+           "|---|---|---|---|---|---|"]
+    for m, v in pp["methods"].items():
+        at = v["top_pct_at"]
+        af = lambda a: ("not reached" if v["af"][a]["experiments_bo_median"] is None else
+                        f"{v['af'][a]['experiments_bo_median']:.0f}" + ("" if v["af"][a]["af"] is None else f" ({v['af'][a]['af']:.1f}×)"))
+        ef = f"{v['ef_max_median']:.1f}× ({v['ef_max_q25']:.1f}–{v['ef_max_q75']:.1f}) at {v['ef_max_at_experiment']}" if m != "random" else "—"
+        efn = " / ".join(f"{v['ef_of_median_at'][n]:.1f}×" for n in ("20", "40", "60"))
+        out.append(f"| {names.get(m, m)} | {ef} | {efn} | {at['20']:.0%} / {at['40']:.0%} / {at['60']:.0%} | {af('0.5')} | {af('0.8')} |")
+    rnd = pp["random_analytic_top_pct"]
+    reach = lambda a: next((i + 1 for i, x in enumerate(rnd) if x >= a - 1e-9), None)
+    full = {a: next((i + 1 for i in range(pp["pool"]) if (i + 1) / pp["pool"] >= a - 1e-9), None) for a in (0.5, 0.8)}
+    out.append(f"| Random (paper's analytic baseline) | 1× | 1× | {rnd[19]:.0%} / {rnd[39]:.0%} / {rnd[59]:.0%} | {_fmt(full[0.5])} | {_fmt(full[0.8])} |")
+    bo = {k: v for k, v in pp["methods"].items() if k != "random"}
+    efs = {m: v["ef_max_median"] for m, v in bo.items()}
+    spans = {m: (min(v["ef_of_median_at"].values()), max(v["ef_of_median_at"].values())) for m, v in bo.items()}
+    inside = all(2 <= lo and hi <= 5 for lo, hi in spans.values())
+    best = max(bo, key=lambda m: bo[m]["af"]["0.8"]["af"] or 0)
+    early = [m for m, v in bo.items() if v["ef_max_at_experiment"] <= 10]
+    out += ["", "EF after n experiments = the median run's Top% divided by random's. "
+            + (f"The {', '.join(short[m] for m in early)}'s EF_max falls at experiment {', '.join(str(bo[m]['ef_max_at_experiment']) for m in early)}, where finding one of the "
+               f"{pp['top_size']} top blends in the first few experiments already gives a large ratio; its interquartile range runs from 0 to that value, so the EF after 20–60 experiments is the steadier number. "
+               if early else "")
+            + "Top% 0.8 lies beyond our budget for random, so its experiments come from the analytic baseline over the whole pool.", "",
+            f"**Against the paper.** It reports EF_max for its four smaller datasets, P3HT/CNT among them, 'in the 2× to 5× range', and GP with ARD and random forest as comparable, "
+            "with random forest slightly ahead on P3HT/CNT (its Fig. 4). Here the EF after 20–60 experiments is "
+            + ", ".join(f"{lo:.1f}–{hi:.1f}× for the {short[m]}" for m, (lo, hi) in spans.items())
+            + (", inside that range" if inside else "")
+            + f", and the {short[best]} is ahead (it reaches Top% 0.8 in {bo[best]['af']['0.8']['experiments_bo_median']:.0f} experiments). "
+            + ("So the ranking of the two surrogates is the reverse of the paper's. " if best == "bayes-gp" else "")
+            + "The setups differ: Lodestone's GP is BoTorch's RBF-ARD on log10 conductivity with expected improvement (qLogNEI), its forest uses "
+            "Monte-Carlo expected improvement, and runs stop at " + f"{pp['budget']} experiments; the paper used Matérn-5/2 GP-ARD and a 50-tree forest with LCB on standardized raw "
+            "conductivity, run until the pool is empty. So this checks that Lodestone lands in the published range, not that it reproduces the paper's curves.", ""]
+    m = lp["methods"]
+    cell = lambda v: f"{_fmt(v['experiments_to_top_median'])} ({v['found_top_in_budget']}/{v['runs']}) · {v['top_found_mean']:.1f} found"
+    g = m["bayes-gp"]
+    out += [f"**Lodestone's own protocol** (as for every HTEM campaign: 60 experiments, 10 random seed experiments, batches of 5, 5% simulated failures, {g['runs']} seeds):", "",
+            "| Random | Grid sweep | Bayesian (GP) | Bayesian (random forest) | Top-5% found: GP vs random (paired, ± s.e.m.) |", "|---|---|---|---|---|",
+            "| " + " | ".join(cell(m[k]) for k in ("random", "grid", "bayes-gp", "bayes-rf")) + f" | {g['top_found_minus_random_mean']:+.1f} ± {g['top_found_minus_random_sem']:.1f} |",
+            "", "Cells: median experiments to find 5 of the 9 top-5% blends (runs that got there) · top-5% blends found in the budget, mean.", ""]
+    return out
+
+
+def _published_bullet(R: Path) -> list[str]:
+    pub = _load(R / "benchmark" / "published_p3ht.json")
+    if not pub:
+        return []
+    bo = {m: v for m, v in pub["paper_protocol"]["methods"].items() if m != "random"}
+    spans = {m: (min(v["ef_of_median_at"].values()), max(v["ef_of_median_at"].values())) for m, v in bo.items()}
+    return ["- **On a published benchmark (P3HT/CNT, Liang et al. 2021), the paper's enhancement factor comes out at "
+            + " and ".join(f"{lo:.1f}–{hi:.1f}× ({'GP' if m == 'bayes-gp' else 'random forest'})" for m, (lo, hi) in spans.items())
+            + "** after 20–60 experiments, against the paper's 2–5× for that class of dataset. Unlike the paper, the GP beats the random forest here; "
+            "the surrogates and acquisition functions differ from the paper's, so it is a range check, not a reproduction."]
+
+
 def write_report() -> Path:
     R = config.REPORTS_DIR
     out = ["# Lodestone evaluation report", "",
@@ -460,6 +529,10 @@ def write_report() -> Path:
     if more and more["campaigns"]:
         out += _more_systems_section(more, _load(R / "benchmark" / "more_systems_library.json"))
 
+    pub = _load(R / "benchmark" / "published_p3ht.json")
+    if pub:
+        out += _published_section(pub)
+
     ob = _load(R / "onboarding" / "onboarding.json")
     prov = _load(R / "onboarding" / "provenance.json")
     cal = _load(R / "calibration" / "calibration.json")
@@ -514,6 +587,7 @@ def write_report() -> Path:
             "- **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign the Bayesian loop finds four times as many top-5% samples as random, yet the *median best value* it reaches (3.2 S/cm) is no higher than random's (4.0 S/cm), and no method reliably finds the extreme outlier (an 85 S/cm Co-Ni-Zn-O film). The first top-1% sample arrives no sooner than with random search on the constrained campaign.",
             *_library_bullet(R),
             *_more_systems_bullet(R),
+            *_published_bullet(R),
             "- **Grid search is a strong baseline for the very first hits** when a system has only one or two composition dimensions: a systematic sweep covers the space quickly. The optimizer pulls ahead once it has data to exploit.",
             "- **The random-forest surrogate is uneven**: excellent on conductivity, weak on constraints and windows, where its uncertainty estimates (tree spread) are poor.",
             "- **Replay can only choose among samples that were made.** A real campaign would propose new recipes; the 'suggest recipes' feature does that, but its predictions are unverified by construction.",

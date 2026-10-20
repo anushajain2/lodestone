@@ -24,7 +24,7 @@ The third step is the point. You see whether the model would have saved experime
 - **The scientist or engineer asked to "try AI" in that lab.** You get a working starting point instead of a research project: importers for messy exports, unit checks, failed measurements handled, a savings report to show your manager, and code small enough to read and adapt.
 - **R&D managers deciding whether AI-guided experiments are worth paying for.** The report gives the saving in experiments and money, with a range, measured against the simple alternatives. It says "not proven" when the data doesn't support a saving.
 
-Today it handles composition and deposition conditions (temperature, pressure, thickness) as inputs, and electrical conductivity and band gap as results.
+Today it handles composition (chemical elements, or the ingredients of a blend) and deposition conditions (temperature, pressure, thickness) as inputs, and electrical conductivity and band gap as results.
 
 ## Try it in five minutes
 
@@ -67,7 +67,7 @@ uv run lodestone campaign run "most conductive zinc tin nitride, 40 experiments"
 
 Three steps, no code changes. The result is one HTML page you can share.
 
-**1. Describe your columns.** Copy [`data/templates/mapping_template.yaml`](data/templates/mapping_template.yaml) and fill in which column of your CSV holds the sample id, composition, deposition temperature, pressure, thickness, conductivity or resistivity, and band gap or absorption edge. Units are read from the headers (`Rho [mOhm*cm]`, `Eg (eV)`) or given in the mapping, and converted automatically. [`data/templates/export_template.csv`](data/templates/export_template.csv) is an example export that matches the template.
+**1. Describe your columns.** Copy [`data/templates/mapping_template.yaml`](data/templates/mapping_template.yaml) and fill in which column of your CSV holds the sample id, composition, deposition temperature, pressure, thickness, conductivity or resistivity, and band gap or absorption edge. Units are read from the headers (`Rho [mOhm*cm]`, `Eg (eV)`) or given in the mapping, and converted automatically. For blends of named ingredients (a polymer and nanotube types, say), set `composition_kind: components`; `replicates: average` merges repeated measurements of the same recipe. [`data/benchmarks/p3ht_cnt/mapping.yaml`](data/benchmarks/p3ht_cnt/mapping.yaml) is a worked example. [`data/templates/export_template.csv`](data/templates/export_template.csv) is an example export that matches the template.
 
 **2. Check the import.** This dry run shows which column feeds which field and lists every rejected row or dropped value with its reason. Nothing is saved.
 
@@ -107,6 +107,7 @@ The report also says when a result is weak. If the range of the saving includes 
 - **Per sample, the model finds 2.5–4× as many top-5% samples** as random picks or a sweep on the same budget. This holds when 0–20% of experiments fail and at batch sizes of 1, 5 and 10.
 - **Per deposition run, the gain is smaller.** In HTEM, one deposition run makes a whole library of about 44 samples, so a lab really chooses runs, not samples. Counted that way (10-run budget), the model finds 1.4–1.6× as many top-5% samples as random: 1.7–1.9× with a 5-run budget, 1.2× with 15. Still a win, but this is the number a lab should expect.
 - **It holds on systems I didn't pick.** On five more HTEM systems chosen by a fixed rule after the method was built, the model found clearly more top-5% samples than random in 5 of 6 campaigns (0.8–5× as many). The exception was copper antimony sulfide, where the Gaussian-process model did no better than random (the random-forest model did). These systems have too few deposition runs to repeat the per-run check.
+- **It lands in the published range on another lab's data.** On the P3HT/CNT polymer-nanotube blends from a published Bayesian-optimization benchmark ([Liang et al. 2021](https://doi.org/10.1038/s41524-021-00656-9)), scored with that paper's own metric, the model has found 2.6–4.0× as many of the top-5% blends as random after 20–60 experiments; the paper reports 2–5× for this kind of dataset. Unlike the paper, the Gaussian-process model beat the random forest here, and the setups differ, so this is a range check, not a reproduction.
 
 **What didn't work, reported as it came out:**
 
@@ -198,13 +199,13 @@ uv run lodestone api
 
 Or run the built-in agent: `ANTHROPIC_API_KEY=... uv run lodestone agent run`.
 
-**Reproduce the evaluation.** `uv run lodestone bench` reruns the benchmark (`--extra` for the five rule-chosen systems), `uv run lodestone eval calibration` the uncertainty checks, and `uv run lodestone eval report` rewrites `reports/EVALUATION.md`. `uv run pytest` runs the tests, including the cross-lab isolation attacks.
+**Reproduce the evaluation.** `uv run lodestone bench` reruns the benchmark (`--extra` for the five rule-chosen systems, `--published` for the P3HT/CNT benchmark), `uv run lodestone eval calibration` the uncertainty checks, and `uv run lodestone eval report` rewrites `reports/EVALUATION.md`. `uv run pytest` runs the tests, including the cross-lab isolation attacks.
 
 ## Limits
 
 - **Replay only chooses among samples that were made.** The "suggest recipes" feature proposes new ones, but predictions for a new deposition run are weak, so treat them as leads to test.
 - **One row per sample.** A new CSV layout needs only a mapping file. Formats that aren't one row per sample (spectra, raw instrument files, several header rows) still need code.
-- **Two measured properties.** Conductivity and band gap are modelled today. Measurement methods are recorded as HTEM's defaults (four-point probe, Tauc fit, XRF thickness) whatever the lab used.
+- **Two measured properties.** Conductivity and band gap are modelled today (for HTEM data and for blends alike). Measurement methods are recorded as HTEM's defaults (four-point probe, Tauc fit, XRF thickness) whatever the lab used.
 - **The Claude agent is built but not yet scored.** Only the scripted reference policy has been evaluated so far; scoring Claude needs an API key.
 
 ## Repository map
@@ -227,6 +228,7 @@ src/lodestone/
   evals/                  agent tasks and scoring, onboarding and provenance checks
 dashboard/app.py          Streamlit dashboard
 tests/                    pytest
+data/benchmarks/p3ht_cnt/ the published P3HT/CNT dataset (MIT License) and its mapping
 data/htem/                HTEM snapshots (3 demo systems + 8 screened for the rule-based check); data/partner_lab/ a second lab's CSV + mapping; data/templates/ mapping and export templates
 reports/                  benchmark, calibration, onboarding, agent eval, EVALUATION.md
 legacy/dielectric/        an earlier version on computed dielectrics, kept for reference

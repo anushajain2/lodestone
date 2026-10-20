@@ -49,7 +49,8 @@ def untransform(prop: str, values: np.ndarray) -> np.ndarray:
 
 
 def short_label(rec: dict) -> str:
-    comp = " ".join(f"{el}{f:.2f}" for el, f in rec["composition"].items())
+    sep = ":" if any(el[-1].isdigit() for el in rec["composition"]) else ""  # blends: "D1:0.20", not "D10.20"
+    comp = " ".join(f"{el}{sep}{f:.2f}" for el, f in rec["composition"].items())
     t = rec["synthesis"].get("deposition_temp_c")
     temp = f" · {t:.0f} °C" if t is not None else ""
     return f"{comp}{temp}"

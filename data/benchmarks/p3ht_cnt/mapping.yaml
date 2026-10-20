@@ -1,0 +1,16 @@
+# P3HT/CNT polymer blends: conductivity of drop-cast films (Bash et al. 2021), as published with
+# Liang et al. 2021's Bayesian optimization benchmark. Five ingredients, in percent of the blend.
+name: P3HT/CNT blends (PV-Lab/Benchmarking)
+composition_kind: components
+row_ids: true          # the file has no sample id column
+replicates: average    # as the benchmark paper does: 232 rows -> 178 distinct blends
+default_library: p3ht-cnt
+synthesis_method: drop casting (P3HT/CNT blend films)
+columns:
+  composition:
+    P3HT: P3HT content (%)
+    D1: D1 content (%)
+    D2: D2 content (%)
+    D6: D6 content (%)
+    D8: D8 content (%)
+  conductivity: {column: "Conductivity (measured) (S/cm)", unit: S/cm}

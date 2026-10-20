@@ -142,6 +142,31 @@ Cells: median experiments to find 5 of the top-5% samples (runs that got there) 
 
 **Counted per deposition run: not testable here.** After import, these systems have only 4–9 deposition runs with usable samples each (the run-level design needs at least 20), so a 10-run budget would cover most of each system. The per-sample gains above are therefore not checked at run level for these systems; on the demo systems, counting per run cut the gain to 1.2–1.9×.
 
+### A published benchmark: P3HT/CNT blends (Liang et al. 2021)
+
+[Q. Liang et al., npj Computational Materials 7, 188 (2021), doi:10.1038/s41524-021-00656-9](https://doi.org/10.1038/s41524-021-00656-9) benchmarked Bayesian optimization on five public experimental datasets. P3HT/CNT shares Lodestone's objective: the electrical conductivity of drop-cast films blended from a polymer (P3HT) and four carbon-nanotube types. Imported through a column mapping (`data/benchmarks/p3ht_cnt/`): 233 rows, repeated recipes averaged as the paper does, **178 blends**, and the same 9 top-5% blends as the paper's own code.
+
+**The paper's protocol and metrics.** 2 random starting experiments, then one experiment per cycle, no simulated failures, 50 seeds, up to 120 of the 178 blends. Top% = share of the top-5% blends found. Enhancement factor (EF) = Top% divided by the paper's analytic random baseline, per run, median over runs; EF_max is its peak. Acceleration factor (AF) = experiments random needs to reach a Top% level divided by experiments the method needs (median run).
+
+| Method | EF_max (median; IQR) at experiment | EF after 20 / 40 / 60 experiments | Top% after 20 / 40 / 60 | Experiments to Top% 0.5 (AF) | Experiments to Top% 0.8 (AF) |
+|---|---|---|---|---|---|
+| Random (simulated) | — | 1.0× / 1.0× / 1.0× | 11% / 22% / 33% | 86 (1.0×) | not reached |
+| Bayesian (GP) | 4.9× (0.0–4.9) at 4 | 4.0× / 3.5× / 2.6× | 44% / 78% / 89% | 24 (3.8×) | 48 (2.9×) |
+| Bayesian (random forest) | 3.0× (1.5–3.6) at 26 | 2.0× / 2.5× / 2.3× | 22% / 56% / 78% | 34 (2.6×) | 66 (2.2×) |
+| Random (paper's analytic baseline) | 1× | 1× | 11% / 22% / 34% | 89 | 143 |
+
+EF after n experiments = the median run's Top% divided by random's. The GP's EF_max falls at experiment 4, where finding one of the 9 top blends in the first few experiments already gives a large ratio; its interquartile range runs from 0 to that value, so the EF after 20–60 experiments is the steadier number. Top% 0.8 lies beyond our budget for random, so its experiments come from the analytic baseline over the whole pool.
+
+**Against the paper.** It reports EF_max for its four smaller datasets, P3HT/CNT among them, 'in the 2× to 5× range', and GP with ARD and random forest as comparable, with random forest slightly ahead on P3HT/CNT (its Fig. 4). Here the EF after 20–60 experiments is 2.6–4.0× for the GP, 2.0–2.5× for the random forest, and the GP is ahead (it reaches Top% 0.8 in 48 experiments). So the ranking of the two surrogates is the reverse of the paper's. The setups differ: Lodestone's GP is BoTorch's RBF-ARD on log10 conductivity with expected improvement (qLogNEI), its forest uses Monte-Carlo expected improvement, and runs stop at 120 experiments; the paper used Matérn-5/2 GP-ARD and a 50-tree forest with LCB on standardized raw conductivity, run until the pool is empty. So this checks that Lodestone lands in the published range, not that it reproduces the paper's curves.
+
+**Lodestone's own protocol** (as for every HTEM campaign: 60 experiments, 10 random seed experiments, batches of 5, 5% simulated failures, 20 seeds):
+
+| Random | Grid sweep | Bayesian (GP) | Bayesian (random forest) | Top-5% found: GP vs random (paired, ± s.e.m.) |
+|---|---|---|---|---|
+| 61 (2/20) · 3.1 found | 61 (1/20) · 1.6 found | 32 (20/20) · 7.8 found | 43 (15/20) · 5.8 found | +4.6 ± 0.3 |
+
+Cells: median experiments to find 5 of the 9 top-5% blends (runs that got there) · top-5% blends found in the budget, mean.
+
 ### Is the model's uncertainty honest?
 
 Fit the GP on n random measured samples of a system, predict every other measured sample, and count how often the real value falls inside the predicted 68% and 95% intervals (20 random splits each). A calibrated model scores 68% and 95%. Two fixes were tried. **CV variance scaling** widens the intervals by a factor from 5-fold cross-validation on the campaign's own data. **Fixed inflation** widens each property's intervals by a constant learned only from the *other* systems' held-out checks. A noise floor and a Matérn-5/2 kernel were also tried; neither raised 68% coverage meaningfully (it moved by at most 7 percentage points, in either direction; `reports/calibration/calibration.json`). Neither fix changes the predicted values, so R² is the same for all three.
@@ -242,6 +267,7 @@ Provenance spot-check: 20 random samples, 56 values compared with the raw HTEM r
 - **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign the Bayesian loop finds four times as many top-5% samples as random, yet the *median best value* it reaches (3.2 S/cm) is no higher than random's (4.0 S/cm), and no method reliably finds the extreme outlier (an 85 S/cm Co-Ni-Zn-O film). The first top-1% sample arrives no sooner than with random search on the constrained campaign.
 - **Counted in deposition runs, the savings shrink.** When one experiment is a whole library (10-run budget), every method finds its first top-5% sample in a median of 2–4 runs, and the Bayesian loop finds 1.4–1.6× as many top-5% samples as random (1.2–1.9× across all the run budgets and seed-run counts tried), down from the spot-level gain. IZTO has too few libraries to test (see 'One experiment = one deposition run').
 - **On five systems chosen by rule after the method was fixed**, the GP loop finds clearly more top-5% samples than random in 5 of 6 campaigns, but not on most conductive copper antimony sulfide. These systems have too few deposition runs to repeat the run-level check (see 'Five more systems, chosen by rule').
+- **On a published benchmark (P3HT/CNT, Liang et al. 2021), the paper's enhancement factor comes out at 2.6–4.0× (GP) and 2.0–2.5× (random forest)** after 20–60 experiments, against the paper's 2–5× for that class of dataset. Unlike the paper, the GP beats the random forest here; the surrogates and acquisition functions differ from the paper's, so it is a range check, not a reproduction.
 - **Grid search is a strong baseline for the very first hits** when a system has only one or two composition dimensions: a systematic sweep covers the space quickly. The optimizer pulls ahead once it has data to exploit.
 - **The random-forest surrogate is uneven**: excellent on conductivity, weak on constraints and windows, where its uncertainty estimates (tree spread) are poor.
 - **Replay can only choose among samples that were made.** A real campaign would propose new recipes; the 'suggest recipes' feature does that, but its predictions are unverified by construction.

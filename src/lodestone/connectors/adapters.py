@@ -86,6 +86,18 @@ def cation_fractions(names: list[str], amounts: list[float]) -> dict[str, float]
     return {k: v / total for k, v in sorted(out.items())}
 
 
+def component_fractions(names: list[str], amounts: list[float]) -> dict[str, float]:
+    """Blend ingredients (percent) → fractions summing to 1, for composition_kind: components."""
+    if any(a < 0 for a in amounts):
+        raise Reject(f"negative ingredient amount in {dict(zip(names, amounts))}")
+    total = sum(amounts)
+    if total <= 0:
+        raise Reject("ingredient amounts are all zero")
+    if not 90.0 <= total <= 110.0:
+        raise Reject(f"ingredient amounts sum to {total:.1f}%, not ~100% (wrong units or truncated record)")
+    return {k: a / total for k, a in sorted(zip(names, amounts)) if a > 0} or {names[0]: 1.0}
+
+
 def _check(prop: str, value: float | None, issues: list[RecordIssue], sid: str) -> float | None:
     if value is None:
         return None
@@ -278,6 +290,19 @@ class MappedColumn:
     error: str | None = None
 
 
+def _num(cell) -> float | None:
+    try:
+        return float(str(cell).strip().replace(",", "."))
+    except (TypeError, ValueError):
+        return None
+
+
+def _cell_key(cell):
+    """Recipe cells compare as numbers when they are numbers (so 30 and 30.0 match)."""
+    v = _num(cell)
+    return round(v, 9) if v is not None else (cell or "").strip()
+
+
 class LabCSVAdapter:
     """Any lab's CSV export, read through a :class:`~lodestone.connectors.mapping.ColumnMapping`.
 
@@ -370,6 +395,8 @@ class LabCSVAdapter:
                 except ValueError:
                     raise Reject(f"unreadable {el} amount {cell!r} in column '{h}'") from None
                 names.append(el)
+            if self.mapping.composition_kind == "components":
+                return component_fractions(names, amounts)
             return cation_fractions(names, amounts)
         txt = row.get(cols["composition"].header) or ""
         parts = [p.split(":") for p in txt.split(";") if p.strip()]
@@ -384,6 +411,35 @@ class LabCSVAdapter:
 
     # ---------------------------------------------------------------- rows
 
+    MEASURED = ("conductivity", "resistivity", "sheet_resistance", "band_gap", "optical_edge", "transmittance")
+    RECIPE = ("deposition_temperature", "pressure", "thickness", "library")
+
+    def _average_replicates(self, rows: list[dict], cols: dict[str, MappedColumn], comp: dict[str, str]):
+        """Merge rows with the same recipe (composition cells, deposition conditions, library) into one
+        row whose measured values are the mean of the rows' readable values. Returns the merged rows,
+        how many source rows each stands for, and a note per merged row."""
+        recipe_cols = list(comp.values()) + ([cols["composition"].header] if "composition" in cols else []) \
+            + [cols[f].header for f in self.RECIPE if f in cols]
+        measured_cols = [cols[f].header for f in self.MEASURED if f in cols]
+        groups: dict[tuple, list[dict]] = {}
+        for row in rows:
+            key = tuple(_cell_key(row.get(h)) for h in recipe_cols)
+            groups.setdefault(key, []).append(row)
+        merged, received, notes = [], {}, {}
+        for group in groups.values():
+            row = dict(group[0])
+            if len(group) > 1:
+                for h in measured_cols:
+                    vals = [_num(r.get(h)) for r in group]
+                    vals = [v for v in vals if v is not None]
+                    if vals:
+                        row[h] = repr(sum(vals) / len(vals))
+                ids = [r["\0id"] if self.mapping.row_ids else (r.get(cols["sample_id"].header) or "").strip() for r in group]
+                notes[len(merged)] = f"mean of {len(group)} rows with the same recipe ({', '.join(ids)})"
+            received[len(merged)] = len(group)
+            merged.append(row)
+        return merged, received, notes
+
     def adapt_csv(self, text: str, system: str | None = None, seen_ids: set[str] | None = None) -> tuple[list[ExperimentRecord], list[ImportReport]]:
         system = system or self.mapping.system
         if not system:
@@ -397,13 +453,23 @@ class LabCSVAdapter:
             missing_reasons[prop] = f"no {' or '.join(have)} reported" if have else "not in this lab's export"
         reports: dict[str, ImportReport] = {}
         records: list[ExperimentRecord] = []
-        for row in reader:
+        rows = list(reader)
+        if self.mapping.row_ids:
+            for i, row in enumerate(rows, start=1):
+                row["\0id"] = f"row-{i}"
+        received = {}
+        notes: dict[int, str] = {}
+        if self.mapping.replicates == "average":
+            rows, received, notes = self._average_replicates(rows, cols, comp)
+        for n_row, row in enumerate(rows):
             lid = (row.get(cols["library"].header) or "").strip() if "library" in cols else ""
             lid = lid or self.mapping.default_library
             rep = reports.setdefault(lid, ImportReport(source=self.source, source_library_id=lid, system=system, adapter=self.name))
-            rep.received += 1
-            sid = (row.get(cols["sample_id"].header) or "").strip()
+            rep.received += received.get(n_row, 1)
+            sid = row["\0id"] if self.mapping.row_ids else (row.get(cols["sample_id"].header) or "").strip()
             issues: list[RecordIssue] = []
+            if n_row in notes:
+                issues.append(RecordIssue(source_sample_id=sid, level="warning", field="replicates", reason=notes[n_row]))
             try:
                 if not re.fullmatch(r"[A-Za-z0-9_\-]+", sid or ""):
                     raise Reject(f"invalid sample id {sid!r}")

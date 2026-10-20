@@ -8,6 +8,7 @@ sample, library and measurement type, so any number on screen can be traced to w
 from __future__ import annotations
 
 import math
+import re
 from datetime import datetime, timezone
 from typing import Literal
 
@@ -18,6 +19,31 @@ SYMBOLS = set(
     "Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm "
     "Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu".split()
 )
+
+# Blends: systems whose inputs are named ingredients (polymers, nanotube types, solvents) rather than
+# chemical elements, e.g. "blend:D1-D2-D6-D8-P3HT". Element systems are validated as before.
+BLEND_PREFIX = "blend:"
+_COMPONENT = re.compile(r"[A-Za-z][A-Za-z0-9_+.]{0,31}")
+
+
+def is_blend(system: str | None) -> bool:
+    return bool(system) and system.startswith(BLEND_PREFIX)
+
+
+def normalize_system(v: str) -> str:
+    """Sorted, dash-joined; element symbols for element systems, ingredient names for blends."""
+    if is_blend(v):
+        names = [n for n in v[len(BLEND_PREFIX):].split("-") if n]
+        bad = [n for n in names if not _COMPONENT.fullmatch(n)]
+        if not names or bad:
+            raise ValueError(f"blend system needs ingredient names (letters, digits, '_', '+', '.'), got {bad or v!r}")
+        return BLEND_PREFIX + "-".join(sorted(names))
+    els = v.split("-")
+    bad = [e for e in els if e not in SYMBOLS]
+    if bad:
+        raise ValueError(f"system has unknown elements {bad}")
+    return "-".join(sorted(els))
+
 
 PropertyName = Literal["conductivity", "band_gap", "visible_transmittance", "sheet_resistance", "thickness"]
 
@@ -103,15 +129,24 @@ class ExperimentRecord(BaseModel):
     def _fractions(cls, v: dict[str, float]) -> dict[str, float]:
         if not v:
             raise ValueError("composition is empty")
-        bad = [e for e in v if e not in SYMBOLS]
-        if bad:
-            raise ValueError(f"not element symbols: {bad}")
         if any(x < 0 for x in v.values()):
             raise ValueError("composition fractions cannot be negative")
         s = sum(v.values())
         if abs(s - 1.0) > 1e-6:
             raise ValueError(f"composition fractions sum to {s:.4f}, not 1")
         return v
+
+    @model_validator(mode="after")
+    def _composition_names(self) -> "ExperimentRecord":
+        if is_blend(self.system):
+            bad = [n for n in self.composition if not _COMPONENT.fullmatch(n)]
+            if bad:
+                raise ValueError(f"not ingredient names: {bad}")
+        else:
+            bad = [e for e in self.composition if e not in SYMBOLS]
+            if bad:
+                raise ValueError(f"not element symbols: {bad}")
+        return self
 
     @model_validator(mode="after")
     def _canonical_units(self) -> "ExperimentRecord":
@@ -231,11 +266,7 @@ class CampaignSpec(BaseModel):
     @field_validator("system")
     @classmethod
     def _system(cls, v: str) -> str:
-        els = v.split("-")
-        bad = [e for e in els if e not in SYMBOLS]
-        if bad:
-            raise ValueError(f"system has unknown elements {bad}")
-        return "-".join(sorted(els))
+        return normalize_system(v)
 
     @model_validator(mode="after")
     def _shape(self) -> "CampaignSpec":

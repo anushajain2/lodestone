@@ -11,6 +11,11 @@ A mapping is a small YAML (or JSON) file::
       conductivity: "Sigma [S/cm]"
       band_gap: Eg (eV)
 
+Blends whose inputs are named ingredients rather than elements (a polymer and nanotube types, say) use
+``composition_kind: components``; their system becomes ``blend:<sorted ingredient names>``. An export
+with no sample id column can set ``row_ids: true`` (ids become row-1, row-2, ...), and repeated
+measurements of the same recipe can be merged with ``replicates: average``.
+
 A column can be named with or without the unit written in its header: ``Rho`` matches the header
 ``Rho [mOhm*cm]`` and the unit is read from the brackets (or parentheses). A unit given in the mapping
 is used when the header has none. Units are converted with ``pint`` by the adapter; see
@@ -28,7 +33,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from lodestone import config
-from lodestone.schemas import SYMBOLS
+from lodestone.schemas import _COMPONENT, BLEND_PREFIX, SYMBOLS, is_blend, normalize_system
 
 # field → (what it is, a unit with the dimension the column must have; None = not a quantity)
 FIELDS: dict[str, tuple[str, str | None]] = {
@@ -75,6 +80,9 @@ class ColumnMapping(BaseModel):
     date_format: str = "%Y-%m-%d"
     default_library: str = Field("export", description="Library id when no library column is mapped")
     synthesis_method: str = Field("thin-film deposition (lab export)", description="How the films were made, for provenance")
+    composition_kind: Literal["elements", "components"] = Field("elements", description="'components' for blends of named ingredients")
+    row_ids: bool = Field(False, description="Number the rows (row-1, row-2, ...) when the export has no sample id column")
+    replicates: Literal["keep", "average"] = Field("keep", description="'average' merges rows with the same recipe into one sample")
 
     @model_validator(mode="before")
     @classmethod
@@ -102,23 +110,32 @@ class ColumnMapping(BaseModel):
     @field_validator("system")
     @classmethod
     def _system(cls, v: str | None) -> str | None:
-        if v is None:
-            return v
-        bad = [e for e in v.split("-") if e not in SYMBOLS]
-        if bad:
-            raise ValueError(f"system has unknown elements {bad}")
-        return "-".join(sorted(v.split("-")))
+        return v if v is None else normalize_system(v)
 
     @model_validator(mode="after")
     def _shape(self) -> "ColumnMapping":
-        if "sample_id" not in self.columns:
-            raise ValueError("map the sample id column: columns.sample_id")
+        if "sample_id" not in self.columns and not self.row_ids:
+            raise ValueError("map the sample id column: columns.sample_id (or set row_ids: true)")
         if ("composition" in self.columns) == bool(self.composition):
             raise ValueError("map composition either as one column or as one column per element, not both or neither")
-        if self.composition:
-            bad = [e for e in self.composition if e not in SYMBOLS]
+        if self.composition_kind == "components":
+            if not self.composition:
+                raise ValueError("composition_kind: components needs one column per ingredient under columns.composition")
+            bad = [n for n in self.composition if not _COMPONENT.fullmatch(n)]
             if bad:
-                raise ValueError(f"composition keys must be element symbols, got {bad}")
+                raise ValueError(f"ingredient names may use letters, digits, '_', '+' and '.', got {bad}")
+            blend = normalize_system(BLEND_PREFIX + "-".join(self.composition))
+            if self.system is None:
+                self.system = blend
+            elif self.system != blend:
+                raise ValueError(f"system {self.system!r} doesn't match the mapped ingredients ({blend})")
+        else:
+            if self.system is not None and is_blend(self.system):
+                raise ValueError("a blend: system needs composition_kind: components")
+            if self.composition:
+                bad = [e for e in self.composition if e not in SYMBOLS]
+                if bad:
+                    raise ValueError(f"composition keys must be element symbols, got {bad} (for named ingredients set composition_kind: components)")
         if "band_gap" in self.columns and "optical_edge" in self.columns:
             raise ValueError("map either band_gap or optical_edge, not both")
         return self
