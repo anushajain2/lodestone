@@ -288,6 +288,17 @@ def lab_order(problem: Problem) -> list[str]:
     return sorted(problem.libraries(), key=lambda lib: (lib not in dates, dates.get(lib, ""), int(lib) if lib.isdigit() else lib))
 
 
+def lab_sample_order(problem: Problem) -> list[int]:
+    """Samples in the order the lab made them: date, then position in the export (undated last)."""
+    dates = [r["provenance"].get("sample_date") or "" for r in problem.records]
+    return sorted(range(problem.n), key=lambda i: (dates[i] == "", dates[i], i))
+
+
+def select_lab_samples(unavailable: set[int], q: int, order: list[int]) -> list[Pick]:
+    picks = [Pick(index=i, strategy="lab-order", notes=["the next sample the lab actually made"]) for i in order if i not in unavailable]
+    return picks[:q]
+
+
 def select_lab_order(unavailable: set[str], q: int, order: list[str]) -> list[LibraryPick]:
     picks = [LibraryPick(library=lib, strategy="lab-order", notes=["the next run the lab actually made"]) for lib in order if lib not in unavailable]
     return picks[:q]

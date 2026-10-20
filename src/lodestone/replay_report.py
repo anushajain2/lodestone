@@ -27,13 +27,14 @@ from lodestone.connectors.adapters import LabCSVAdapter
 from lodestone.connectors.mapping import ColumnMapping, helix_mapping, load_mapping
 from lodestone.goals import find_system, parse_goal
 from lodestone.loop.benchmark import _natural, run_problem
-from lodestone.loop.engine import experiments_to_top
+from lodestone.loop.engine import experiments_to_top, per_run, simulate, simulate_libraries
 from lodestone.loop.problem import Problem, fmt_value
 from lodestone.schemas import PROPERTIES, ImportReport
 
 METHODS = (("bayes", "gp"), ("random", "gp"), ("grid", "gp"))
 NAMES = {"bayes-gp": "Bayesian optimization", "random": "Random picks", "grid": "Grid sweep"}
 MIN_POOL = 30  # fewer accepted samples than this and a replay says nothing useful
+MIN_RUNS = 6  # dated deposition runs needed before the run-level comparison with the lab's order can say anything
 DEFAULT_BUDGET = 60
 
 
@@ -151,6 +152,81 @@ def _verdict(save: dict, bayes: dict, rand: dict, k: int, budget: int, seeds: in
                             f"({_n(lo)} to {_n(hi)}) includes zero. Treat any saving from this data as unproven."), notes
 
 
+# ------------------------------------------------------------------ the lab's own order
+
+def date_granularity(prob: Problem) -> tuple[str, dict]:
+    """'row' when samples carry their own dates, 'run' when every library (batch) has one date,
+    'none' when fewer than half the samples are dated or every date is the same."""
+    dates = [r["provenance"].get("sample_date") for r in prob.records]
+    dated = [d for d in dates if d]
+    info = {"dated": len(dated), "samples": prob.n, "distinct_dates": len(set(dated))}
+    if len(dated) < 0.5 * prob.n or len(set(dated)) < 2:
+        return "none", info
+    libs = prob.libraries()
+    per_lib = {lib: {dates[i] for i in idx if dates[i]} for lib, idx in libs.items()}
+    if len(libs) > 1 and all(len(v) <= 1 for v in per_lib.values()):
+        return "run", info | {"runs": sum(1 for v in per_lib.values() if v)}
+    rows_sharing = sum(1 for d in dated if dated.count(d) > 1)
+    return "row", info | {"rows_sharing_a_date": rows_sharing}
+
+
+def lab_comparison(prob: Problem, k: int, seeds: int, budget: int) -> dict:
+    """The model against the order the lab actually made its samples (or runs), started from the
+    lab's own first experiments. Paired by seed; only the simulated failures differ between seeds."""
+    level, info = date_granularity(prob)
+    out = {"level": level, "info": info}
+    if level == "none":
+        return out
+    top = prob.top_set(0.05)
+    if level == "row":
+        spec = prob.spec
+        runs = {m: [simulate(prob, strat, "gp", seed=s, start="lab") for s in range(seeds)]
+                for m, strat in (("lab-order", "lab-order"), ("bayes-gp-from-lab-start", "bayes"))}
+        unit, horizon = "experiments", budget
+        out["initial"] = spec.initial
+    else:
+        n_runs = info["runs"]
+        initial = 1 if n_runs < 10 else 2
+        runs = {m: [simulate_libraries(prob, strat, "gp", s, budget=n_runs, batch=1, initial=initial, failure_rate=prob.spec.failure_rate, start="lab")
+                    for s in range(seeds)] for m, strat in (("lab-order", "lab-order"), ("bayes-gp-from-lab-start", "bayes"))}
+        unit, horizon = "runs", n_runs
+        out["initial"] = initial
+        out["found_per_run"] = {m: np.mean([per_run(prob, t, top)[1] for t in ts], axis=0).tolist() for m, ts in runs.items()}
+        out["lab_runs_with_top"] = [n + 1 for n, lib in enumerate(dict.fromkeys(st.library for st in runs["lab-order"][0].steps))
+                                    if lib in {str(prob.library[i]) for i in top}]
+    per_seed = {m: np.array([experiments_to_top(prob, t, top, k) or horizon + 1 for t in ts], float) for m, ts in runs.items()}
+    meth = {m: {"to_k_median": float(np.median(v)), "reached": int((v <= horizon).sum()), "runs": len(v),
+                "top_found_mean": float(np.mean([len({st.index for st in t.steps if st.status == "ok" and st.index in set(top.tolist())}) for t in ts]))}
+            for (m, v), ts in zip(per_seed.items(), runs.values())}
+    lo, hi = _bootstrap(per_seed["lab-order"], per_seed["bayes-gp-from-lab-start"])
+    saved = meth["lab-order"]["to_k_median"] - meth["bayes-gp-from-lab-start"]["to_k_median"]
+    out.update({"unit": unit, "horizon": horizon, "methods": meth, "saved": saved, "interval": [lo, hi],
+                "usable": level == "row" or info["runs"] >= MIN_RUNS})
+    return out
+
+
+def _verdict_lab(lab: dict, k: int, seeds: int) -> tuple[str, str]:
+    m, u, h = lab["methods"], lab["unit"], lab["horizon"]
+    b, l = m["bayes-gp-from-lab-start"], m["lab-order"]
+    lo, hi = lab["interval"]
+    what = "deposition runs" if u == "runs" else "experiments"
+    if not lab["usable"]:
+        return "too_few", (f"Your export dates each deposition run, but there are only {lab['info']['runs']} runs: too few to tell whether the model "
+                           "would have beaten the order your lab actually made them in. The verdict above is against random picks, which flatters the model.")
+    if b["reached"] < b["runs"] / 2:
+        return "weak", (f"Started from your lab's own first {what}, the model did not reliably find {k} of the top-5% samples within {h} {what} "
+                        f"(it did in {b['reached']} of {b['runs']} runs). This replay does not support a savings claim against what you actually did.")
+    if lo > 0:
+        return "positive", (f"Against the order your lab actually made them in, the model found {k} of the top-5% samples in a median of {_n(b['to_k_median'])} {what}, "
+                            f"against {_n(l['to_k_median'])} for your lab: {_n(lab['saved'])} fewer (90% interval {_n(lo)} to {_n(hi)}).")
+    if hi < 0:
+        return "negative", (f"Your lab's own order was faster than the model: {_n(l['to_k_median'])} {what} to find {k} of the top-5% samples, "
+                            f"against {_n(b['to_k_median'])} for the model started from the same first {what} (90% interval of the difference {_n(lo)} to {_n(hi)}). "
+                            "On this data the model would not have saved you experiments.")
+    return "inconclusive", (f"No clear difference from what your lab actually did: {_n(b['to_k_median'])} {what} for the model against {_n(l['to_k_median'])} "
+                            f"for your lab's order, and the 90% interval of the saving ({_n(lo)} to {_n(hi)}) includes zero.")
+
+
 def run_replay_report(
     csv_path: str | Path, goal: str, mapping_path: str | Path | None = None, system: str | None = None,
     cost_per_experiment: float = 1500.0, currency: str = "$", seeds: int = 30, budget: int | None = None,
@@ -218,6 +294,15 @@ def run_replay_report(
             "bayes_faster": int((d > 0).sum()), "tied": int((d == 0).sum()), "bayes_slower": int((d < 0).sum()),
         }
     verdict, sentence, vnotes = _verdict(savings["random"], meth["bayes-gp"], meth["random"], k, budget, seeds)
+    lab = lab_comparison(prob, k, seeds, budget)
+    headline = "random"
+    if lab["level"] != "none":
+        lab["verdict"], lab["verdict_text"] = _verdict_lab(lab, k, seeds)
+        if lab["usable"]:
+            headline = "lab"
+            vnotes = [f"Against random picks instead: {sentence}"] + vnotes
+            verdict, sentence = lab["verdict"], lab["verdict_text"]
+            vnotes.append("Your lab chose its experiments for its own goals at the time, which may not be the goal entered here.")
     _, ylabel, logy = _natural(spec, np.array([0.0]))
     best_nat = _natural(spec, np.array([summary["best_possible"]]))[0][0]
     top_ids = {int(i) for i in top}
@@ -234,7 +319,7 @@ def run_replay_report(
         "spec": spec.model_dump(), "goal_summary": spec.summary(), "goal_notes": notes, "pool": pool, "feasible": feasible,
         "top_size": summary["top_size"], "k": k, "budget": budget, "seeds": seeds, "failure_rate": failure_rate,
         "methods": {m: meth[m] | {"name": NAMES[m], "per_seed": [int(x) for x in per_seed[m]]} for m in order},
-        "savings": savings, "verdict": verdict, "verdict_text": sentence, "verdict_notes": vnotes,
+        "savings": savings, "verdict": verdict, "verdict_text": sentence, "verdict_notes": vnotes, "lab": lab, "headline": headline,
         "best_in_data": {"value": float(best_nat), "text": prob.natural_best(summary["best_possible"])},
         "charts": {
             "best": {"ylabel": ylabel, "unit": ylabel[ylabel.rfind("(") + 1:-1] if ylabel.endswith(")") else "", "log": bool(logy),
@@ -351,7 +436,7 @@ main{max-width:940px;margin:0 auto;padding:32px 16px 64px}h1{font-size:26px;line
 .hero{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end}.hero .big{font-size:52px;font-weight:650;line-height:1;font-variant-numeric:tabular-nums}
 .hero .lab{color:var(--ink2);font-size:14px;margin-top:6px}.verdict{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:16px}
 .hero.unproven .big{font-size:34px;color:var(--ink2)}
-.badge{display:inline-flex;gap:6px;align-items:center;font-weight:600;font-size:13px;padding:2px 10px;border-radius:999px;background:var(--chip);margin-right:8px}
+.v-too_few{color:var(--warn)}.badge{display:inline-flex;gap:6px;align-items:center;font-weight:600;font-size:13px;padding:2px 10px;border-radius:999px;background:var(--chip);margin-right:8px}
 .v-positive{color:var(--good)}.v-inconclusive,.v-weak{color:var(--warn)}.v-negative{color:var(--bad)}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px}.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .tile .v{font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}.tile .l{color:var(--ink2);font-size:13px}
@@ -395,6 +480,19 @@ def render_html(r: dict) -> str:
     lo, hi = save["interval"]
     badge = {"positive": "✓ Clear saving", "inconclusive": "≈ Not proven", "weak": "! Weak result", "negative": "✕ No saving"}[r["verdict"]]
     proven = r["verdict"] == "positive"
+    lab = r.get("lab") or {"level": "none", "info": {}}
+    vs_lab = r.get("headline") == "lab"
+    if vs_lab:
+        unit = "deposition runs" if lab["unit"] == "runs" else "experiments"
+        h_val, (h_lo, h_hi) = lab["saved"], lab["interval"]
+        h_label = f"{unit} saved vs what your lab actually did"
+        money = (_money(lab["saved"] * r["cost_per_experiment"], cur), f"at {_money(r['cost_per_experiment'], cur)} per experiment",
+                 f"interval {_money(h_lo * r['cost_per_experiment'], cur)} to {_money(h_hi * r['cost_per_experiment'], cur)}") if lab["unit"] == "experiments" else \
+                ("—", "no cost per run was entered", "multiply by what one deposition run costs you")
+    else:
+        h_val, h_lo, h_hi, h_label = save["experiments"], lo, hi, "experiments saved vs random picks"
+        money = (_money(save["money"], cur), f"at {_money(r['cost_per_experiment'], cur)} per experiment",
+                 f"interval {_money(save['money_interval'][0], cur)} to {_money(save['money_interval'][1], cur)}")
 
     def tile(v, label):
         return f'<div class="tile"><div class="v">{v}</div><div class="l">{label}</div></div>'
@@ -430,8 +528,13 @@ def render_html(r: dict) -> str:
         f"<b>Numbers are medians over {seeds} seeds</b> (each seed changes the shared starting batch of {spec['initial']} random samples and the "
         f"simulated failures). A run that never found {k} top-5% samples within {budget} experiments counts as {budget + 1}. "
         "The interval is a bootstrap over seeds.",
-        "<b>The baselines are ours, not your lab's history.</b> “Random picks” chooses samples uniformly; “Grid sweep” is a planned "
-        "raster over composition and temperature. Neither is the order in which your lab actually made these samples.",
+        ("<b>Your lab's own order is the main comparison.</b> It replays the samples in the order your export dates them (ties in file order), "
+         "and the model starts from the same first experiments. Your lab chose its experiments for its own goals at the time, which may not be the goal entered here. "
+         "“Random picks” and “Grid sweep” are shown too; they are easier baselines and flatter the model."
+         if vs_lab else
+         "<b>The baselines are ours, not your lab's history, and they flatter the model.</b> “Random picks” chooses samples uniformly; “Grid sweep” is a planned "
+         "raster over composition and temperature. On the HTEM data in this project, the order a lab actually made its runs was a much tougher baseline. "
+         + ("Map a date column and the report compares with your lab's own order." if lab["level"] == "none" else "")),
         f"<b>Money saved = experiments saved × {_money(r['cost_per_experiment'], cur)}</b>, the cost per experiment you entered. "
         "Instrument time, staff time and the cost of running the model are not included.",
         f"Rows that were rejected ({imp['rejected']}) are not in the replay at all; values that were dropped ({imp['dropped']}) count as failed measurements.",
@@ -447,11 +550,12 @@ def render_html(r: dict) -> str:
 
 <div class="card"><div class="verdict"><span class="badge v-{r['verdict']}">{badge}</span>{E(r['verdict_text'])}</div>
 <div class="hero{'' if proven else ' unproven'}">
-<div><div class="big">{_n(save['experiments'])}</div><div class="lab">experiments saved vs random picks{'' if proven else ' (not proven)'}<br>median; 90% interval {_n(lo)} to {_n(hi)}</div></div>
-<div><div class="big">{_money(save['money'], cur)}</div><div class="lab">at {_money(r['cost_per_experiment'], cur)} per experiment{'' if proven else ' (not proven)'}<br>interval {_money(save['money_interval'][0], cur)} to {_money(save['money_interval'][1], cur)}</div></div>
+<div><div class="big">{_n(h_val)}</div><div class="lab">{h_label}{'' if proven else ' (not proven)'}<br>median; 90% interval {_n(h_lo)} to {_n(h_hi)}</div></div>
+<div><div class="big">{money[0]}</div><div class="lab">{money[1]}{'' if proven or money[0] == '—' else ' (not proven)'}<br>{money[2]}</div></div>
 </div>{notes}
-<p class="muted">Against the grid sweep: {_n(saveg['experiments'])} experiments ({_money(saveg['money'], cur)}), 90% interval {_n(saveg['interval'][0])} to {_n(saveg['interval'][1])}.
+<p class="muted">{'Against random picks: ' + _n(save['experiments']) + ' experiments (' + _money(save['money'], cur) + '), 90% interval ' + _n(lo) + ' to ' + _n(hi) + '. ' if vs_lab else ''}Against the grid sweep: {_n(saveg['experiments'])} experiments ({_money(saveg['money'], cur)}), 90% interval {_n(saveg['interval'][0])} to {_n(saveg['interval'][1])}.
 Seed by seed against random picks, Bayesian optimization was faster in {save['bayes_faster']}, tied in {save['tied']} and slower in {save['bayes_slower']} of {seeds} runs.</p></div>
+{_lab_card(lab, k)}
 
 <h2>How fast each method finds your best samples</h2>
 <p class="sub">Median run (line) and middle half of runs (band) over {seeds} seeds, {budget} experiments each. The savings above come from the same runs: for each run, the experiment at which it had found {k} of the top-5% samples. All methods share the first {spec['initial']} random experiments.</p>
@@ -479,6 +583,32 @@ Seed by seed against random picks, Bayesian optimization was faster in {save['ba
 <p class="muted">Replay setup: {r['pool']} samples of {E(r['system'])}, {r['feasible']} meet the goal; budget {budget} experiments, a first batch of {spec['initial']} random samples
 shared by all methods, then {spec['batch_size']} per round; Gaussian-process surrogate. The numbers behind this page are embedded in it as JSON (<code>#replay-data</code>).</p></div>
 </main><script type="application/json" id="replay-data">{data_json}</script><script>{JS}</script></body></html>"""
+
+
+def _lab_card(lab: dict, k: int) -> str:
+    """The comparison with the order the lab actually made its samples, or why there is none."""
+    if lab["level"] == "none":
+        return ("<h2>Against what your lab actually did</h2><div class='card'><p>Your export has no usable dates "
+                f"({lab['info'].get('dated', 0)} of {lab['info'].get('samples', '?')} samples dated), so the model is compared only with random picks and a sweep. "
+                "Those are easy baselines: on the HTEM data in this project, the order a lab actually made its runs matched or beat the model on 2 of 3 goals. "
+                "Map a <code>date</code> column to get this comparison.</p></div>")
+    m, u = lab["methods"], lab["unit"]
+    what = "deposition runs" if u == "runs" else "experiments"
+    first = f"first {what[:-1]}" if lab["initial"] == 1 else f"first {lab['initial']} {what}"
+    head = (f"Your export dates each deposition run ({lab['info']['runs']} runs), so the comparison is per run: the whole run is made at once. "
+            if lab["level"] == "run" else
+            f"Your export dates {lab['info']['dated']} of {lab['info']['samples']} samples ({lab['info']['distinct_dates']} distinct dates; samples sharing a date are taken in file order). ")
+    rows = "".join(f"<tr><td>{E(n)}</td><td class='n'>{_n(m[key]['to_k_median'])}</td><td class='n'>{m[key]['reached']}/{m[key]['runs']}</td>"
+                   f"<td class='n'>{m[key]['top_found_mean']:.1f}</td></tr>"
+                   for key, n in (("lab-order", "Your lab's actual order"), ("bayes-gp-from-lab-start", "The model, from your lab's " + first)))
+    badge = {"positive": "✓ Model ahead", "inconclusive": "≈ No clear difference", "weak": "! Weak result", "negative": "✕ Your lab ahead", "too_few": "? Too few runs"}[lab["verdict"]]
+    extra = (f"<p class='muted'>Runs of yours that contained a top-5% sample: {', '.join('#' + str(x) for x in lab['lab_runs_with_top']) or 'none'}.</p>"
+             if lab["level"] == "run" else "")
+    return (f"<h2>Against what your lab actually did</h2><div class='card'><div class='verdict'><span class='badge v-{E(lab['verdict'])}'>{badge}</span>{E(lab['verdict_text'])}</div>"
+            f"<p class='sub'>{E(head)}The model starts from the same {first} your lab made, then chooses; your lab's order continues as it really happened. "
+            "Your lab chose for its own goals at the time, which may not be the goal entered here.</p>"
+            f"<div class='scroll'><table><thead><tr><th>Order</th><th class='n'>{what.capitalize()} to find {k} of the top-5%<br>(median)</th>"
+            f"<th class='n'>Runs that found them<br>within {lab['horizon']}</th><th class='n'>Top-5% samples found<br>(mean)</th></tr></thead><tbody>{rows}</tbody></table></div>{extra}</div>")
 
 
 def write_replay_report(out: str | Path, **kwargs) -> tuple[Path, dict]:

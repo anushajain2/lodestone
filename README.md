@@ -77,6 +77,8 @@ uv run lodestone data check path/to/export.csv --mapping my_mapping.yaml
 
 **3. Write the savings report.** Your goal is replayed with the model, with random picks and with a systematic sweep, 30 times each with different random starts. The page shows the import summary, how fast each method found your top-5% samples, and the experiments and money saved with a 90% range.
 
+**If you map a `date` column, the main comparison is against what your lab actually did.** The report replays your experiments in the order your export dates them, starts the model from the same first experiments, and reports the saving against your own order. Random picks and the sweep are then shown as easier, secondary baselines. If your dates are per deposition run, the comparison is per run, and with fewer than 6 dated runs the report says it can't tell. Without dates, it says plainly that it compared only with random and a sweep, which flatters the model.
+
 ```bash
 uv run lodestone replay-report path/to/export.csv --mapping my_mapping.yaml --goal "maximize conductivity with band gap >= 3 eV" --cost-per-experiment 1500
 ```
@@ -87,7 +89,7 @@ To see an example first, run it on the Helix demo export (about five minutes):
 uv run lodestone replay-report data/partner_lab/helix_second_lab_export.csv --mapping data/partner_lab/helix_mapping.yaml --goal "maximize conductivity with band gap >= 3 eV" --cost-per-experiment 1500
 ```
 
-On that file, 178 of 180 rows are accepted. The report finds a **clear saving of 16.5 experiments** (90% range 13 to 21), about $24,750 at $1,500 per experiment: the model found 5 of the 9 best samples within the 60-experiment budget in 26 of 30 replays, random picks in 3 and the sweep in 1.
+On that file, 178 of 180 rows are accepted. Against random picks the report finds a **clear saving of 16.5 experiments** (90% range 13 to 21), about $24,750 at $1,500 per experiment: the model found 5 of the 9 best samples within the 60-experiment budget in 26 of 30 replays, random picks in 3 and the sweep in 1. But the file dates only 4 deposition runs, too few to compare with the lab's own order, and the report says so. The lab's first dated run already contained all 9 of the top samples, so the saving against random overstates what this lab would have gained.
 
 The report also says when a result is weak. If the range of the saving includes zero, it is marked "not proven". It refuses to run on fewer than 30 usable samples. One experiment means one row of your export, so if your lab makes many samples in one deposition run, read the saving per run rather than per sample.
 
@@ -206,7 +208,7 @@ Or run the built-in agent: `ANTHROPIC_API_KEY=... uv run lodestone agent run`.
 
 - **Replay only chooses among samples that were made.** The "suggest recipes" feature proposes new ones, but predictions for a new deposition run are weak, so treat them as leads to test.
 - **One row per sample.** A new CSV layout needs only a mapping file. Formats that aren't one row per sample (spectra, raw instrument files, several header rows) still need code.
-- **The savings report's baselines are the easy ones.** It compares with random picks and a sweep. On HTEM, the lab's own run order was a much tougher baseline, so read the report's saving as an upper bound.
+- **Without dates, the savings report's baselines are the easy ones.** It then compares only with random picks and a sweep. On HTEM, the lab's own run order was a much tougher baseline, so map a date column, or read a saving against random as an upper bound.
 - **Two measured properties.** Conductivity and band gap are modelled today (for HTEM data and for blends alike). Measurement methods are recorded as HTEM's defaults (four-point probe, Tauc fit, XRF thickness) whatever the lab used.
 - **The Claude agent is built but not yet scored.** Only the scripted reference policy has been evaluated so far; scoring Claude needs an API key.
 

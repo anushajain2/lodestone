@@ -21,7 +21,7 @@ from lodestone.loop.problem import Problem
 from lodestone.loop.replay import LabReplay, seeded_rng
 from lodestone.loop.select import (
     LibraryPick, Pick, grid_order, lab_order, library_grid_order, select_bayes, select_bayes_libraries, select_grid,
-    select_lab_order,
+    select_lab_order, lab_sample_order, select_lab_samples,
     select_grid_libraries, select_random, select_random_libraries,
 )
 
@@ -62,12 +62,16 @@ def next_batch(problem: Problem, obs: Observations, unavailable: set[int], pendi
         return select_random(problem, unavailable, q, rng), {}
     if strategy == "grid":
         return select_grid(problem, unavailable, q, grid or grid_order(problem, problem.spec.budget, seed)), {}
+    if strategy == "lab-order":
+        return select_lab_samples(unavailable, q, lab_sample_order(problem)), {}
     return select_bayes(problem, obs, unavailable, pending, q, rng, surrogate, seed=seed + round_no)
 
 
 def simulate(problem: Problem, strategy: str, surrogate: str = "gp", seed: int = 0, budget: int | None = None,
              batch: int | None = None, initial: int | None = None, failure_rate: float | None = None,
-             delay: int | None = None) -> Trajectory:
+             delay: int | None = None, start: str = "random") -> Trajectory:
+    """One campaign. ``start="lab"`` makes the first batch the lab's own first samples (by date);
+    the ``lab-order`` strategy replays the lab's order throughout."""
     spec = problem.spec
     budget = budget or spec.budget
     batch = batch or spec.batch_size
@@ -75,10 +79,10 @@ def simulate(problem: Problem, strategy: str, surrogate: str = "gp", seed: int =
     failure_rate = spec.failure_rate if failure_rate is None else failure_rate
     delay = spec.delay_rounds if delay is None else delay
     if spec.experiment_unit == "library":
-        return simulate_libraries(problem, strategy, surrogate, seed, budget, batch, initial, failure_rate, delay)
+        return simulate_libraries(problem, strategy, surrogate, seed, budget, batch, initial, failure_rate, delay, start)
     replay = LabReplay(problem, failure_rate, seed)
     grid = grid_order(problem, budget, seed) if strategy == "grid" else None
-    traj = Trajectory(method_name(strategy, surrogate), seed)
+    traj = Trajectory(method_name(strategy, surrogate) + ("-from-lab-start" if start == "lab" and strategy != "lab-order" else ""), seed)
     obs = Observations()
     attempts: dict[int, int] = {}
     in_flight: list[tuple[Step, int]] = []  # (step, due round)
@@ -92,7 +96,8 @@ def simulate(problem: Problem, strategy: str, surrogate: str = "gp", seed: int =
             unavailable -= {i for i, kind, _ in obs.failures if kind == "random" and attempts.get(i, 0) <= MAX_RANDOM_RETRIES and i not in gave_up and not any(i in v for v in obs.values.values())}
             q = min(initial if used == 0 else batch, budget - used)
             if used == 0:
-                picks = initial_picks(problem, unavailable, q, seed)
+                picks = (select_lab_samples(unavailable, q, lab_sample_order(problem)) if start == "lab" or strategy == "lab-order"
+                         else initial_picks(problem, unavailable, q, seed))
             else:
                 picks, _ = next_batch(problem, obs, unavailable, [s.index for s, _ in in_flight], q, strategy, surrogate, seed, rnd, grid)
             for pk in picks:
