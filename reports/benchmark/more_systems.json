@@ -1,0 +1,616 @@
+{
+  "rules": {
+    "systems": "the 5 HTEM systems with the most libraries with electrical + optical data, excluding the demo systems (N-Sn-Zn, Co-Ni-O-Zn, In-O-Sn-Zn), that have at least 100 imported samples with a conductivity value",
+    "goals": "most conductive for all; transparent conductor (gap >= 3 eV) where >= 100 samples qualify"
+  },
+  "systems": [
+    "Cu-S-Sn",
+    "Cu-O-Zn",
+    "O-Sn-Ti-Zn",
+    "Cu-S-Sb",
+    "Cu-O-Se-Zn"
+  ],
+  "excluded": {
+    "Ba-Cu-S": "1,320 samples served, 220 imported, only 8 with a conductivity value (no film thickness for the rest)",
+    "Ba-Cu-S-Sr": "748 samples served, none with an XRF composition",
+    "Al-Cu-S": "no samples with an XRF composition (tied on library count with Cu-O-Se-Zn, ranked first by name)"
+  },
+  "data": {
+    "Cu-S-Sn": {
+      "libraries": 19,
+      "samples_received": 660,
+      "accepted": 264,
+      "with_conductivity": 193,
+      "with_band_gap": 164,
+      "conductivity_decades": 4.492077036982705,
+      "transparent_feasible": 0,
+      "transparent_goal": false
+    },
+    "Cu-O-Zn": {
+      "libraries": 14,
+      "samples_received": 572,
+      "accepted": 396,
+      "with_conductivity": 326,
+      "with_band_gap": 387,
+      "conductivity_decades": 4.238520523980718,
+      "transparent_feasible": 78,
+      "transparent_goal": false
+    },
+    "O-Sn-Ti-Zn": {
+      "libraries": 13,
+      "samples_received": 396,
+      "accepted": 396,
+      "with_conductivity": 211,
+      "with_band_gap": 306,
+      "conductivity_decades": 6.493540314092916,
+      "transparent_feasible": 197,
+      "transparent_goal": true
+    },
+    "Cu-S-Sb": {
+      "libraries": 12,
+      "samples_received": 528,
+      "accepted": 176,
+      "with_conductivity": 159,
+      "with_band_gap": 131,
+      "conductivity_decades": 8.472428439607844,
+      "transparent_feasible": 0,
+      "transparent_goal": false
+    },
+    "Cu-O-Se-Zn": {
+      "libraries": 10,
+      "samples_received": 308,
+      "accepted": 176,
+      "with_conductivity": 127,
+      "with_band_gap": 169,
+      "conductivity_decades": 4.0094538883635735,
+      "transparent_feasible": 20,
+      "transparent_goal": false
+    }
+  },
+  "config": {
+    "seeds": 20,
+    "failure_rate": 0.05
+  },
+  "campaigns": {
+    "cu-s-sn-conductivity": {
+      "top_size": 13,
+      "top1_size": 3,
+      "headline_k": 5,
+      "pool": 264,
+      "best_possible": 2.728110184100341,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 2,
+          "experiments_to_first_top5_median": 10.0,
+          "found_first_top5": 18,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 9,
+          "top_found_mean": 2.55,
+          "best_mean": 2.405238924885057,
+          "failures_mean": 17.5,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 0,
+          "experiments_to_first_top5_median": 16.0,
+          "found_first_top5": 18,
+          "experiments_to_first_top1_median": 48.0,
+          "found_first_top1": 12,
+          "top_found_mean": 1.7,
+          "best_mean": 2.413133481904324,
+          "failures_mean": 13.9,
+          "top_found_minus_random_mean": -0.85,
+          "top_found_minus_random_sem": 0.3718729267965208
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 31.5,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 10.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 15.0,
+          "found_first_top1": 20,
+          "top_found_mean": 10.9,
+          "best_mean": 2.540581755287591,
+          "failures_mean": 7.6,
+          "top_found_minus_random_mean": 8.35,
+          "top_found_minus_random_sem": 0.5092564238801096
+        },
+        "bayes-rf": {
+          "runs": 20,
+          "experiments_to_top_median": 31.0,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 11.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 24.5,
+          "found_first_top1": 20,
+          "top_found_mean": 11.1,
+          "best_mean": 2.550451672593525,
+          "failures_mean": 7.9,
+          "top_found_minus_random_mean": 8.55,
+          "top_found_minus_random_sem": 0.5051055126875655
+        }
+      },
+      "spec": {
+        "name": "Most conductive copper tin sulfide",
+        "system": "Cu-S-Sn",
+        "plain_text": null,
+        "objectives": [
+          {
+            "property": "conductivity",
+            "direction": "max"
+          }
+        ],
+        "constraints": [],
+        "window": null,
+        "experiment_unit": "sample",
+        "budget": 60,
+        "batch_size": 5,
+        "initial": 10,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "Cu-S-Sn: maximize conductivity; budget 60, 5/round, bayes"
+    },
+    "cu-o-zn-conductivity": {
+      "top_size": 20,
+      "top1_size": 4,
+      "headline_k": 5,
+      "pool": 396,
+      "best_possible": -0.7349462114959853,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 2,
+          "experiments_to_first_top5_median": 11.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 57.5,
+          "found_first_top1": 10,
+          "top_found_mean": 2.7,
+          "best_mean": -1.0822081661029024,
+          "failures_mean": 11.9,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 46.0,
+          "found_top_in_budget": 18,
+          "experiments_to_first_top5_median": 11.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 8,
+          "top_found_mean": 6.35,
+          "best_mean": -1.0072960129829442,
+          "failures_mean": 5.8,
+          "top_found_minus_random_mean": 3.65,
+          "top_found_minus_random_sem": 0.37888340103381063
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 28.5,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 11.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 22.0,
+          "found_first_top1": 19,
+          "top_found_mean": 13.6,
+          "best_mean": -0.9950542184088758,
+          "failures_mean": 4.2,
+          "top_found_minus_random_mean": 10.9,
+          "top_found_minus_random_sem": 0.4915068131454751
+        },
+        "bayes-rf": {
+          "runs": 20,
+          "experiments_to_top_median": 30.0,
+          "found_top_in_budget": 16,
+          "experiments_to_first_top5_median": 14.5,
+          "found_first_top5": 18,
+          "experiments_to_first_top1_median": 26.5,
+          "found_first_top1": 16,
+          "top_found_mean": 6.6,
+          "best_mean": -1.046224833120591,
+          "failures_mean": 6.2,
+          "top_found_minus_random_mean": 3.9,
+          "top_found_minus_random_sem": 0.897071258097852
+        }
+      },
+      "spec": {
+        "name": "Most conductive copper zinc oxide",
+        "system": "Cu-O-Zn",
+        "plain_text": null,
+        "objectives": [
+          {
+            "property": "conductivity",
+            "direction": "max"
+          }
+        ],
+        "constraints": [],
+        "window": null,
+        "experiment_unit": "sample",
+        "budget": 60,
+        "batch_size": 5,
+        "initial": 10,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "Cu-O-Zn: maximize conductivity; budget 60, 5/round, bayes"
+    },
+    "o-sn-ti-zn-conductivity": {
+      "top_size": 20,
+      "top1_size": 4,
+      "headline_k": 5,
+      "pool": 396,
+      "best_possible": 3.1082266563749283,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 0,
+          "experiments_to_first_top5_median": 12.5,
+          "found_first_top5": 19,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 9,
+          "top_found_mean": 2.8,
+          "best_mean": 1.8853952975502346,
+          "failures_mean": 27.5,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 0,
+          "experiments_to_first_top5_median": 22.0,
+          "found_first_top5": 15,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 4,
+          "top_found_mean": 1.05,
+          "best_mean": 1.7530808711098498,
+          "failures_mean": 36.6,
+          "top_found_minus_random_mean": -1.75,
+          "top_found_minus_random_sem": 0.3469794472906216
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 33.5,
+          "found_top_in_budget": 19,
+          "experiments_to_first_top5_median": 16.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 31.0,
+          "found_first_top1": 18,
+          "top_found_mean": 10.1,
+          "best_mean": 2.1519392721882564,
+          "failures_mean": 15.5,
+          "top_found_minus_random_mean": 7.3,
+          "top_found_minus_random_sem": 0.7222042282958616
+        },
+        "bayes-rf": {
+          "runs": 20,
+          "experiments_to_top_median": 37.0,
+          "found_top_in_budget": 18,
+          "experiments_to_first_top5_median": 15.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 42.0,
+          "found_first_top1": 18,
+          "top_found_mean": 8.25,
+          "best_mean": 2.4119394163113546,
+          "failures_mean": 10.7,
+          "top_found_minus_random_mean": 5.45,
+          "top_found_minus_random_sem": 0.6976464192668012
+        }
+      },
+      "spec": {
+        "name": "Most conductive zinc tin titanium oxide",
+        "system": "O-Sn-Ti-Zn",
+        "plain_text": null,
+        "objectives": [
+          {
+            "property": "conductivity",
+            "direction": "max"
+          }
+        ],
+        "constraints": [],
+        "window": null,
+        "experiment_unit": "sample",
+        "budget": 60,
+        "batch_size": 5,
+        "initial": 10,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "O-Sn-Ti-Zn: maximize conductivity; budget 60, 5/round, bayes"
+    },
+    "o-sn-ti-zn-transparent-conductor": {
+      "top_size": 20,
+      "top1_size": 4,
+      "headline_k": 5,
+      "pool": 396,
+      "best_possible": 3.1082266563749283,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 0,
+          "experiments_to_first_top5_median": 12.5,
+          "found_first_top5": 19,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 9,
+          "top_found_mean": 2.8,
+          "best_mean": 1.8853952975502346,
+          "failures_mean": 28.2,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 0,
+          "experiments_to_first_top5_median": 22.0,
+          "found_first_top5": 15,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 4,
+          "top_found_mean": 1.05,
+          "best_mean": 1.7530808711098498,
+          "failures_mean": 39.05,
+          "top_found_minus_random_mean": -1.75,
+          "top_found_minus_random_sem": 0.3469794472906216
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 34.5,
+          "found_top_in_budget": 19,
+          "experiments_to_first_top5_median": 16.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 27.0,
+          "found_first_top1": 20,
+          "top_found_mean": 11.0,
+          "best_mean": 2.245954246634598,
+          "failures_mean": 17.1,
+          "top_found_minus_random_mean": 8.2,
+          "top_found_minus_random_sem": 0.7167176644441768
+        },
+        "bayes-rf": {
+          "runs": 20,
+          "experiments_to_top_median": 36.0,
+          "found_top_in_budget": 19,
+          "experiments_to_first_top5_median": 15.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 42.0,
+          "found_first_top1": 17,
+          "top_found_mean": 9.15,
+          "best_mean": 2.2160054469680235,
+          "failures_mean": 11.15,
+          "top_found_minus_random_mean": 6.35,
+          "top_found_minus_random_sem": 0.5344697322925238
+        }
+      },
+      "spec": {
+        "name": "Transparent conductor, zinc tin titanium oxide (gap ≥ 3 eV)",
+        "system": "O-Sn-Ti-Zn",
+        "plain_text": null,
+        "objectives": [
+          {
+            "property": "conductivity",
+            "direction": "max"
+          }
+        ],
+        "constraints": [
+          {
+            "property": "band_gap",
+            "op": ">=",
+            "value": 3.0
+          }
+        ],
+        "window": null,
+        "experiment_unit": "sample",
+        "budget": 60,
+        "batch_size": 5,
+        "initial": 10,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "O-Sn-Ti-Zn: maximize conductivity with direct band gap >= 3 eV; budget 60, 5/round, bayes"
+    },
+    "cu-s-sb-conductivity": {
+      "top_size": 9,
+      "top1_size": 2,
+      "headline_k": 5,
+      "pool": 176,
+      "best_possible": 4.385606273598312,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 2,
+          "experiments_to_first_top5_median": 14.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 48.5,
+          "found_first_top1": 12,
+          "top_found_mean": 2.8,
+          "best_mean": 3.935087012712935,
+          "failures_mean": 7.85,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 0,
+          "experiments_to_first_top5_median": 23.0,
+          "found_first_top5": 17,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 6,
+          "top_found_mean": 1.65,
+          "best_mean": 3.7788088726997193,
+          "failures_mean": 6.2,
+          "top_found_minus_random_mean": -1.15,
+          "top_found_minus_random_sem": 0.30153118019796715
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 2,
+          "experiments_to_first_top5_median": 15.0,
+          "found_first_top5": 17,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 3,
+          "top_found_mean": 2.1,
+          "best_mean": 3.539188124503297,
+          "failures_mean": 6.5,
+          "top_found_minus_random_mean": -0.7,
+          "top_found_minus_random_sem": 0.4173853451138282
+        },
+        "bayes-rf": {
+          "runs": 20,
+          "experiments_to_top_median": 43.0,
+          "found_top_in_budget": 14,
+          "experiments_to_first_top5_median": 12.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 42.5,
+          "found_first_top1": 13,
+          "top_found_mean": 5.25,
+          "best_mean": 3.8648949960755266,
+          "failures_mean": 10.45,
+          "top_found_minus_random_mean": 2.45,
+          "top_found_minus_random_sem": 0.5688168699844857
+        }
+      },
+      "spec": {
+        "name": "Most conductive copper antimony sulfide",
+        "system": "Cu-S-Sb",
+        "plain_text": null,
+        "objectives": [
+          {
+            "property": "conductivity",
+            "direction": "max"
+          }
+        ],
+        "constraints": [],
+        "window": null,
+        "experiment_unit": "sample",
+        "budget": 60,
+        "batch_size": 5,
+        "initial": 10,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "Cu-S-Sb: maximize conductivity; budget 60, 5/round, bayes"
+    },
+    "cu-o-se-zn-conductivity": {
+      "top_size": 9,
+      "top1_size": 2,
+      "headline_k": 5,
+      "pool": 176,
+      "best_possible": -0.9351677802614262,
+      "methods": {
+        "random": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 1,
+          "experiments_to_first_top5_median": 13.5,
+          "found_first_top5": 18,
+          "experiments_to_first_top1_median": 61.0,
+          "found_first_top1": 8,
+          "top_found_mean": 2.85,
+          "best_mean": -0.9560733972159582,
+          "failures_mean": 19.1,
+          "top_found_minus_random_mean": 0.0,
+          "top_found_minus_random_sem": 0.0
+        },
+        "grid": {
+          "runs": 20,
+          "experiments_to_top_median": 61.0,
+          "found_top_in_budget": 2,
+          "experiments_to_first_top5_median": 13.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 60.0,
+          "found_first_top1": 10,
+          "top_found_mean": 3.0,
+          "best_mean": -0.9494512686116705,
+          "failures_mean": 19.1,
+          "top_found_minus_random_mean": 0.15,
+          "top_found_minus_random_sem": 0.4716990566028301
+        },
+        "bayes-gp": {
+          "runs": 20,
+          "experiments_to_top_median": 37.0,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 16.0,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 25.5,
+          "found_first_top1": 20,
+          "top_found_mean": 9.0,
+          "best_mean": -0.9351677802614263,
+          "failures_mean": 7.55,
+          "top_found_minus_random_mean": 6.15,
+          "top_found_minus_random_sem": 0.3185080350965304
+        },
+        "bayes-rf": {
+          "runs": 20,
+          "experiments_to_top_median": 34.0,
+          "found_top_in_budget": 20,
+          "experiments_to_first_top5_median": 11.5,
+          "found_first_top5": 20,
+          "experiments_to_first_top1_median": 24.5,
+          "found_first_top1": 20,
+          "top_found_mean": 8.25,
+          "best_mean": -0.9354501603667865,
+          "failures_mean": 7.45,
+          "top_found_minus_random_mean": 5.4,
+          "top_found_minus_random_sem": 0.4255027985559523
+        }
+      },
+      "spec": {
+        "name": "Most conductive copper zinc oxide selenide",
+        "system": "Cu-O-Se-Zn",
+        "plain_text": null,
+        "objectives": [
+          {
+            "property": "conductivity",
+            "direction": "max"
+          }
+        ],
+        "constraints": [],
+        "window": null,
+        "experiment_unit": "sample",
+        "budget": 60,
+        "batch_size": 5,
+        "initial": 10,
+        "strategy": "bayes",
+        "surrogate": "gp",
+        "failure_rate": 0.05,
+        "delay_rounds": 0,
+        "cost_per_experiment": 1500.0,
+        "seed": 0
+      },
+      "summary": "Cu-O-Se-Zn: maximize conductivity; budget 60, 5/round, bayes"
+    }
+  }
+}

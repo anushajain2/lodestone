@@ -66,6 +66,16 @@ class BenchConfig:
 
 
 _RECORDS: dict[str, list] = {}
+_EXTRA_CAMPAIGNS: dict[str, CampaignSpec] = {}
+
+
+def register_campaigns(specs: dict[str, CampaignSpec]) -> None:
+    """Make more campaigns runnable by key (the rule-chosen systems in loop/more_systems.py)."""
+    _EXTRA_CAMPAIGNS.update(specs)
+
+
+def campaign_spec(key: str) -> CampaignSpec:
+    return DEMO_CAMPAIGNS[key] if key in DEMO_CAMPAIGNS else _EXTRA_CAMPAIGNS[key]
 
 
 def public_records(system: str) -> list[dict]:
@@ -80,7 +90,7 @@ def public_records(system: str) -> list[dict]:
 
 
 def problem_for(key: str, failure_rate: float | None = None, batch: int | None = None) -> Problem:
-    spec = DEMO_CAMPAIGNS[key]
+    spec = campaign_spec(key)
     upd = {}
     if failure_rate is not None:
         upd["failure_rate"] = failure_rate
@@ -144,7 +154,7 @@ MIN_LIBRARIES = 2 * LIBRARY_BUDGET  # below this the budget covers most of the s
 
 
 def library_problem(key: str, failure_rate: float = 0.05, budget: int = LIBRARY_BUDGET, initial: int = LIBRARY_INITIAL) -> Problem:
-    spec = DEMO_CAMPAIGNS[key].model_copy(update={
+    spec = campaign_spec(key).model_copy(update={
         "experiment_unit": "library", "budget": budget, "initial": initial, "batch_size": LIBRARY_BATCH, "failure_rate": failure_rate,
     })
     return Problem.from_records(public_records(spec.system), spec)

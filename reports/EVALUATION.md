@@ -113,6 +113,35 @@ The same comparison at other run budgets and with one random seed run instead of
 
 **Reading.** Bayesian ÷ random: 5 runs, 2 seed runs: 1.7–1.9×; 10 runs, 2 seed runs: 1.4–1.6×; 15 runs, 2 seed runs: 1.2×; 10 runs, 1 seed run: 1.5–1.8×. The ratio falls as the budget grows, because by 15 runs random has also run most of each system's libraries; the paired gain in samples stays between +6 and +17. The Bayesian loop beats random by more than two standard errors on 2 of 3 campaigns at 5 runs, 2 seed runs, 3 of 3 campaigns at 10 runs, 2 seed runs, 3 of 3 campaigns at 15 runs, 2 seed runs, 3 of 3 campaigns at 10 runs, 1 seed run. Grid search finds more top-5% samples than the Bayesian loop on the transparent p-type conductor (gap ≥ 3 eV) campaign at 5 runs, 2 seed runs. Median runs saved to the first top-5% sample (random − Bayesian) are 0 to +2 runs in every design, so that metric never separates the methods. So the 1.4–1.6× above is specific to the 10-run budget. Across these designs the Bayesian loop finds 1.2–1.9× as many top-5% samples as random, more when the lab can afford fewer runs.
 
+### Five more systems, chosen by rule
+
+The four campaigns above use three systems picked while the method was being built, so they could be the ones where it happens to work. These five were chosen afterwards by a rule fixed before any optimizer was run on them: the 5 HTEM systems with the most libraries with electrical + optical data, excluding the demo systems (N-Sn-Zn, Co-Ni-O-Zn, In-O-Sn-Zn), that have at least 100 imported samples with a conductivity value. Goals: most conductive for all; transparent conductor (gap >= 3 eV) where >= 100 samples qualify. Everything else is the same as above: 60-experiment budget, 10 random seed experiments, batches of 5, 5% simulated lab failures, 20 seeds. Systems: Cu-S-Sn (264 samples), Cu-O-Zn (396 samples), O-Sn-Ti-Zn (396 samples), Cu-S-Sb (176 samples), Cu-O-Se-Zn (176 samples).
+
+**Ranked above the cut-off but excluded for lack of usable data** (decided before any optimization ran): Ba-Cu-S: 1,320 samples served, 220 imported, only 8 with a conductivity value (no film thickness for the rest); Ba-Cu-S-Sr: 748 samples served, none with an XRF composition; Al-Cu-S: no samples with an XRF composition (tied on library count with Cu-O-Se-Zn, ranked first by name). Downloading them exposed an importer bug: for sulfides, XRF also reports the sulfur, so the metals alone sum to ~50% and those records were rejected. Fixed; the three demo systems import exactly as before.
+
+| System | Libraries | Samples received | Accepted | With conductivity | With band gap | Conductivity range (decades) | Samples with gap ≥ 3 eV and a conductivity |
+|---|---|---|---|---|---|---|---|
+| Cu-S-Sn | 19 | 660 | 264 | 193 | 164 | 4.5 | 0 (too few; no goal) |
+| Cu-O-Zn | 14 | 572 | 396 | 326 | 387 | 4.2 | 78 (too few; no goal) |
+| O-Sn-Ti-Zn | 13 | 396 | 396 | 211 | 306 | 6.5 | 197 |
+| Cu-S-Sb | 12 | 528 | 176 | 159 | 131 | 8.5 | 0 (too few; no goal) |
+| Cu-O-Se-Zn | 10 | 308 | 176 | 127 | 169 | 4.0 | 20 (too few; no goal) |
+
+| Campaign | Random | Grid sweep | Bayesian (GP) | Bayesian (random forest) | Top-5% found: GP vs random (paired, ± s.e.m.) |
+|---|---|---|---|---|---|
+| Most conductive copper tin sulfide (264 samples, top 5% = 13) | 61 (2/20) · 2.5 found | 61 (0/20) · 1.7 found | 32 (20/20) · 10.9 found | 31 (20/20) · 11.1 found | +8.3 ± 0.5 |
+| Most conductive copper zinc oxide (396 samples, top 5% = 20) | 61 (2/20) · 2.7 found | 46 (18/20) · 6.3 found | 28 (20/20) · 13.6 found | 30 (16/20) · 6.6 found | +10.9 ± 0.5 |
+| Most conductive zinc tin titanium oxide (396 samples, top 5% = 20) | 61 (0/20) · 2.8 found | 61 (0/20) · 1.1 found | 34 (19/20) · 10.1 found | 37 (18/20) · 8.2 found | +7.3 ± 0.7 |
+| Transparent conductor, zinc tin titanium oxide (gap ≥ 3 eV) (396 samples, top 5% = 20) | 61 (0/20) · 2.8 found | 61 (0/20) · 1.1 found | 34 (19/20) · 11.0 found | 36 (19/20) · 9.2 found | +8.2 ± 0.7 |
+| Most conductive copper antimony sulfide (176 samples, top 5% = 9) | 61 (2/20) · 2.8 found | 61 (0/20) · 1.6 found | 61 (2/20) · 2.1 found | 43 (14/20) · 5.2 found | -0.7 ± 0.4 |
+| Most conductive copper zinc oxide selenide (176 samples, top 5% = 9) | 61 (1/20) · 2.9 found | 61 (2/20) · 3.0 found | 37 (20/20) · 9.0 found | 34 (20/20) · 8.2 found | +6.2 ± 0.3 |
+
+Cells: median experiments to find 5 of the top-5% samples (runs that got there) · top-5% samples found in the budget, mean. A run that never gets there counts as budget + 1.
+
+**Does it hold?** Mostly. The GP loop finds clearly more top-5% samples than random (by more than two standard errors, paired by seed) in 5 of 6 campaigns (all but Most conductive copper antimony sulfide), clearly fewer in none, and needs fewer experiments than both baselines to find 5 of them in 5 of 6. It finds 0.8–5.0× as many top-5% samples as random (the demo campaigns: 2.5–4×). On most conductive copper antimony sulfide, the random-forest model does better: 43 experiments (14/20 got there).
+
+**Counted per deposition run: not testable here.** After import, these systems have only 4–9 deposition runs with usable samples each (the run-level design needs at least 20), so a 10-run budget would cover most of each system. The per-sample gains above are therefore not checked at run level for these systems; on the demo systems, counting per run cut the gain to 1.2–1.9×.
+
 ### Is the model's uncertainty honest?
 
 Fit the GP on n random measured samples of a system, predict every other measured sample, and count how often the real value falls inside the predicted 68% and 95% intervals (20 random splits each). A calibrated model scores 68% and 95%. Two fixes were tried. **CV variance scaling** widens the intervals by a factor from 5-fold cross-validation on the campaign's own data. **Fixed inflation** widens each property's intervals by a constant learned only from the *other* systems' held-out checks. A noise floor and a Matérn-5/2 kernel were also tried; neither raised 68% coverage meaningfully (it moved by at most 7 percentage points, in either direction; `reports/calibration/calibration.json`). Neither fix changes the predicted values, so R² is the same for all three.
@@ -177,9 +206,17 @@ Samples on one HTEM library come from one deposition run, so a random split leav
 
 | System | Libraries | Listed but no samples served | Records received | Accepted | Rejected | Main rejection reasons |
 |---|---|---|---|---|---|---|
+| Al-Cu-S | 10 | 0 | 440 | 0 | 440 | no usable XRF composition (440) |
+| Ba-Cu-S | 32 | 2 | 1320 | 220 | 1100 | no usable XRF composition (1100), library lists 44 samples but the API served no sample records (2) |
+| Ba-Cu-S-Sr | 17 | 0 | 748 | 0 | 748 | no usable XRF composition (748) |
 | Co-Ni-O-Zn | 24 | 4 | 880 | 880 | 0 | library lists 44 samples but the API served no sample records (4) |
+| Cu-O-Se-Zn | 10 | 3 | 308 | 176 | 132 | no usable XRF composition (132), deposition temperature not recorded for this library (7) |
+| Cu-O-Zn | 14 | 1 | 572 | 396 | 176 | no usable XRF composition (176), deposition temperature not recorded for this library (9) |
+| Cu-S-Sb | 12 | 0 | 528 | 176 | 352 | no usable XRF composition (352) |
+| Cu-S-Sn | 19 | 4 | 660 | 264 | 396 | no usable XRF composition (396), library lists 44 samples but the API served no sample records (4) |
 | In-O-Sn-Zn | 22 | 18 | 176 | 176 | 0 | library lists 44 samples but the API served no sample records (18), deposition temperature not recorded for this library (4) |
 | N-Sn-Zn | 33 | 2 | 1364 | 999 | 365 | no usable XRF composition (352), unreadable XRF entry 'Zn'=None (13) |
+| O-Sn-Ti-Zn | 13 | 4 | 396 | 396 | 0 | library lists 44 samples but the API served no sample records (4) |
 
 Deliberately broken records (both lab formats): **18/18** handled correctly (accepted, measurement dropped, or record rejected, each with a reason).
 
@@ -204,6 +241,7 @@ Provenance spot-check: 20 random samples, 56 values compared with the raw HTEM r
 - **'Experiments to the first top-5% sample' doesn't separate methods** on pools of ~1,000 with 10 random seed experiments: luck dominates. The stricter metrics (5 of the top 5%, first top-1%, top-5% samples found) do.
 - **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign the Bayesian loop finds four times as many top-5% samples as random, yet the *median best value* it reaches (3.2 S/cm) is no higher than random's (4.0 S/cm), and no method reliably finds the extreme outlier (an 85 S/cm Co-Ni-Zn-O film). The first top-1% sample arrives no sooner than with random search on the constrained campaign.
 - **Counted in deposition runs, the savings shrink.** When one experiment is a whole library (10-run budget), every method finds its first top-5% sample in a median of 2–4 runs, and the Bayesian loop finds 1.4–1.6× as many top-5% samples as random (1.2–1.9× across all the run budgets and seed-run counts tried), down from the spot-level gain. IZTO has too few libraries to test (see 'One experiment = one deposition run').
+- **On five systems chosen by rule after the method was fixed**, the GP loop finds clearly more top-5% samples than random in 5 of 6 campaigns, but not on most conductive copper antimony sulfide. These systems have too few deposition runs to repeat the run-level check (see 'Five more systems, chosen by rule').
 - **Grid search is a strong baseline for the very first hits** when a system has only one or two composition dimensions: a systematic sweep covers the space quickly. The optimizer pulls ahead once it has data to exploit.
 - **The random-forest surrogate is uneven**: excellent on conductivity, weak on constraints and windows, where its uncertainty estimates (tree spread) are poor.
 - **Replay can only choose among samples that were made.** A real campaign would propose new recipes; the 'suggest recipes' feature does that, but its predictions are unverified by construction.

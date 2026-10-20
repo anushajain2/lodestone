@@ -197,8 +197,16 @@ def campaign_export(campaign_id: str, partner: str = typer.Option("partner-a"), 
 @app.command()
 def bench(seeds: int = typer.Option(20), robustness_seeds: int = typer.Option(10),
           level: str = typer.Option("sample", help="sample: one experiment = one spot (the main benchmark). library: one experiment = one deposition run"),
-          variant: str = typer.Option("", help="Library level only: a sensitivity variant (budget-5, budget-15, seed-runs-1) instead of the main 10-run design")):
+          variant: str = typer.Option("", help="Library level only: a sensitivity variant (budget-5, budget-15, seed-runs-1) instead of the main 10-run design"),
+          extra: bool = typer.Option(False, "--extra", help="Run the five rule-chosen extra HTEM systems instead (both levels; pull them first)")):
     """Benchmark (E1): Bayesian optimization vs random and grid search on real HTEM data."""
+    if extra:
+        from lodestone.loop.more_systems import run as run_more
+
+        out = run_more(seeds=seeds)
+        for k, v in out["campaigns"].items():
+            typer.echo(k + ": " + ", ".join(f"{m} {s['experiments_to_top_median']:.0f}" for m, s in v["methods"].items()))
+        return
     from lodestone.loop.benchmark import LIBRARY_VARIANTS, BenchConfig, run_benchmark, run_library_benchmark, run_library_variant
 
     if level == "library":

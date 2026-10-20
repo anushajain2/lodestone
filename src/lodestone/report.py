@@ -311,6 +311,85 @@ def _library_sensitivity(R: Path, lib: dict) -> list[str]:
     return out
 
 
+def _more_systems_section(more: dict, lib: dict | None) -> list[str]:
+    """The same benchmark on five systems chosen by rule after the method was fixed."""
+    names = ", ".join(f"{s} ({more['data'][s]['accepted']} samples)" for s in more["systems"])
+    out = ["### Five more systems, chosen by rule", "",
+           "The four campaigns above use three systems picked while the method was being built, so they could be the ones where it happens to work. "
+           f"These five were chosen afterwards by a rule fixed before any optimizer was run on them: {more['rules']['systems']}. "
+           f"Goals: {more['rules']['goals']}. Everything else is the same as above: 60-experiment budget, 10 random seed experiments, batches of 5, "
+           f"5% simulated lab failures, {more['config']['seeds']} seeds. Systems: {names}.", "",
+           "**Ranked above the cut-off but excluded for lack of usable data** (decided before any optimization ran): "
+           + "; ".join(f"{k}: {v}" for k, v in more.get("excluded", {}).items())
+           + ". Downloading them exposed an importer bug: for sulfides, XRF also reports the sulfur, so the metals alone sum to ~50% and those records were rejected. "
+           "Fixed; the three demo systems import exactly as before.", "",
+           "| System | Libraries | Samples received | Accepted | With conductivity | With band gap | Conductivity range (decades) | Samples with gap ≥ 3 eV and a conductivity |",
+           "|---|---|---|---|---|---|---|---|"]
+    for sname, d in more["data"].items():
+        out.append(f"| {sname} | {d['libraries']} | {d['samples_received']} | {d['accepted']} | {d['with_conductivity']} | {d['with_band_gap']} | "
+                   f"{_fmt(d['conductivity_decades'], 1)} | {d['transparent_feasible']}{'' if d['transparent_goal'] else ' (too few; no goal)'} |")
+    out += ["", "| Campaign | Random | Grid sweep | Bayesian (GP) | Bayesian (random forest) | Top-5% found: GP vs random (paired, ± s.e.m.) |",
+            "|---|---|---|---|---|---|"]
+    rows = []
+    for key, c in more["campaigns"].items():
+        m = c["methods"]
+        cell = lambda v: f"{_fmt(v['experiments_to_top_median'])} ({v['found_top_in_budget']}/{v['runs']}) · {v['top_found_mean']:.1f} found"
+        g = m["bayes-gp"]
+        out.append(f"| {c['spec']['name']} ({c['pool']} samples, top 5% = {c['top_size']}) | " + " | ".join(cell(m[k]) for k in ("random", "grid", "bayes-gp", "bayes-rf") if k in m)
+                   + f" | {g['top_found_minus_random_mean']:+.1f} ± {g['top_found_minus_random_sem']:.1f} |")
+        rows.append((c, g))
+    clear = [c["spec"]["name"] for c, g in rows if g["top_found_minus_random_mean"] - 2 * g["top_found_minus_random_sem"] > 0]
+    worse = [c["spec"]["name"] for c, g in rows if g["top_found_minus_random_mean"] + 2 * g["top_found_minus_random_sem"] < 0]
+    faster = [c["spec"]["name"] for c, g in rows if g["experiments_to_top_median"] < min(c["methods"]["random"]["experiments_to_top_median"], c["methods"]["grid"]["experiments_to_top_median"])]
+    ratio = [g["top_found_mean"] / c["methods"]["random"]["top_found_mean"] for c, g in rows if c["methods"]["random"]["top_found_mean"] > 0]
+    others = [c["spec"]["name"] for c, _ in rows if c["spec"]["name"] not in clear]
+    named = (f" (all but {', '.join(others)})" if others and len(clear) > len(rows) / 2 else (f" ({', '.join(clear)})" if clear and others else ""))
+    rf = {c["spec"]["name"]: c["methods"]["bayes-rf"] for c, _ in rows if "bayes-rf" in c["methods"]}
+    rf_note = "".join(f" On {n.lower()}, the random-forest model does better: {_fmt(rf[n]['experiments_to_top_median'])} experiments ({rf[n]['found_top_in_budget']}/{rf[n]['runs']} got there)."
+                      for n in others if n in rf and rf[n]["experiments_to_top_median"] < c_min(rows, n))
+    out += ["", "Cells: median experiments to find 5 of the top-5% samples (runs that got there) · top-5% samples found in the budget, mean. A run that never gets there counts as budget + 1.", "",
+            f"**Does it hold?** Mostly. The GP loop finds clearly more top-5% samples than random (by more than two standard errors, paired by seed) in {len(clear)} of {len(rows)} campaigns{named}, "
+            + (f"clearly fewer in {len(worse)} ({', '.join(worse)}), " if worse else "clearly fewer in none, ")
+            + f"and needs fewer experiments than both baselines to find 5 of them in {len(faster)} of {len(rows)}. "
+            + (f"It finds {min(ratio):.1f}–{max(ratio):.1f}× as many top-5% samples as random (the demo campaigns: 2.5–4×)." if ratio else "") + rf_note, ""]
+    if lib:
+        out += ["**Counted per deposition run** (same design as 'One experiment = one deposition run': 10 runs, 2 random seed runs, systems with at least "
+                f"{lib['config']['min_libraries']} libraries):", "",
+                "| Campaign | Random | Grid sweep | Bayesian (GP) | GP vs random, paired (± s.e.m.) |", "|---|---|---|---|---|"]
+        if lib["campaigns"]:
+            for key, c in lib["campaigns"].items():
+                m = c["methods"]
+                out.append(f"| {c['spec']['name']} ({c['libraries']} libraries) | " + " | ".join(f"{m[k]['top_found_mean']:.1f}" for k in ("random", "grid", "bayes-gp"))
+                           + f" | {m['bayes-gp']['top_found_minus_random_mean']:+.1f} ± {m['bayes-gp']['top_found_minus_random_sem']:.1f} |")
+            out += ["", "Cells: top-5% samples found in 10 runs, mean over seeds."]
+        else:
+            out = out[:-4]
+            n = sorted(s["libraries"] for s in lib["skipped"].values())
+            out += [f"**Counted per deposition run: not testable here.** After import, these systems have only {n[0]}–{n[-1]} deposition runs with usable samples each "
+                    f"(the run-level design needs at least {lib['config']['min_libraries']}), so a 10-run budget would cover most of each system. "
+                    "The per-sample gains above are therefore not checked at run level for these systems; on the demo systems, counting per run cut the gain to 1.2–1.9×."]
+        out.append("")
+    return out
+
+
+def c_min(rows, name: str) -> float:
+    c = next(c for c, _ in rows if c["spec"]["name"] == name)
+    return min(c["methods"]["random"]["experiments_to_top_median"], c["methods"]["grid"]["experiments_to_top_median"], c["methods"]["bayes-gp"]["experiments_to_top_median"])
+
+
+def _more_systems_bullet(R: Path) -> list[str]:
+    more = _load(R / "benchmark" / "more_systems.json")
+    if not more or not more["campaigns"]:
+        return []
+    rows = [c["methods"]["bayes-gp"] for c in more["campaigns"].values()]
+    clear = sum(1 for g in rows if g["top_found_minus_random_mean"] - 2 * g["top_found_minus_random_sem"] > 0)
+    miss = [c["spec"]["name"].lower() for c in more["campaigns"].values()
+            if c["methods"]["bayes-gp"]["top_found_minus_random_mean"] - 2 * c["methods"]["bayes-gp"]["top_found_minus_random_sem"] <= 0]
+    return [f"- **On five systems chosen by rule after the method was fixed**, the GP loop finds clearly more top-5% samples than random in {clear} of {len(rows)} campaigns"
+            + (f", but not on {', '.join(miss)}" if miss else "") + ". These systems have too few deposition runs to repeat the run-level check "
+            "(see 'Five more systems, chosen by rule')."]
+
+
 def write_report() -> Path:
     R = config.REPORTS_DIR
     out = ["# Lodestone evaluation report", "",
@@ -377,6 +456,10 @@ def write_report() -> Path:
         out += _library_section(lib, bench)
         out += _library_sensitivity(R, lib)
 
+    more = _load(R / "benchmark" / "more_systems.json")
+    if more and more["campaigns"]:
+        out += _more_systems_section(more, _load(R / "benchmark" / "more_systems_library.json"))
+
     ob = _load(R / "onboarding" / "onboarding.json")
     prov = _load(R / "onboarding" / "provenance.json")
     cal = _load(R / "calibration" / "calibration.json")
@@ -430,6 +513,7 @@ def write_report() -> Path:
             "- **'Experiments to the first top-5% sample' doesn't separate methods** on pools of ~1,000 with 10 random seed experiments: luck dominates. The stricter metrics (5 of the top 5%, first top-1%, top-5% samples found) do.",
             "- **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign the Bayesian loop finds four times as many top-5% samples as random, yet the *median best value* it reaches (3.2 S/cm) is no higher than random's (4.0 S/cm), and no method reliably finds the extreme outlier (an 85 S/cm Co-Ni-Zn-O film). The first top-1% sample arrives no sooner than with random search on the constrained campaign.",
             *_library_bullet(R),
+            *_more_systems_bullet(R),
             "- **Grid search is a strong baseline for the very first hits** when a system has only one or two composition dimensions: a systematic sweep covers the space quickly. The optimizer pulls ahead once it has data to exploit.",
             "- **The random-forest surrogate is uneven**: excellent on conductivity, weak on constraints and windows, where its uncertainty estimates (tree spread) are poor.",
             "- **Replay can only choose among samples that were made.** A real campaign would propose new recipes; the 'suggest recipes' feature does that, but its predictions are unverified by construction.",

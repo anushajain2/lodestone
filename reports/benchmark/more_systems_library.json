@@ -1,0 +1,54 @@
+{
+  "config": {
+    "seeds": 20,
+    "budget_runs": 10,
+    "initial_runs": 2,
+    "batch_runs": 1,
+    "failure_rate": 0.05,
+    "min_libraries": 20,
+    "methods": [
+      "random",
+      "grid",
+      "bayes"
+    ]
+  },
+  "campaigns": {},
+  "skipped": {
+    "cu-s-sn-conductivity": {
+      "libraries": 6,
+      "samples": 264,
+      "name": "Most conductive copper tin sulfide",
+      "reason": "only 6 libraries with samples; a 10-run budget needs at least 20"
+    },
+    "cu-o-zn-conductivity": {
+      "libraries": 9,
+      "samples": 396,
+      "name": "Most conductive copper zinc oxide",
+      "reason": "only 9 libraries with samples; a 10-run budget needs at least 20"
+    },
+    "o-sn-ti-zn-conductivity": {
+      "libraries": 9,
+      "samples": 396,
+      "name": "Most conductive zinc tin titanium oxide",
+      "reason": "only 9 libraries with samples; a 10-run budget needs at least 20"
+    },
+    "o-sn-ti-zn-transparent-conductor": {
+      "libraries": 9,
+      "samples": 396,
+      "name": "Transparent conductor, zinc tin titanium oxide (gap \u2265 3 eV)",
+      "reason": "only 9 libraries with samples; a 10-run budget needs at least 20"
+    },
+    "cu-s-sb-conductivity": {
+      "libraries": 4,
+      "samples": 176,
+      "name": "Most conductive copper antimony sulfide",
+      "reason": "only 4 libraries with samples; a 10-run budget needs at least 20"
+    },
+    "cu-o-se-zn-conductivity": {
+      "libraries": 4,
+      "samples": 176,
+      "name": "Most conductive copper zinc oxide selenide",
+      "reason": "only 4 libraries with samples; a 10-run budget needs at least 20"
+    }
+  }
+}

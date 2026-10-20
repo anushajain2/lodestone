@@ -1,5 +1,36 @@
 {
   "systems": {
+    "Al-Cu-S": {
+      "libraries": 10,
+      "libraries_with_no_samples_served": 0,
+      "received": 440,
+      "accepted": 0,
+      "rejected": 440,
+      "reasons": {
+        "rejected: no usable XRF composition": 440
+      }
+    },
+    "Ba-Cu-S": {
+      "libraries": 32,
+      "libraries_with_no_samples_served": 2,
+      "received": 1320,
+      "accepted": 220,
+      "rejected": 1100,
+      "reasons": {
+        "rejected: no usable XRF composition": 1100,
+        "warning: library lists 44 samples but the API served no sample records": 2
+      }
+    },
+    "Ba-Cu-S-Sr": {
+      "libraries": 17,
+      "libraries_with_no_samples_served": 0,
+      "received": 748,
+      "accepted": 0,
+      "rejected": 748,
+      "reasons": {
+        "rejected: no usable XRF composition": 748
+      }
+    },
     "Co-Ni-O-Zn": {
       "libraries": 24,
       "libraries_with_no_samples_served": 4,
@@ -8,6 +39,52 @@
       "rejected": 0,
       "reasons": {
         "warning: library lists 44 samples but the API served no sample records": 4
+      }
+    },
+    "Cu-O-Se-Zn": {
+      "libraries": 10,
+      "libraries_with_no_samples_served": 3,
+      "received": 308,
+      "accepted": 176,
+      "rejected": 132,
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 3,
+        "warning: deposition temperature not recorded for this library": 7,
+        "rejected: no usable XRF composition": 132
+      }
+    },
+    "Cu-O-Zn": {
+      "libraries": 14,
+      "libraries_with_no_samples_served": 1,
+      "received": 572,
+      "accepted": 396,
+      "rejected": 176,
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 9,
+        "rejected: no usable XRF composition": 176,
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    "Cu-S-Sb": {
+      "libraries": 12,
+      "libraries_with_no_samples_served": 0,
+      "received": 528,
+      "accepted": 176,
+      "rejected": 352,
+      "reasons": {
+        "rejected: no usable XRF composition": 352
+      }
+    },
+    "Cu-S-Sn": {
+      "libraries": 19,
+      "libraries_with_no_samples_served": 4,
+      "received": 660,
+      "accepted": 264,
+      "rejected": 396,
+      "reasons": {
+        "rejected: no usable XRF composition": 396,
+        "warning: library lists 44 samples but the API served no sample records": 4,
+        "warning: deposition temperature not recorded for this library": 1
       }
     },
     "In-O-Sn-Zn": {
@@ -35,6 +112,16 @@
         "dropped_measurement: impossible conductivity 999700 S/cm": 1,
         "dropped_measurement: impossible conductivity 283600 S/cm": 1,
         "dropped_measurement: impossible conductivity 397300 S/cm": 1
+      }
+    },
+    "O-Sn-Ti-Zn": {
+      "libraries": 13,
+      "libraries_with_no_samples_served": 4,
+      "received": 396,
+      "accepted": 396,
+      "rejected": 0,
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 4
       }
     }
   },
@@ -96,7 +183,7 @@
         "expected": "rejected",
         "got": "rejected",
         "correct": true,
-        "reason": "duplicate sample id 234890"
+        "reason": "duplicate sample id (234890)"
       },
       {
         "case": "sample from another library",
@@ -189,6 +276,675 @@
     ]
   },
   "libraries": [
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10508",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10509",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10497",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10451",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10507",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10492",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10493",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10512",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10513",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Al-Cu-S",
+      "library_id": "10510",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10166",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10157",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10433",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10167",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10133",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10154",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10168",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "7427",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10429",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10150",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10180",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10448",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10438",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10175",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10134",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10158",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10172",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10434",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10151",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10138",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10152",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10174",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10169",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10035",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10037",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 2,
+        "sheet_resistance": 2,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10062",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10038",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44,
+        "conductivity": 1,
+        "sheet_resistance": 1
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10040",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10044",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 1,
+        "sheet_resistance": 1,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10046",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10055",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 1,
+        "sheet_resistance": 1,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Ba-Cu-S",
+      "library_id": "10056",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 3,
+        "sheet_resistance": 3,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10399",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10188",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10402",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10177",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10403",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10181",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10436",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10394",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10185",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10184",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10186",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10187",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10437",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10400",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10391",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10389",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Ba-Cu-S-Sr",
+      "library_id": "10183",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
     {
       "system": "Co-Ni-O-Zn",
       "library_id": "7541",
@@ -532,6 +1288,722 @@
         "thickness": 44
       },
       "reasons": {}
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "8850",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "7755",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "6750",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 43,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "7444",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44,
+        "conductivity": 26,
+        "sheet_resistance": 26
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "6939",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44,
+        "conductivity": 28,
+        "sheet_resistance": 28
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "6657",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "7349",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "6885",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 29,
+        "sheet_resistance": 29,
+        "band_gap": 38,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "9841",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Cu-O-Se-Zn",
+      "library_id": "8878",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "7751",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "7929",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 43,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "7963",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "6626",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 11,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "7290",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "6672",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "6671",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "7582",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "7879",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 4,
+        "sheet_resistance": 4,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "6661",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 42,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "6894",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "6749",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "7775",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 14,
+        "sheet_resistance": 14,
+        "band_gap": 38,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1
+      }
+    },
+    {
+      "system": "Cu-O-Zn",
+      "library_id": "8877",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "7690",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "7454",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "7637",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "6720",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "7942",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "6682",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 42,
+        "sheet_resistance": 42,
+        "band_gap": 43,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "6829",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "7109",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 29,
+        "sheet_resistance": 29,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "6746",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "6740",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "8883",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sb",
+      "library_id": "7001",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "6824",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 44,
+        "sheet_resistance": 44,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "7228",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "7200",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 11,
+        "sheet_resistance": 11,
+        "band_gap": 36,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "7651",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "6949",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "6903",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 42,
+        "sheet_resistance": 42,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "7187",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "8926",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "7240",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 43,
+        "sheet_resistance": 43,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "7813",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "6928",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "warning: deposition temperature not recorded for this library": 1,
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "6973",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "6972",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 42,
+        "sheet_resistance": 42,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "7330",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "7967",
+      "received": 44,
+      "accepted": 0,
+      "rejected": 44,
+      "measurements": {},
+      "reasons": {
+        "rejected: no usable XRF composition": 44
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "6808",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 11,
+        "sheet_resistance": 11,
+        "band_gap": 40,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "8842",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "8843",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "Cu-S-Sn",
+      "library_id": "8844",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
     },
     {
       "system": "In-O-Sn-Zn",
@@ -1252,6 +2724,181 @@
     {
       "system": "N-Sn-Zn",
       "library_id": "9991",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "9851",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "7988",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 43,
+        "sheet_resistance": 43,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "9864",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "10136",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 3,
+        "sheet_resistance": 3,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "9764",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 3,
+        "sheet_resistance": 3,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "7707",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 38,
+        "sheet_resistance": 38,
+        "band_gap": 43,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "7997",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 40,
+        "sheet_resistance": 40,
+        "band_gap": 43,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "7887",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 42,
+        "sheet_resistance": 42,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "9777",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 2,
+        "sheet_resistance": 2,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "9895",
+      "received": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "measurements": {},
+      "reasons": {
+        "warning: library lists 44 samples but the API served no sample records": 1
+      }
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "7909",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 39,
+        "sheet_resistance": 39,
+        "band_gap": 44,
+        "visible_transmittance": 44,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "10105",
+      "received": 44,
+      "accepted": 44,
+      "rejected": 0,
+      "measurements": {
+        "conductivity": 1,
+        "sheet_resistance": 1,
+        "thickness": 44
+      },
+      "reasons": {}
+    },
+    {
+      "system": "O-Sn-Ti-Zn",
+      "library_id": "9887",
       "received": 0,
       "accepted": 0,
       "rejected": 0,

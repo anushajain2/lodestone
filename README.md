@@ -106,6 +106,7 @@ The report also says when a result is weak. If the range of the saving includes 
 
 - **Per sample, the model finds 2.5–4× as many top-5% samples** as random picks or a sweep on the same budget. This holds when 0–20% of experiments fail and at batch sizes of 1, 5 and 10.
 - **Per deposition run, the gain is smaller.** In HTEM, one deposition run makes a whole library of about 44 samples, so a lab really chooses runs, not samples. Counted that way (10-run budget), the model finds 1.4–1.6× as many top-5% samples as random: 1.7–1.9× with a 5-run budget, 1.2× with 15. Still a win, but this is the number a lab should expect.
+- **It holds on systems I didn't pick.** On five more HTEM systems chosen by a fixed rule after the method was built, the model found clearly more top-5% samples than random in 5 of 6 campaigns (0.8–5× as many). The exception was copper antimony sulfide, where the Gaussian-process model did no better than random (the random-forest model did). These systems have too few deposition runs to repeat the per-run check.
 
 **What didn't work, reported as it came out:**
 
@@ -197,7 +198,7 @@ uv run lodestone api
 
 Or run the built-in agent: `ANTHROPIC_API_KEY=... uv run lodestone agent run`.
 
-**Reproduce the evaluation.** `uv run lodestone bench` reruns the benchmark, `uv run lodestone eval calibration` the uncertainty checks, and `uv run lodestone eval report` rewrites `reports/EVALUATION.md`. `uv run pytest` runs the tests, including the cross-lab isolation attacks.
+**Reproduce the evaluation.** `uv run lodestone bench` reruns the benchmark (`--extra` for the five rule-chosen systems), `uv run lodestone eval calibration` the uncertainty checks, and `uv run lodestone eval report` rewrites `reports/EVALUATION.md`. `uv run pytest` runs the tests, including the cross-lab isolation attacks.
 
 ## Limits
 
@@ -226,7 +227,7 @@ src/lodestone/
   evals/                  agent tasks and scoring, onboarding and provenance checks
 dashboard/app.py          Streamlit dashboard
 tests/                    pytest
-data/htem/                HTEM snapshot (3 systems); data/partner_lab/ a second lab's CSV + mapping; data/templates/ mapping and export templates
+data/htem/                HTEM snapshots (3 demo systems + 8 screened for the rule-based check); data/partner_lab/ a second lab's CSV + mapping; data/templates/ mapping and export templates
 reports/                  benchmark, calibration, onboarding, agent eval, EVALUATION.md
 legacy/dielectric/        an earlier version on computed dielectrics, kept for reference
 ```

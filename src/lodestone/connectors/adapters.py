@@ -65,20 +65,24 @@ def cation_fractions(names: list[str], amounts: list[float]) -> dict[str, float]
     if not names or not amounts or len(names) != len(amounts):
         raise Reject("no usable XRF composition (compounds and concentrations missing or mismatched)")
     out: dict[str, float] = {}
+    anion_total = 0.0
     for name, amt in zip(names, amounts):
         el = _metal(name)
         if el is None or amt is None:
             raise Reject(f"unreadable XRF entry {name!r}={amt!r}")
-        if el in ANIONS:
-            continue
         if amt < 0:
             raise Reject(f"negative XRF concentration for {el} ({amt})")
+        if el in ANIONS:
+            anion_total += float(amt)  # XRF measures S, Se, Te; O and N are not usually reported
+            continue
         out[el] = out.get(el, 0.0) + float(amt)
     total = sum(out.values())
     if total <= 0:
         raise Reject("XRF composition has no metal content")
-    if not (90.0 <= total <= 110.0):
-        raise Reject(f"XRF concentrations sum to {total:.1f}%, not ~100% (wrong units or truncated record)")
+    # Oxides and nitrides: the metals alone sum to ~100%. Sulfides and selenides: the anion is measured
+    # too, so metals + anion sum to ~100% (Ba 18, Cu 32, S 50).
+    if not (90.0 <= total <= 110.0 or 90.0 <= total + anion_total <= 110.0):
+        raise Reject(f"XRF concentrations sum to {total + anion_total:.1f}%, not ~100% (wrong units or truncated record)")
     return {k: v / total for k, v in sorted(out.items())}
 
 

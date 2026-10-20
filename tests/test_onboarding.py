@@ -50,6 +50,27 @@ def test_cation_fractions_ignore_anions_and_validate():
         cation_fractions(["Zn", "Sn"], [150, 100])
 
 
+def test_cation_fractions_accept_sulfides_where_xrf_reports_the_sulfur():
+    # HTEM Ba-Cu-S: XRF measures S, so metals sum to ~50% and metals + S to ~100%
+    assert cation_fractions(["Ba", "Cu", "S"], [18.06, 31.52, 50.42]) == pytest.approx({"Ba": 18.06 / 49.58, "Cu": 31.52 / 49.58})
+    with pytest.raises(Exception, match="sum to"):
+        cation_fractions(["Ba", "Cu", "S"], [9.0, 16.0, 25.0])  # 50% in all: a truncated record is still rejected
+
+
+def test_more_systems_goal_rule_needs_enough_qualifying_samples():
+    from lodestone.loop import more_systems as m
+
+    def recs(n_ok, n_low):
+        ok = [{"measurements": {"conductivity": {"value": 1.0}, "band_gap": {"value": 3.2}}}] * n_ok
+        low = [{"measurements": {"conductivity": {"value": 1.0}, "band_gap": {"value": 2.0}}}] * n_low
+        return ok + low
+
+    assert m.feasible_transparent(recs(120, 50)) == 120
+    specs = m.campaigns(lambda system: recs(m.MIN_FEASIBLE if system == "Cu-O-Zn" else m.MIN_FEASIBLE - 1, 10))
+    assert sum(k.endswith("-transparent-conductor") for k in specs) == 1 and "cu-o-zn-transparent-conductor" in specs
+    assert all(f"{s.lower()}-conductivity" in specs for s in m.SYSTEMS)
+
+
 def test_import_into_workspace_reports_and_blocks_duplicates(seeded):
     from lodestone.onboarding import OnboardingError, import_htem_library
 
