@@ -199,8 +199,14 @@ def bench(seeds: int = typer.Option(20), robustness_seeds: int = typer.Option(10
           level: str = typer.Option("sample", help="sample: one experiment = one spot (the main benchmark). library: one experiment = one deposition run"),
           variant: str = typer.Option("", help="Library level only: a sensitivity variant (budget-5, budget-15, seed-runs-1) instead of the main 10-run design"),
           extra: bool = typer.Option(False, "--extra", help="Run the five rule-chosen extra HTEM systems instead (both levels; pull them first)"),
-          published: bool = typer.Option(False, "--published", help="Run the P3HT/CNT dataset from Liang et al. 2021 (the paper's protocol and Lodestone's)")):
+          published: bool = typer.Option(False, "--published", help="Run the P3HT/CNT dataset from Liang et al. 2021 (the paper's protocol and Lodestone's)"),
+          lab_order: bool = typer.Option(False, "--lab-order", help="Compare with the order the lab actually made its deposition runs")):
     """Benchmark (E1): Bayesian optimization vs random and grid search on real HTEM data."""
+    if lab_order:
+        from lodestone.loop.lab_order import run as run_lab_order
+
+        run_lab_order(seeds=seeds)
+        return
     if published:
         from lodestone.loop.published import run as run_published
 

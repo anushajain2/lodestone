@@ -113,6 +113,34 @@ The same comparison at other run budgets and with one random seed run instead of
 
 **Reading.** Bayesian ÷ random: 5 runs, 2 seed runs: 1.7–1.9×; 10 runs, 2 seed runs: 1.4–1.6×; 15 runs, 2 seed runs: 1.2×; 10 runs, 1 seed run: 1.5–1.8×. The ratio falls as the budget grows, because by 15 runs random has also run most of each system's libraries; the paired gain in samples stays between +6 and +17. The Bayesian loop beats random by more than two standard errors on 2 of 3 campaigns at 5 runs, 2 seed runs, 3 of 3 campaigns at 10 runs, 2 seed runs, 3 of 3 campaigns at 15 runs, 2 seed runs, 3 of 3 campaigns at 10 runs, 1 seed run. Grid search finds more top-5% samples than the Bayesian loop on the transparent p-type conductor (gap ≥ 3 eV) campaign at 5 runs, 2 seed runs. Median runs saved to the first top-5% sample (random − Bayesian) are 0 to +2 runs in every design, so that metric never separates the methods. So the 1.4–1.6× above is specific to the 10-run budget. Across these designs the Bayesian loop finds 1.2–1.9× as many top-5% samples as random, more when the lab can afford fewer runs.
 
+### Against the lab's own order
+
+Random picks and a grid sweep are weak baselines: no scientist chooses experiments at random. HTEM dates every library, and all ~44 samples on a library are made in one deposition run, so the order the lab really made its runs is known. Here that order is replayed as a baseline, at run level (one experiment = one library), over the whole system. The Bayesian loop is started from the lab's own first 2 runs, a like-for-like comparison, and also from 2 random runs as in the run-level benchmark. 5% simulated lost spots, 20 seeds (the lab's order varies only by which spots are lost).
+
+Systems with at least 20 dated libraries: N-Sn-Zn, Co-Ni-O-Zn. Too few dated libraries to test: In-O-Sn-Zn (4 of 4); Cu-S-Sn (1 of 6); Cu-O-Zn (4 of 9); O-Sn-Ti-Zn (9 of 9); Cu-S-Sb (3 of 4); Cu-O-Se-Zn (0 of 4).
+
+**Caveat.** The lab chose its runs for its own goals at the time, which need not be the campaign's goal. So this is 'the order the runs were made', not 'what the scientists would have done for this goal'.
+
+| Campaign | Method | Runs to the first top-5% sample (median) | Top-5% samples found after 3 / 5 / 10 / 15 runs (mean) | Minus the lab's order after 5 / 10 / 15 runs (paired, ± s.e.m.) |
+|---|---|---|---|---|
+| Most conductive zinc tin nitride (23 runs; top 5% = 50 samples in 6 runs) | The lab's actual order | 4 | 0.0 / 29.8 / 46.1 / 46.1 | — |
+|  | Bayesian (GP), from the lab's first 2 runs | 4 | 9.2 / 27.2 / 36.0 / 40.0 | -2.5 ± 0.8 / -10.1 ± 0.6 / -6.2 ± 1.0 |
+|  | Bayesian (GP), from 2 random runs | 3 | 9.8 / 19.9 / 32.9 / 42.8 | -9.8 ± 2.4 / -13.2 ± 2.0 / -3.4 ± 1.1 |
+|  | Random runs | 4 | 6.1 / 11.3 / 23.5 / 34.2 | -18.5 ± 2.3 / -22.6 ± 2.4 / -11.9 ± 2.2 |
+|  | Grid sweep of runs | 4 | 6.1 / 7.0 / 22.2 / 33.1 | -22.8 ± 2.3 / -23.9 ± 3.7 / -12.9 ± 1.9 |
+| Band gap in the 1.4–1.6 eV solar window (23 runs; top 5% = 50 samples in 8 runs) | The lab's actual order | 1 | 4.7 / 16.3 / 22.2 / 22.2 | — |
+|  | Bayesian (GP), from the lab's first 2 runs | 1 | 5.6 / 14.7 / 31.8 / 44.2 | -1.6 ± 0.8 / +9.6 ± 1.2 / +22.0 ± 1.4 |
+|  | Bayesian (GP), from 2 random runs | 2 | 8.8 / 17.3 / 34.5 / 41.8 | +1.0 ± 1.8 / +12.3 ± 1.2 / +19.6 ± 1.4 |
+|  | Random runs | 2 | 5.3 / 8.9 / 22.1 / 34.6 | -7.3 ± 1.5 / -0.1 ± 1.6 / +12.4 ± 1.6 |
+|  | Grid sweep of runs | 2 | 5.7 / 10.8 / 21.4 / 34.6 | -5.5 ± 1.4 / -0.8 ± 0.9 / +12.4 ± 0.8 |
+| Transparent p-type conductor (gap ≥ 3 eV) (20 runs; top 5% = 44 samples in 10 runs) | The lab's actual order | 1 | 30.6 / 31.4 / 36.2 / 39.8 | — |
+|  | Bayesian (GP), from the lab's first 2 runs | 1 | 31.1 / 32.1 / 34.1 / 38.8 | +0.7 ± 0.3 / -2.0 ± 0.4 / -1.0 ± 0.3 |
+|  | Bayesian (GP), from 2 random runs | 2 | 6.0 / 14.4 / 29.9 / 38.0 | -17.0 ± 2.7 / -6.3 ± 1.9 / -1.8 ± 0.5 |
+|  | Random runs | 2 | 5.5 / 8.7 / 21.6 / 31.4 | -22.8 ± 2.1 / -14.6 ± 2.8 / -8.4 ± 2.4 |
+|  | Grid sweep of runs | 2 | 7.4 / 19.2 / 30.4 / 37.5 | -12.2 ± 3.0 / -5.8 ± 2.3 / -2.3 ± 1.3 |
+
+**Result.** Started from the same first runs, the optimizer does **not** beat the lab's own order on 2 of 3 campaigns: the lab's order is ahead on most conductive zinc tin nitride (-10.1 ± 0.6 of 50 top-5% samples after 10 runs); narrowly, transparent p-type conductor (gap ≥ 3 eV) (-2.0 ± 0.4 of 44 top-5% samples after 10 runs). The optimizer is clearly ahead only on band gap in the 1.4–1.6 eV solar window (+9.6 ± 1.2 of 50 top-5% samples after 10 runs), a goal the lab's order was evidently not following: its runs with a window sample are #1, #2, #4, #5, #6, #16, #17, #18, with a long gap in the middle. Against random and grid runs the optimizer wins nearly everywhere, which is why those baselines flatter it. On this data, the lab's real choices were about as good as the optimizer at the goals they appear to have been pursuing. The case for Lodestone is therefore a new goal, a new system, or a lab without this experience, not a claim to beat experienced scientists at their own goal.
+
 ### Five more systems, chosen by rule
 
 The four campaigns above use three systems picked while the method was being built, so they could be the ones where it happens to work. These five were chosen afterwards by a rule fixed before any optimizer was run on them: the 5 HTEM systems with the most libraries with electrical + optical data, excluding the demo systems (N-Sn-Zn, Co-Ni-O-Zn, In-O-Sn-Zn), that have at least 100 imported samples with a conductivity value. Goals: most conductive for all; transparent conductor (gap >= 3 eV) where >= 100 samples qualify. Everything else is the same as above: 60-experiment budget, 10 random seed experiments, batches of 5, 5% simulated lab failures, 20 seeds. Systems: Cu-S-Sn (264 samples), Cu-O-Zn (396 samples), O-Sn-Ti-Zn (396 samples), Cu-S-Sb (176 samples), Cu-O-Se-Zn (176 samples).
@@ -266,6 +294,7 @@ Provenance spot-check: 20 random samples, 56 values compared with the raw HTEM r
 - **'Experiments to the first top-5% sample' doesn't separate methods** on pools of ~1,000 with 10 random seed experiments: luck dominates. The stricter metrics (5 of the top 5%, first top-1%, top-5% samples found) do.
 - **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign the Bayesian loop finds four times as many top-5% samples as random, yet the *median best value* it reaches (3.2 S/cm) is no higher than random's (4.0 S/cm), and no method reliably finds the extreme outlier (an 85 S/cm Co-Ni-Zn-O film). The first top-1% sample arrives no sooner than with random search on the constrained campaign.
 - **Counted in deposition runs, the savings shrink.** When one experiment is a whole library (10-run budget), every method finds its first top-5% sample in a median of 2–4 runs, and the Bayesian loop finds 1.4–1.6× as many top-5% samples as random (1.2–1.9× across all the run budgets and seed-run counts tried), down from the spot-level gain. IZTO has too few libraries to test (see 'One experiment = one deposition run').
+- **The optimizer does not beat the lab's own run order on 2 of 3 campaigns**, started from the same first runs (see 'Against the lab's own order'). It wins only on a goal the lab's order wasn't following. Random and grid baselines flatter it.
 - **On five systems chosen by rule after the method was fixed**, the GP loop finds clearly more top-5% samples than random in 5 of 6 campaigns, but not on most conductive copper antimony sulfide. These systems have too few deposition runs to repeat the run-level check (see 'Five more systems, chosen by rule').
 - **On a published benchmark (P3HT/CNT, Liang et al. 2021), the paper's enhancement factor comes out at 2.6–4.0× (GP) and 2.0–2.5× (random forest)** after 20–60 experiments, against the paper's 2–5× for that class of dataset. Unlike the paper, the GP beats the random forest here; the surrogates and acquisition functions differ from the paper's, so it is a range check, not a reproduction.
 - **Grid search is a strong baseline for the very first hits** when a system has only one or two composition dimensions: a systematic sweep covers the space quickly. The optimizer pulls ahead once it has data to exploit.

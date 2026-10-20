@@ -20,7 +20,8 @@ from lodestone.loop.models import Observations
 from lodestone.loop.problem import Problem
 from lodestone.loop.replay import LabReplay, seeded_rng
 from lodestone.loop.select import (
-    LibraryPick, Pick, grid_order, library_grid_order, select_bayes, select_bayes_libraries, select_grid,
+    LibraryPick, Pick, grid_order, lab_order, library_grid_order, select_bayes, select_bayes_libraries, select_grid,
+    select_lab_order,
     select_grid_libraries, select_random, select_random_libraries,
 )
 
@@ -125,23 +126,29 @@ def next_libraries(problem: Problem, obs: Observations, unavailable: set[str], p
         return select_random_libraries(problem, unavailable, q, rng)
     if strategy == "grid":
         return select_grid_libraries(unavailable, q, grid or library_grid_order(problem, problem.spec.budget, seed))
+    if strategy == "lab-order":
+        return select_lab_order(unavailable, q, lab_order(problem))
     return select_bayes_libraries(problem, obs, unavailable, pending, q, rng, seed=seed + round_no)[0]
 
 
 def simulate_libraries(problem: Problem, strategy: str, surrogate: str = "gp", seed: int = 0, budget: int = 10,
-                       batch: int = 1, initial: int = 2, failure_rate: float = 0.05, delay: int = 0) -> Trajectory:
+                       batch: int = 1, initial: int = 2, failure_rate: float = 0.05, delay: int = 0,
+                       start: str = "random") -> Trajectory:
     """A campaign in which each experiment is a whole library (one deposition run).
 
     Every spot of a chosen library is replayed: its real measurement, a real missing value, or a
     simulated mishap at ``failure_rate`` (a lost or damaged spot). A spot can't be retried on its own,
-    and a library is never run twice, so the budget is at most the number of libraries."""
+    and a library is never run twice, so the budget is at most the number of libraries.
+
+    ``start="lab"`` makes the first ``initial`` runs the lab's own first runs (by date) instead of
+    random ones; the ``lab-order`` strategy then continues in the lab's order."""
     if strategy == "bayes" and surrogate != "gp":
         raise ValueError("library-level campaigns use the GP surrogate")
     libs = problem.libraries()
     budget = min(budget, len(libs))
     replay = LabReplay(problem, failure_rate, seed)
     grid = library_grid_order(problem, budget, seed) if strategy == "grid" else None
-    traj = Trajectory(method_name(strategy, surrogate), seed)
+    traj = Trajectory(method_name(strategy, surrogate) + ("-from-lab-start" if start == "lab" and strategy != "lab-order" else ""), seed)
     obs = Observations()
     in_flight: list[tuple[str, int, int, int]] = []  # (library, run number, submitted round, due round)
     done: set[str] = set()
@@ -151,7 +158,8 @@ def simulate_libraries(problem: Problem, strategy: str, surrogate: str = "gp", s
         if used < budget:
             q = min(initial if used == 0 else batch, budget - used)
             if used == 0:
-                picks = initial_libraries(problem, q, seed)
+                picks = (select_lab_order(set(), q, lab_order(problem)) if start == "lab" or strategy == "lab-order"
+                         else initial_libraries(problem, q, seed))
             else:
                 busy = [lib for lib, *_ in in_flight]
                 picks = next_libraries(problem, obs, done | set(busy), busy, q, strategy, seed, rnd, grid)

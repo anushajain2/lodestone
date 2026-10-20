@@ -459,6 +459,64 @@ def _published_bullet(R: Path) -> list[str]:
             "the surrogates and acquisition functions differ from the paper's, so it is a range check, not a reproduction."]
 
 
+def _lab_order_section(lo: dict) -> list[str]:
+    """The optimizer against the order the lab actually made its deposition runs."""
+    cfg = lo["config"]
+    LAB, LIKE = "The lab's actual order", "Bayesian (GP), from the lab's first 2 runs"
+    cov = lo["coverage"]
+    ok = [s for s, c in cov.items() if c["dated"] >= cfg["min_dated"]]
+    few = [f"{s} ({c['dated']} of {c['libraries']})" for s, c in cov.items() if c["dated"] < cfg["min_dated"]]
+    out = ["### Against the lab's own order", "",
+           "Random picks and a grid sweep are weak baselines: no scientist chooses experiments at random. HTEM dates every library, and all ~44 samples on a library "
+           "are made in one deposition run, so the order the lab really made its runs is known. Here that order is replayed as a baseline, at run level "
+           f"(one experiment = one library), over the whole system. The Bayesian loop is started from the lab's own first {cfg['initial_runs']} runs, a like-for-like "
+           f"comparison, and also from {cfg['initial_runs']} random runs as in the run-level benchmark. {cfg['failure_rate']:.0%} simulated lost spots, {cfg['seeds']} seeds "
+           "(the lab's order varies only by which spots are lost).", "",
+           f"Systems with at least {cfg['min_dated']} dated libraries: {', '.join(ok)}. Too few dated libraries to test: {'; '.join(few)}.", "",
+           "**Caveat.** The lab chose its runs for its own goals at the time, which need not be the campaign's goal. So this is 'the order the runs were made', "
+           "not 'what the scientists would have done for this goal'.", "",
+           "| Campaign | Method | Runs to the first top-5% sample (median) | Top-5% samples found after " + " / ".join(str(k) for k in cfg["checkpoints"]) + " runs (mean) | "
+           "Minus the lab's order after 5 / 10 / 15 runs (paired, ± s.e.m.) |", "|---|---|---|---|---|"]
+    verdict = []
+    for key, c in lo["campaigns"].items():
+        for i, (label, m) in enumerate(c["methods"].items()):
+            name = f"{c['name']} ({c['libraries']} runs; top 5% = {c['top_size']} samples in {c['libraries_with_top']} runs)" if i == 0 else ""
+            found = " / ".join(f"{m['top_found_mean_at'][str(k)]:.1f}" for k in cfg["checkpoints"] if str(k) in m["top_found_mean_at"])
+            diff = "—" if "minus_lab_at" not in m else " / ".join(f"{m['minus_lab_at'][k]['mean']:+.1f} ± {m['minus_lab_at'][k]['sem']:.1f}" for k in ("5", "10", "15") if k in m["minus_lab_at"])
+            out.append(f"| {name} | {label} | {_fmt(m['runs_to_first_top_median'])} | {found} | {diff} |")
+        d = c["methods"][LIKE]["minus_lab_at"]["10"]
+        clear = abs(d["mean"]) > 2 * d["sem"]
+        verdict.append((c["name"], d, "the optimizer" if clear and d["mean"] > 0 else ("the lab's order" if clear else None), c["lab_runs_with_top"], c["top_size"]))
+    out.append("")
+    lab_wins = [v for v in verdict if v[2] == "the lab's order"]
+    opt_wins = [v for v in verdict if v[2] == "the optimizer"]
+    ties = [v for v in verdict if v[2] is None]
+    low = lambda n: n[0].lower() + n[1:]
+    say = lambda vs: "; ".join(f"{'narrowly, ' if abs(d['mean']) < 0.1 * size else ''}{low(n)} ({d['mean']:+.1f} ± {d['sem']:.1f} of {size} top-5% samples after 10 runs)"
+                               for n, d, _, _, size in vs)
+    out += [f"**Result.** Started from the same first runs, the optimizer does **not** beat the lab's own order on {len(lab_wins) + len(ties)} of {len(verdict)} campaigns: "
+            + (f"the lab's order is ahead on {say(lab_wins)}" if lab_wins else "")
+            + ("; " if lab_wins and ties else "") + (f"they are within about two standard errors, or close to it, on {say(ties)}" if ties else "") + ". "
+            + (f"The optimizer is clearly ahead only on {say(opt_wins)}, a goal the lab's order was evidently not following: its runs with a window sample are "
+               + ", ".join(f"#{k}" for k in opt_wins[0][3]) + ", with a long gap in the middle. " if opt_wins else "")
+            + "Against random and grid runs the optimizer wins nearly everywhere, which is why those baselines flatter it. "
+            "On this data, the lab's real choices were about as good as the optimizer at the goals they appear to have been pursuing. "
+            "The case for Lodestone is therefore a new goal, a new system, or a lab without this experience, not a claim to beat experienced scientists at their own goal.", ""]
+    return out
+
+
+def _lab_order_bullet(R: Path) -> list[str]:
+    lo = _load(R / "benchmark" / "lab_order.json")
+    if not lo:
+        return []
+    like = "Bayesian (GP), from the lab's first 2 runs"
+    n = len(lo["campaigns"])
+    not_beat = sum(1 for c in lo["campaigns"].values()
+                   if not (c["methods"][like]["minus_lab_at"]["10"]["mean"] > 2 * c["methods"][like]["minus_lab_at"]["10"]["sem"]))
+    return [f"- **The optimizer does not beat the lab's own run order on {not_beat} of {n} campaigns**, started from the same first runs (see 'Against the lab's own order'). "
+            "It wins only on a goal the lab's order wasn't following. Random and grid baselines flatter it."]
+
+
 def write_report() -> Path:
     R = config.REPORTS_DIR
     out = ["# Lodestone evaluation report", "",
@@ -525,6 +583,10 @@ def write_report() -> Path:
         out += _library_section(lib, bench)
         out += _library_sensitivity(R, lib)
 
+    lo = _load(R / "benchmark" / "lab_order.json")
+    if lo:
+        out += _lab_order_section(lo)
+
     more = _load(R / "benchmark" / "more_systems.json")
     if more and more["campaigns"]:
         out += _more_systems_section(more, _load(R / "benchmark" / "more_systems_library.json"))
@@ -586,6 +648,7 @@ def write_report() -> Path:
             "- **'Experiments to the first top-5% sample' doesn't separate methods** on pools of ~1,000 with 10 random seed experiments: luck dominates. The stricter metrics (5 of the top 5%, first top-1%, top-5% samples found) do.",
             "- **Finding many good samples is not the same as finding the single best one.** On the transparent-conductor campaign the Bayesian loop finds four times as many top-5% samples as random, yet the *median best value* it reaches (3.2 S/cm) is no higher than random's (4.0 S/cm), and no method reliably finds the extreme outlier (an 85 S/cm Co-Ni-Zn-O film). The first top-1% sample arrives no sooner than with random search on the constrained campaign.",
             *_library_bullet(R),
+            *_lab_order_bullet(R),
             *_more_systems_bullet(R),
             *_published_bullet(R),
             "- **Grid search is a strong baseline for the very first hits** when a system has only one or two composition dimensions: a systematic sweep covers the space quickly. The optimizer pulls ahead once it has data to exploit.",

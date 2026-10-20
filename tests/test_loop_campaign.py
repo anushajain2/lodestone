@@ -238,3 +238,19 @@ def test_leave_one_library_out_holds_out_whole_libraries():
     for arm in ("library", "random"):
         assert 0 <= row[arm]["cov68"] <= row[arm]["cov95"] <= 1
     assert all(p["best_gap"] >= 0 and 0 < p["pick_percentile"] <= 1 for p in row["per_library"])
+
+
+def test_lab_order_replays_runs_by_date_and_lab_start_uses_the_first_runs():
+    from lodestone.loop.benchmark import library_problem
+    from lodestone.loop.engine import simulate_libraries
+    from lodestone.loop.select import lab_order
+
+    prob = library_problem("cnzo-transparent-conductor", 0.0, budget=1000, initial=2)
+    order = lab_order(prob)
+    dates = {str(r["provenance"]["source_library_id"]): r["provenance"]["sample_date"] for r in prob.records}
+    assert [dates[lib] for lib in order] == sorted(dates[lib] for lib in order)
+    lab = simulate_libraries(prob, "lab-order", "gp", 0, budget=6, initial=2, failure_rate=0.0)
+    seen = list(dict.fromkeys(st.library for st in lab.steps))
+    assert seen == order[:6]
+    bo = simulate_libraries(prob, "bayes", "gp", 0, budget=3, initial=2, failure_rate=0.0, start="lab")
+    assert list(dict.fromkeys(st.library for st in bo.steps))[:2] == order[:2] and bo.method.endswith("from-lab-start")

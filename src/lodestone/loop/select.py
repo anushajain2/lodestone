@@ -277,6 +277,22 @@ def library_grid_order(problem: Problem, budget: int, seed: int) -> list[str]:
     return [names[i] for i in _sweep(Z, budget, rng)]
 
 
+def lab_order(problem: Problem) -> list[str]:
+    """The order the lab actually made its deposition runs: library date, then library id. Libraries
+    without a date go last (none of the systems this is used on have any)."""
+    dates: dict[str, str] = {}
+    for r in problem.records:
+        lib, d = str(r["provenance"]["source_library_id"]), r["provenance"].get("sample_date")
+        if d and lib not in dates:
+            dates[lib] = d
+    return sorted(problem.libraries(), key=lambda lib: (lib not in dates, dates.get(lib, ""), int(lib) if lib.isdigit() else lib))
+
+
+def select_lab_order(unavailable: set[str], q: int, order: list[str]) -> list[LibraryPick]:
+    picks = [LibraryPick(library=lib, strategy="lab-order", notes=["the next run the lab actually made"]) for lib in order if lib not in unavailable]
+    return picks[:q]
+
+
 def select_grid_libraries(unavailable: set[str], q: int, order: list[str]) -> list[LibraryPick]:
     picks = [LibraryPick(library=lib, strategy="grid", notes=["next run in the planned composition/temperature sweep"]) for lib in order if lib not in unavailable]
     return picks[:q]

@@ -106,6 +106,7 @@ The report also says when a result is weak. If the range of the saving includes 
 
 - **Per sample, the model finds 2.5–4× as many top-5% samples** as random picks or a sweep on the same budget. This holds when 0–20% of experiments fail and at batch sizes of 1, 5 and 10.
 - **Per deposition run, the gain is smaller.** In HTEM, one deposition run makes a whole library of about 44 samples, so a lab really chooses runs, not samples. Counted that way (10-run budget), the model finds 1.4–1.6× as many top-5% samples as random: 1.7–1.9× with a 5-run budget, 1.2× with 15. Still a win, but this is the number a lab should expect.
+- **It does not beat the lab's own choices on the goals the lab appears to have pursued.** HTEM dates every deposition run, so the order the lab really made them can be replayed as a baseline. Started from the lab's own first two runs, the model was behind the lab's real order on the most-conductive zinc tin nitride goal (10 fewer of the 50 top samples after 10 runs), about level on the cobalt nickel zinc oxide transparent conductor, and ahead only on the band-gap window, a goal the lab's order wasn't chasing. Random and grid baselines flatter the model. The realistic case for it is a new goal, a new material system, or a lab without that experience.
 - **It holds on systems I didn't pick.** On five more HTEM systems chosen by a fixed rule after the method was built, the model found clearly more top-5% samples than random in 5 of 6 campaigns (0.8–5× as many). The exception was copper antimony sulfide, where the Gaussian-process model did no better than random (the random-forest model did). These systems have too few deposition runs to repeat the per-run check.
 - **It lands in the published range on another lab's data.** On the P3HT/CNT polymer-nanotube blends from a published Bayesian-optimization benchmark ([Liang et al. 2021](https://doi.org/10.1038/s41524-021-00656-9)), scored with that paper's own metric, the model has found 2.6–4.0× as many of the top-5% blends as random after 20–60 experiments; the paper reports 2–5× for this kind of dataset. Unlike the paper, the Gaussian-process model beat the random forest here, and the setups differ, so this is a range check, not a reproduction.
 
@@ -199,12 +200,13 @@ uv run lodestone api
 
 Or run the built-in agent: `ANTHROPIC_API_KEY=... uv run lodestone agent run`.
 
-**Reproduce the evaluation.** `uv run lodestone bench` reruns the benchmark (`--extra` for the five rule-chosen systems, `--published` for the P3HT/CNT benchmark), `uv run lodestone eval calibration` the uncertainty checks, and `uv run lodestone eval report` rewrites `reports/EVALUATION.md`. `uv run pytest` runs the tests, including the cross-lab isolation attacks.
+**Reproduce the evaluation.** `uv run lodestone bench` reruns the benchmark (`--extra` for the five rule-chosen systems, `--published` for the P3HT/CNT benchmark, `--lab-order` for the comparison with the lab's own run order), `uv run lodestone eval calibration` the uncertainty checks, and `uv run lodestone eval report` rewrites `reports/EVALUATION.md`. `uv run pytest` runs the tests, including the cross-lab isolation attacks.
 
 ## Limits
 
 - **Replay only chooses among samples that were made.** The "suggest recipes" feature proposes new ones, but predictions for a new deposition run are weak, so treat them as leads to test.
 - **One row per sample.** A new CSV layout needs only a mapping file. Formats that aren't one row per sample (spectra, raw instrument files, several header rows) still need code.
+- **The savings report's baselines are the easy ones.** It compares with random picks and a sweep. On HTEM, the lab's own run order was a much tougher baseline, so read the report's saving as an upper bound.
 - **Two measured properties.** Conductivity and band gap are modelled today (for HTEM data and for blends alike). Measurement methods are recorded as HTEM's defaults (four-point probe, Tauc fit, XRF thickness) whatever the lab used.
 - **The Claude agent is built but not yet scored.** Only the scripted reference policy has been evaluated so far; scoring Claude needs an API key.
 
